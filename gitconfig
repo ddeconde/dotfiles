@@ -1,0 +1,58 @@
+; .gitconfig
+;
+; Last changed: Tue, 11 Nov 2014 22:13:03 -0800
+;
+
+[include]
+        path = ~/.gitconfig_local
+; The [user] and [github] sections are in ~/.gitlocal included above
+; [user]
+;         name = [name]
+;         email = [email]
+; [github]
+;         user = [github username]
+;         token = [API token from https://github.com/account/admin]
+[credential]
+        helper = osxkeychain
+        ; helper = cache --timeout=3600
+[color]
+        ui = auto
+[core]
+	autocrlf = input
+        editor = vim
+        excludesfile = ~/.gitignore
+        pager = less -FRSX
+[diff]
+        tool = vimdiff
+[difftool]
+        prompt = false
+[merge]
+        tool = vimdiff
+[mergetool]
+        prompt = false
+[push]
+        default = simple
+[alias]
+        a = add .
+        aa = add -A .
+        au = add -u .
+        s = status
+        b = branch
+        c = commit
+        cm = commit -m
+        ca = commit --amend
+        lg = log --graph --decorate --pretty=oneline --abbrev-commit
+        la = log --graph --decorate --pretty=oneline --abbrev-commit --all
+        ls = log --stat --abbrev-commit
+        dw = diff --color-words
+        dh = diff --color-words head
+        res = reset HEAD~
+        ress = reset --soft HEAD~
+        resh = reset --hard HEAD~
+        master = checkout master
+        alias = !git config --list | grep 'alias\\.' | sed 's/alias\\.\\([^=]*\\)=\\(.*\\)/\\1\\\t => \\2/' | sort
+        setup = !git init && git add . && git commit -m \"initial commit\"
+        grm  = !git ls-files -z --deleted | xargs -0 git rm 
+        ignore=!([ ! -e .gitignore ] && touch .gitignore) | echo $1 >>.gitignore
+
+        
