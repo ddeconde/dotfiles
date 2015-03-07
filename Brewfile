@@ -52,7 +52,6 @@ cask install macvim
 cask install the-unarchiver
 cask install firefox
 # cask install chromium
-cask install utorrent
 # cask install adium
 # cask install vlc
 # cask install alfred
