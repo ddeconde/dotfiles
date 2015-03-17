@@ -41,6 +41,7 @@ Plugin 'scrooloose/syntastic' " syntax checking for many languages
 
 " Appearance Plugins
 Plugin 'altercation/vim-colors-solarized' " high-contrast colorscheme
+Plugin 'chriskempson/base16-vim' " another nice colorscheme
 
 " Filetype Specific Plugins
 Plugin 'LaTeX-Box-Team/LaTeX-Box' " LaTeX support
@@ -132,6 +133,7 @@ set background=dark
 colorscheme solarized
 " When using solarized without custom terminal colors use the following
 " let g:solarized_termcolors=256
+" colorscheme base16
 " When running without plugins use the desert colorscheme
 " colorscheme desert " a nice dark built-in colorscheme
 " Modify the highlighting of cursorline number to make it stand out
