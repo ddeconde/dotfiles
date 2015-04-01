@@ -13,42 +13,41 @@ set nocompatible " this is actually assumed when this .vimrc file exists
 " Load Plugins first to ensure that they are available to settings
 " Plugins are managed with Vundle.vim
 
-filetype off " required for Vundle
-set rtp+=~/.vim/bundle/Vundle.vim " required for Vundle
-call vundle#begin() " required for Vundle
+filetype off  " required for Vundle
+set rtp+=~/.vim/bundle/Vundle.vim  " required for Vundle
+call vundle#begin()  " required for Vundle
 
-Plugin 'gmarik/Vundle.vim' " let Vundle manage Vundle; required for Vundle
+Plugin 'gmarik/Vundle.vim'  " let Vundle manage Vundle; required for Vundle
 
 " GitHub-served plugins managed by Vundle are specified in the format:
 " Plugin 'github_account/repository_name'
 
 " Completion & Search Plugins
-Plugin 'kien/ctrlp.vim' " full path fuzzy file, buffer, MRU, tag finder
-Plugin 'ervandew/supertab' " use '<Tab>' for smart omnicompletions
-Plugin 'tpope/vim-vinegar' " enhanced netrw file browser
+Plugin 'kien/ctrlp.vim'  " full path fuzzy file, buffer, MRU, tag finder
+Plugin 'ervandew/supertab'  " use '<Tab>' for smart omnicompletions
+Plugin 'tpope/vim-vinegar'  " enhanced netrw file browser
 
 " Editing Enhancement Plugins
-Plugin 'mbbill/undotree' " visual navigation of VIM undotree
-Plugin 'tpope/vim-surround' " easy handling of surrounding brackets etc.
-Plugin 'Raimondi/delimitMate' " automatic closing of parentheses etc.
-Plugin 'junegunn/vim-easy-align' " easy alignment of text blocks
-Plugin 'tpope/vim-commentary' " easy toggling of comment markers
-Plugin 'tpope/vim-repeat' " make vim-surround and vim-commentary repeatable
+Plugin 'mbbill/undotree'  " visual navigation of VIM undotree
+Plugin 'tpope/vim-surround'  " easy handling of surrounding brackets etc.
+Plugin 'Raimondi/delimitMate'  " automatic closing of parentheses etc.
+Plugin 'junegunn/vim-easy-align'  " easy alignment of text blocks
+Plugin 'tpope/vim-commentary'  " easy toggling of comment markers
+Plugin 'tpope/vim-repeat'  " make vim-surround and vim-commentary repeatable
 
 " Source Code Management Tool Plugins
-Plugin 'tpope/vim-fugitive' " git integration for VIM
-Plugin 'scrooloose/syntastic' " syntax checking for many languages
+Plugin 'tpope/vim-fugitive'  " git integration for VIM
+Plugin 'scrooloose/syntastic'  " syntax checking for many languages
 
 " Appearance Plugins
-Plugin 'altercation/vim-colors-solarized' " high-contrast colorscheme
-Plugin 'chriskempson/base16-vim' " another nice colorscheme
+Plugin 'altercation/vim-colors-solarized'  " high-contrast colorscheme
 
 " Filetype Specific Plugins
-Plugin 'LaTeX-Box-Team/LaTeX-Box' " LaTeX support
+Plugin 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support
 
 " All plugins must be added before the following lines
-call vundle#end() " required for Vundle
-filetype plugin indent on " enable filetype detection after Vundle is done
+call vundle#end()  " required for Vundle
+filetype plugin indent on  " enable filetype detection after Vundle is done
 
 
 "
@@ -56,9 +55,9 @@ filetype plugin indent on " enable filetype detection after Vundle is done
 "
 
 " netrw (built-in)
-let g:netrw_liststyle = 3 " default to tree-style file listing
-let g:netrw_winsize   = 30 " use 30% of columns for list
-let g:netrw_preview   = 1 " default to vertical splitting for preview
+let g:netrw_liststyle = 3  " default to tree-style file listing
+let g:netrw_winsize   = 30  " use 30% of columns for list
+let g:netrw_preview   = 1  " default to vertical splitting for preview
  
 " ctrlp
 if executable("ag")
@@ -111,24 +110,24 @@ nnoremap <F3> :SyntasticReset<CR>
 "
 
 " Display
-syntax enable " enable syntax highlighting
-set showmode " show current mode at bottom of screen
-set showcmd " show (partial) commands below statusline
-set showmatch " show matching paretheses, brackets, and braces
-set number " display line number of cursor location
-set relativenumber " display relative line numbers
-set numberwidth=4 " always make room for 4-digit line numbers
-set display+=lastline " display as much as possible of the last line
-set lazyredraw " don't redraw unnecessarily during macros etc.
-set ttyfast " indicate that the terminal connection is fast
-set wrap " wrap long lines
-set linebreak " don't break words when wrapping; will be disabled by list
-set listchars=tab:»·,trail:· " show whitespace with UTF-8 Characters
-" set listchars=tab:>-,trail:. " show whitespace with ASCII characters
-set visualbell " flash screen instead of audio bell for alert
-" set visualbell t_vb= " turn off visualbell effect
-" set title " update terminal window title
-set shortmess+=A " don't show 'ATTENTION' warning for existing swapfiles
+syntax enable  " enable syntax highlighting
+set showmode  " show current mode at bottom of screen
+set showcmd  " show (partial) commands below statusline
+set showmatch  " show matching paretheses, brackets, and braces
+set number  " display line number of cursor location
+set relativenumber  " display relative line numbers
+set numberwidth=4  " always make room for 4-digit line numbers
+set display+=lastline  " display as much as possible of the last line
+set lazyredraw  " don't redraw unnecessarily during macros etc.
+set ttyfast  " indicate that the terminal connection is fast
+set wrap  " wrap long lines
+set linebreak  " don't break words when wrapping; will be disabled by list
+set listchars=tab:»·,trail:·  " show whitespace with UTF-8 Characters
+" set listchars=tab:>-,trail:.  " show whitespace with ASCII characters
+set visualbell  " flash screen instead of audio bell for alert
+" set visualbell t_vb=  " turn off visualbell effect
+" set title  " update terminal window title
+set shortmess+=A  " don't show 'ATTENTION' warning for existing swapfiles
 set background=dark
 colorscheme solarized
 " When using solarized without custom terminal colors use the following
@@ -140,50 +139,50 @@ colorscheme solarized
 highlight CursorLineNr term=bold ctermfg=7 gui=bold guifg=Yellow
 
 " Editing
-set backspace=indent,eol,start " backspace over line breaks, insertion start
-set history=1000 " by default command history is only the last 20
-set undolevels=1000 " enable many levels of undo
-set undofile " save undo tree to file for persistent undos
-set clipboard+=unnamed " make yanked text avilable in system clipboard
-set scrolloff=3 " always show 3 lines above or below cursor when scrolling
-set scrolljump=3 " scroll 3 lines when the cursor would leave the screen
+set backspace=indent,eol,start  " backspace over line breaks, insertion start
+set history=1000  " by default command history is only the last 20
+set undolevels=1000  " enable many levels of undo
+set undofile  " save undo tree to file for persistent undos
+set clipboard+=unnamed  " make yanked text avilable in system clipboard
+set scrolloff=3  " always show 3 lines above or below cursor when scrolling
+set scrolljump=3  " scroll 3 lines when the cursor would leave the screen
 
 " File Handling
-set nomodeline " don't use modelines, they are a security risk
-set autoread " reread files that have been changed while open
-set autowrite " write modified files when moving to other buffers/windows
+set nomodeline  " don't use modelines, they are a security risk
+set autoread  " reread files that have been changed while open
+set autowrite  " write modified files when moving to other buffers/windows
 set encoding=utf-8  " the encoding displayed
 
 " VIM Files
-set directory=/var/tmp//,/tmp// " set swap file directory
-set backupdir=/var/tmp//,/tmp// " set backup file directory
-set undodir=/var/tmp//,/tmp// " set undo file directory
+set directory=/var/tmp//,/tmp//  " set swap file directory
+set backupdir=/var/tmp//,/tmp//  " set backup file directory
+set undodir=/var/tmp//,/tmp//  " set undo file directory
 
 " Indentation & Formatting
-set autoindent " retain indentation on next line for non-specific filetypes
-set shiftwidth=4 " by default indent 4 spaces using '>>'
-" set tabstop=4 " show tabs as 4 spaces (default is 8)
-set softtabstop=4 " when editing tabs are 4 spaces wide
-set expandtab " all tabs are converted to spaces
-set smarttab " use 'shiftwidth' for tabs rather than 'tabstop'
-set shiftround " round all indentation to multiples of 'shiftwidth'
-set nojoinspaces " make 'J' and 'gq' only add one space after a period
-set textwidth=79 " default format of no more than 79 characters in a line
-" set formatoptions=tcq " this is the default, add 'a' for auto-rewrap
+set autoindent  " retain indentation on next line for non-specific filetypes
+set shiftwidth=4  " by default indent 4 spaces using '>>'
+" set tabstop=4  " show tabs as 4 spaces (default is 8)
+set softtabstop=4  " when editing tabs are 4 spaces wide
+set expandtab  " all tabs are converted to spaces
+set smarttab  " use 'shiftwidth' for tabs rather than 'tabstop'
+set shiftround  " round all indentation to multiples of 'shiftwidth'
+set nojoinspaces  " make 'J' and 'gq' only add one space after a period
+set textwidth=79  " default format of no more than 79 characters in a line
+" set formatoptions=tcq  " this is the default, add 'a' for auto-rewrap
 
 " Buffers & Windows
-set hidden " don't close windowless buffers
-set confirm " get confirmation to discard unwritten buffers
+set hidden  " don't close windowless buffers
+set confirm  " get confirmation to discard unwritten buffers
 " Open new windows below and to the right (default is opposite)
 set splitbelow
 set splitright
 
 " Search & Substitution
-set hlsearch " highlight search results
-set incsearch " incremental search begins as you type
-set ignorecase " use case insensitive search
-set smartcase " except when capital letters are entered in the pattern
-" set gdefault " make substitutions global by default: this reverses convention
+set hlsearch  " highlight search results
+set incsearch  " incremental search begins as you type
+set ignorecase  " use case insensitive search
+set smartcase  " except when capital letters are entered in the pattern
+" set gdefault  " make substitutions global by default: this reverses convention
 " Use Ag, The Silver Searcher, for grep
 if executable("ag")
     " Use Ag as grep program
@@ -198,41 +197,41 @@ endif
 
 " Completion
 set completeopt+=longest
-set wildmenu " command-line completion
-set wildmode=list:longest,full " shell-style completion behavior
+set wildmenu  " command-line completion
+set wildmode=list:longest,full  " shell-style completion behavior
 " File types to ignore for command-line completion
-set wildignore+=*.DS_Store " OSX folder meta-data file
-set wildignore+=.git,.hg,.svn " version control system files
-set wildignore+=*.o,*.obj,*.exe " compiled object files
-set wildignore+=*.jpg,*.gif,*.png,*.jpeg "binary image files
-set wildignore+=*.aux,*.out,*.toc,*.pdf "LaTeX intermediate/output files
-set wildignore+=*.pyc " python object codes
-set wildignore+=*.luac " lua byte code
-set wildignore+=*.class " java/scala class files
-set wildignore+=*/target/* " sbt target directory
+set wildignore+=*.DS_Store  " OSX folder meta-data file
+set wildignore+=.git,.hg,.svn  " version control system files
+set wildignore+=*.o,*.obj,*.exe  " compiled object files
+set wildignore+=*.jpg,*.gif,*.png,*.jpeg  "binary image files
+set wildignore+=*.aux,*.out,*.toc,*.pdf  "LaTeX intermediate/output files
+set wildignore+=*.pyc  " python object codes
+set wildignore+=*.luac  " lua byte code
+set wildignore+=*.class  " java/scala class files
+set wildignore+=*/target/*  " sbt target directory
 
 " Folding
-set foldenable " default to folding on, can be toggled with 'zi'
-set foldlevelstart=99 " open files completely unfolded
-set foldnestmax=8 " no more than 8 levels of folds
-set foldmethod=indent "default to indentation-based folding
+set foldenable  " default to folding on, can be toggled with 'zi'
+set foldlevelstart=99  " open files completely unfolded
+set foldnestmax=8  " no more than 8 levels of folds
+set foldmethod=indent  "default to indentation-based folding
 
 " Statusline
-set laststatus=2 " always display statusline
-set ruler " display cursor position even with empty statusline
-set statusline=%#WildMenu#%(\ %n\ \|%)%< "buffer number and truncation
-set statusline+=%#WildMenu#%(\ %f\ %) "filename
-set statusline+=%r "read only flag: [RO]
-set statusline+=%m%* " modified flag: [+][-]
-set statusline+=%= " right-align the rest of the statusline
-set statusline+=[%{&fileformat}] " file format
-set statusline+=[%{strlen(&fenc)?&fenc:&enc}] " file encoding
-set statusline+=[%{strlen(&filetype)?&filetype:'no\ ft'}] " file type
-set statusline+=%w " preview window flag: [Preview]
-set statusline+=%(\ %)%#ModeMsg#%{&paste?'\ PASTE\ ':''}%* " paste mode
-set statusline+=%#WarningMsg#%{SyntasticStatuslineFlag()}%* " syntastic
-set statusline+=%#WildMenu#%(\ %3p%%\ \|%) " scroll percentage
-set statusline+=%(\ %3l:%-2v\ %)%* " line:virtualcolumn
+set laststatus=2  " always display statusline
+set ruler  " display cursor position even with empty statusline
+set statusline=%#WildMenu#%(\ %n\ \|%)%<  " buffer number and truncation
+set statusline+=%#WildMenu#%(\ %f\ %)  " filename
+set statusline+=%r  " read only flag: [RO]
+set statusline+=%m%*  " modified flag: [+][-]
+set statusline+=%=  " right-align the rest of the statusline
+set statusline+=[%{&fileformat}]  " file format
+set statusline+=[%{strlen(&fenc)?&fenc:&enc}]  " file encoding
+set statusline+=[%{strlen(&filetype)?&filetype:'no\ ft'}]  " file type
+set statusline+=%w  " preview window flag: [Preview]
+set statusline+=%(\ %)%#ModeMsg#%{&paste?'\ PASTE\ ':''}%*  " paste mode
+set statusline+=%#WarningMsg#%{SyntasticStatuslineFlag()}%*  " syntastic
+set statusline+=%#WildMenu#%(\ %3p%%\ \|%)  " scroll percentage
+set statusline+=%(\ %3l:%-2v\ %)%*  " line:virtualcolumn
 
 
 "
@@ -286,8 +285,9 @@ nnoremap <Leader>cp :set cursorline!<Bar>:set cursorcolumn!<CR>
 " Map search '/' key to always be very-magic, i.e. full regex support
 nnoremap / /\v
 vnoremap / /\v
-" Map 'CRTL-L' to also clear search highlights before clearing screen
-nnoremap <Silent> <C-L> :nohlsearch<CR><C-L>
+" Map F4 to clear search highlights
+imap <F4> <C-O><F4>
+nnoremap <F4> :nohlsearch<CR><C-L>
 " Bind Ctrl-K to grep word under cursor
 nnoremap <C-K> :silent! grep! "\b<C-r><C-w>\b"<CR>:cw<CR>:redr!<CR>
 
