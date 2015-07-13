@@ -60,6 +60,10 @@ cask install things
 cask install onepassword
 cask install dash
 
+# cask install viscosity
+# cask install shortcat
+# cask install cheatsheet
+
 cask install ghc
 # cask install java
 
