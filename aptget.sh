@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-### Begin Homebrew commands ###
+### Begin apt-get commands ###
 
-# Installations via BREW
+# Installations via apt-get
 brew install zsh
 brew install vim
 brew install zsh-history-substring-search
@@ -26,6 +26,7 @@ packages=(
   the_silver_searcher
   ctags-exuberant
   git
+  build-essentials
 )
 
 

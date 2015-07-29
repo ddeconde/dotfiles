@@ -104,7 +104,6 @@ imap <F3> <C-O><F3>
 nnoremap <F3> :SyntasticReset<CR>
 
 
-
 "
 " SETTINGS
 "
@@ -240,9 +239,8 @@ set statusline+=%(\ %3l:%-2v\ %)%*  " line:virtualcolumn
 
 " Movement & Editing
 " Recall that 'Ctrl-[' is already equivalent to '<Esc>'
-" Make Ctrl-Enter and Shift-Enter act as Escape to exit Insert-Mode
-inoremap <C-CR> <Esc> 
-inoremap <S-CR> <Esc> 
+" Make Ctrl-Space act as Escape while in Insert-Mode
+inoremap <C-@> <Esc>
 " Move around wrapped long lines more naturally
 nnoremap j gj
 nnoremap k gk
@@ -288,8 +286,8 @@ vnoremap / /\v
 " Map F4 to clear search highlights
 imap <F4> <C-O><F4>
 nnoremap <F4> :nohlsearch<CR><C-L>
-" Bind Ctrl-K to grep word under cursor
-nnoremap <C-K> :silent! grep! "\b<C-r><C-w>\b"<CR>:cw<CR>:redr!<CR>
+" Bind Ctrl-H to grep word under cursor
+nnoremap <C-H> :silent! grep! "\b<C-r><C-w>\b"<CR>:cw<CR>:redr!<CR>
 
 " Formatting
 " Strip all trailing whitespace without losing search history
@@ -310,12 +308,32 @@ nnoremap <Leader>q gqip
 " Windows & Buffers
 " See a list of buffers and hit a number to select one
 nnoremap <Leader>b :buffers<CR>:buffer<Space>
+" Move to next or previous buffer easily
+noremap <C-N> :bn
+noremap <C-P> :bp
 " Move to next or previous window easily
 noremap <C-J> <C-W>w
 noremap <C-K> <C-W>W
 " Split current window and move to new split (w: vertical, W: horizontal)
 nnoremap <leader>w <C-w>v<C-w>l
 nnoremap <leader>W <C-w>s<C-w>j
+
+
+"
+" CURSOR SHAPE
+"
+
+
+" Use a blinking upright bar cursor in Insert mode, a blinking block in normal
+if &term == 'xterm-256color' || &term == 'screen-256color'
+    let &t_SI = "\<Esc>[5 q"
+    let &t_EI = "\<Esc>[1 q"
+endif
+
+if exists('$TMUX')
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+endif
 
 
 "

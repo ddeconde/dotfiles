@@ -37,13 +37,6 @@ fi
 # HOMEBREW
 #
 
-# Install Xcode command line developer tools (required for Homebrew)
-if [[ ! $(xcode-select --print-path) ]]; then
-  xcode-select --install || \
-    { printf "Xcode command line developer tools installation failed\n." >&2; \
-      exit 1; }
-fi
-
 
 # Install Homebrew
 if [[ ! $(which brew) ]]; then
@@ -58,6 +51,12 @@ fi
 brew update || \
   { printf "A problem occurred while updating Homebrew formulae.\n" >&2; \
     exit 1; }
+
+apt-get update
+
+apt-get upgrade
+
+apt-get install ###
 
 
 # Make certain that homebrew is ready for brewing
@@ -77,7 +76,7 @@ brew doctor || \
 # Make certain that Git is installed
 if [[ ! $(which git) ]]; then
   printf "No installation of Git was found.\n" >&2
-  printf "Install Git via Homebrew or Xcode command line tools.\n" >&2
+  printf "Install Git via apt-get.\n" >&2
   exit 1
 fi
 
@@ -103,19 +102,6 @@ elif [[ -x "/bin/zsh" ]]; then
 else
   printf "Zsh not found, leaving login shell unchanged.\n" >&2
 fi
-
-
-#
-# COLOR SCHEMES
-#
-
-# Install Solarized
-if [[ ! -d "${HOME}/.colorscheme" ]]; then
-  git clone git://github.com/altercation/solarized.git ~/.colorscheme && \
-    printf "Solarized color scheme files are in ${HOME}/.colorscheme\n" || \
-      { printf "A problem occured while cloning the Solarized repository." >&2; \
-        exit 1; }
-if
 
 
 #
@@ -160,27 +146,6 @@ for dotfile in "$DOTFILE_DIR/*"; do
         exit 1; }
   fi
 done
-
-
-#
-# ITERM2
-#
-
-# Reminder of where the iTerm2 preferences file is
-printf "Reminder: set iTerm2 -> Preferences -> General to use
-${DOTFILE_DIR}/install/iterm2.plist\n"
-
-
-#
-# HOMEBREW SYMBOLIC LINKS
-#
-
-# Make a user bin directory that occurs early in PATH
-if [[ ! -d "~/bin" ]]; then
-  mkdir ~/bin && \
-    echo "To use specific homebrewed executables over defaults link them to ~/bin."
-fi
-# Actual linking of executables to ~/bin should be done by hand
 
 
 exit 0
