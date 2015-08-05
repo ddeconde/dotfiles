@@ -17,6 +17,9 @@ brew install
 brew install git
 # brew install git-flow
 
+# Enable easy brewing of duplicate utilities
+brew tap homebrew/dupes
+
 packages=(
   zsh
   bash
@@ -26,6 +29,7 @@ packages=(
   the_silver_searcher
   ctags-exuberant
   git
+  rsync
 )
 
 

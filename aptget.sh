@@ -10,10 +10,6 @@ brew install zsh-history-substring-search
 brew install tmux
 brew install the_silver_searcher
 brew install ctags-exuberant
-brew install
-brew install
-brew install
-brew install
 brew install git
 # brew install git-flow
 
@@ -23,10 +19,11 @@ packages=(
   vim
   zsh-history-substring-search
   tmux
+  git
   the_silver_searcher
   ctags-exuberant
-  git
   build-essentials
+  python-pip
 )
 
 
