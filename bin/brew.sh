@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-### Begin apt-get commands ###
+### Begin Homebrew commands ###
 
-# Installations via apt-get
+# Installations via BREW
 brew install zsh
 brew install vim
 brew install zsh-history-substring-search
@@ -10,8 +10,15 @@ brew install zsh-history-substring-search
 brew install tmux
 brew install the_silver_searcher
 brew install ctags-exuberant
+brew install
+brew install
+brew install
+brew install
 brew install git
 # brew install git-flow
+
+# Enable easy brewing of duplicate utilities
+brew tap homebrew/dupes
 
 packages=(
   zsh
@@ -19,11 +26,11 @@ packages=(
   vim
   zsh-history-substring-search
   tmux
-  git
   the_silver_searcher
   ctags-exuberant
-  build-essentials
-  python-pip
+  git
+  rsync
+  curl
 )
 
 

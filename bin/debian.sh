@@ -22,7 +22,7 @@ DOTFILE_DIR="${HOME}/.dotfiles"
 DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
-BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
+PKGFILE="${DOTFILE_BIN_DIR}/packages.sh"
 
 
 # Make certain that sudo is used to run this script
@@ -34,44 +34,27 @@ fi
 
 
 #
-# HOMEBREW
+# APT-GET
 #
 
 
-# Install Homebrew
-if [[ ! $(which brew) ]]; then
-  ruby -e \
-  "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || \
-    { printf "No installation of Homebrew found; installation failed.\n" >&2; \
-      exit 1; }
-fi
-
-
 # Make certain that formulae are up-to-date
-brew update || \
-  { printf "A problem occurred while updating Homebrew formulae.\n" >&2; \
+apt-get update || \
+  { printf "A problem occurred while updating package indices.\n" >&2; \
     exit 1; }
 
-apt-get update
-
-apt-get upgrade
-
-apt-get install ###
-
-
-# Make certain that homebrew is ready for brewing
-# Right now brew doctor must be completely satisfied to continue
-brew doctor || \
-  { printf "Brew doctor \n";
-    printf "Resolve Homebrew warnings and errors before running again.\n";
+apt-get upgrade || \
+  { printf "A problem occurred while upgrading packages.\n" >&2; \
     exit 1; }
 
-
-# If the brewfile script exists and is executable, run it
-[[ -x "${BREWFILE}" ]] && . ${BREWFILE} || \
-  { printf "A problem occurred while running brew.\n" >&2; \
+# If the pkgfile script exists and is executable, run it
+[[ -x "${PKGFILE}" ]] && . ${PKGFILE} || \
+  { printf "A problem occurred while running apt-get.\n" >&2; \
     exit 1; }
 
+apt-get clean || \
+  { printf "A problem occurred while cleaning up local .deb files.\n" >&2; \
+    exit 1; }
 
 # Make certain that Git is installed
 if [[ ! $(which git) ]]; then
@@ -80,28 +63,45 @@ if [[ ! $(which git) ]]; then
   exit 1
 fi
 
+# Make certain that Curl is installed
+if [[ ! $(which curl) ]]; then
+  printf "No installation of Curl was found.\n" >&2
+  printf "Install Curl via apt-get.\n" >&2
+  exit 1
+fi
+
 
 #
 # SHELL
 #
 
-# Append Homebrewed Zsh path to /etc/shells to authorize it as a login shell
-# and then change this user's login shell to this Zsh
-if [[ -h "/usr/local/bin/zsh" ]]; then
-  if [[ -z $(grep /usr/local/bin/zsh /etc/shells) ]]; then
-      echo "/usr/local/bin/zsh" | tee -a /etc/shells && \
-        chsh -s /usr/local/bin/zsh "${USER}" || \
-          { printf "A problem occurred while changing the login shell.\n" >&2; \
-            exit 1; }
-  fi
+# Change this user's login shell to Zsh
+if [[ -h "/usr/bin/zsh" ]]; then
+  chsh -s /usr/bin/zsh "${USER}" || \
+    { printf "A problem occurred while changing the login shell.\n" >&2; \
+    exit 1; }
 elif [[ -x "/bin/zsh" ]]; then
   chsh -s /bin/zsh "${USER}" && \
-    printf "Homebrewed Zsh not found, using /bin/zsh as login shell.\n" >&2 || \
+    printf "/usr/bin/zsh not found, using /bin/zsh as login shell.\n" >&2 || \
       { printf "A problem occured while changing the login shell.\n" >&2; \
         exit 1; }
 else
   printf "Zsh not found, leaving login shell unchanged.\n" >&2
 fi
+
+# Install zsh-history-substring-search
+ZSH_HISTORY_SUBSTRING_SEARCH_URL = \
+  https://raw.githubusercontent.com/zsh-users/zsh-history-substring-search/master/zsh-history-substring-search.zsh
+
+ZSH_HISTORY_SUBSTRING_SEARCH = \
+  /usr/local/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+curl -fsSL \
+  --create-dirs \
+  --output ${ZSH_HISTORY_SUBSTRING_SEARCH} \
+  ${ZSH_HISTORY_SUBSTRING_SEARCH_URL} || \
+    { printf "A problem occurred while installing zsh-history-substring-search.\n" >&2; \
+    exit 1; }
 
 
 #
