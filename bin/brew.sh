@@ -3,19 +3,8 @@
 ### Begin Homebrew commands ###
 
 # Installations via BREW
-brew install zsh
-brew install vim
-brew install zsh-history-substring-search
 # brew install zsh-completions
-brew install tmux
-brew install the_silver_searcher
-brew install ctags-exuberant
-brew install
-brew install
-brew install
-brew install
-brew install git
-# brew install git-flow
+# brew install coreutils
 
 # Enable easy brewing of duplicate utilities
 brew tap homebrew/dupes
@@ -43,23 +32,12 @@ done
 brew install caskroom/cask/brew-cask
 
 # Installations via BREW CASK
-brew cask install iterm2
-brew cask install spectacle
-brew cask install mactex
-brew cask install macvim
-brew cask install the-unarchiver
-brew cask install firefox
-brew cask install little-snitch
-brew cask install onepassword
-brew cask install things
-brew cask install cheatsheet
-brew cask install viscosity
-brew cask install vlc
+# brew cask install fantastical
+# brew install alfred
+# brew cask install ghc
+# brew cask install arq
 # brew cask install adium
-brew cask install virtualbox
-brew cask install vagrant
-brew cask install ghc
-brew cask install
+# brew cask install gpgtools
 
 applications=(
   iterm2
@@ -72,10 +50,8 @@ applications=(
   onepassword
   things
   viscosity
-  cheatsheet
   virtualbox
   vagrant
-  ghc
   vlc
   flux
 )

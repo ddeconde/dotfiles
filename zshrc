@@ -195,12 +195,12 @@ WORDCHARS=${WORDCHARS/\/}
 #
 
 # If on OSX Homebrew will put zsh-history-substring-search here:
-ZSH_HISTORY_SUBSTRING_SEARCH = \
-  /usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh
+ZSH_HISTORY_SUBSTRING_SEARCH=\
+  "/usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh"
 
 # If on Linux install zsh-history-substring-search here:
-ZSH_HISTORY_SUBSTRING_SEARCH_ALT = \
-  /usr/local/zsh-history-substring-search/zsh-history-substring-search.zsh
+ZSH_HISTORY_SUBSTRING_SEARCH_ALT=\
+  "/usr/local/zsh-history-substring-search/zsh-history-substring-search.zsh"
 
 if [[ -f ${ZSH_HISTORY_SUBSTRING_SEARCH} ]]; then
   source ${ZSH_HISTORY_SUBSTRING_SEARCH}
