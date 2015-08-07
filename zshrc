@@ -194,18 +194,20 @@ WORDCHARS=${WORDCHARS/\/}
 # HISTORY SUBSTRING SEARCH
 #
 
+SUBSTRING_SEARCH_PLUGIN="zsh-history-substring-search.zsh"
+
 # If on OSX Homebrew will put zsh-history-substring-search here:
-ZSH_HISTORY_SUBSTRING_SEARCH=\
-  "/usr/local/opt/zsh-history-substring-search/zsh-history-substring-search.zsh"
+SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
+SUBSTRING_SEARCH="${SUBSTRING_SEARCH_PATH}${SUBSTRING_SEARCH_PLUGIN}"
 
 # If on Linux install zsh-history-substring-search here:
-ZSH_HISTORY_SUBSTRING_SEARCH_ALT=\
-  "/usr/local/zsh-history-substring-search/zsh-history-substring-search.zsh"
+SUBSTRING_SEARCH_PATH_ALT="/usr/local/zsh-history-substring-search/"
+SUBSTRING_SEARCH_ALT="${SUBSTRING_SEARCH_PATH_ALT}${SUBSTRING_SEARCH_PLUGIN}"
 
-if [[ -f ${ZSH_HISTORY_SUBSTRING_SEARCH} ]]; then
-  source ${ZSH_HISTORY_SUBSTRING_SEARCH}
-elif [[ -f ${ZSH_HISTORY_SUBSTRING_SEARCH_ALT} ]]; then
-  source ${ZSH_HISTORY_SUBSTRING_SEARCH_ALT}
+if [[ -f "${SUBSTRING_SEARCH}" ]]; then
+  source "${SUBSTRING_SEARCH}"
+elif [[ -f "${SUBSTRING_SEARCH_ALT}" ]]; then
+  source "${SUBSTRING_SEARCH_ALT}"
 else
   print "No zsh-history-substring-search plugin found.\n"
 fi
