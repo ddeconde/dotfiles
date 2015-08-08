@@ -48,7 +48,7 @@ apt-get upgrade || \
     exit 1; }
 
 # If the pkgfile script exists and is executable, run it
-[[ -x "${PKGFILE}" ]] && . ${PKGFILE} || \
+[[ -x "${PKGFILE}" ]] && . "${PKGFILE}" || \
   { printf "A problem occurred while running apt-get.\n" >&2; \
     exit 1; }
 
@@ -79,7 +79,7 @@ fi
 if [[ -h "/usr/bin/zsh" ]]; then
   chsh -s /usr/bin/zsh "${USER}" || \
     { printf "A problem occurred while changing the login shell.\n" >&2; \
-    exit 1; }
+      exit 1; }
 elif [[ -x "/bin/zsh" ]]; then
   chsh -s /bin/zsh "${USER}" && \
     printf "/usr/bin/zsh not found, using /bin/zsh as login shell.\n" >&2 || \
@@ -90,16 +90,17 @@ else
 fi
 
 # Install zsh-history-substring-search
-ZSH_HISTORY_SUBSTRING_SEARCH_URL = \
-  https://raw.githubusercontent.com/zsh-users/zsh-history-substring-search/master/zsh-history-substring-search.zsh
+ZSH_USERS_REPO="https://raw.githubusercontent.com/zsh-users/"
+MASTER_BRANCH="zsh-history-substring-search/master/"
+ZSH_FILE="zsh-history-substring-search.zsh"
+ZSH_HISTORY_SUBSTRING_SEARCH_URL="${ZSH_USERS_REPO}${MASTER_BRANCH}${ZSH_FILE}"
 
-ZSH_HISTORY_SUBSTRING_SEARCH = \
-  /usr/local/zsh-history-substring-search/zsh-history-substring-search.zsh
+ZSH_HISTORY_SUBSTRING_SEARCH_PATH="/usr/local/zsh-history-substring-search/"
 
 curl -fsSL \
   --create-dirs \
-  --output ${ZSH_HISTORY_SUBSTRING_SEARCH} \
-  ${ZSH_HISTORY_SUBSTRING_SEARCH_URL} || \
+  --output "${ZSH_HISTORY_SUBSTRING_SEARCH_PATH}${ZSH_FILE}" \
+  "${ZSH_HISTORY_SUBSTRING_SEARCH_URL}" || \
     { printf "A problem occurred while installing zsh-history-substring-search.\n" >&2; \
     exit 1; }
 
@@ -127,7 +128,7 @@ fi
 
 
 if [[ ! -d "${DOTDIR}" ]]; then
-  git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR} || \
+  git clone git://github.com/"${DOTFILE_GIT_REPO}" "${DOTFILE_DIR}" || \
     { printf "A problem occured while cloning the dotfiles repository." >&2; \
       exit 1; }
 fi

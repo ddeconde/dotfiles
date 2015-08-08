@@ -63,8 +63,4 @@ for application in ${applications}; do
 done
 
 
-# Remove out-dated versions and extra files from the cellar
-brew cleanup
-
-
 exit 0

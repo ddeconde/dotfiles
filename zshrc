@@ -230,10 +230,10 @@ bindkey -M vicmd 'j' history-substring-search-down
 # ALIASES
 #
 
-alias ls='ls -Gh'
-alias la='ls -aGh'
-alias ll='ls -GFhl'
-alias lla='ls -aGFhl'
+alias ls='ls -Ghp'
+alias la='ls -aGhp'
+alias ll='ls -GFhlp'
+alias lla='ls -aGFhlp'
 alias mvim='mvim -v'
 
 # Use Homebrewed versions of some programs

@@ -69,10 +69,14 @@ brew doctor || \
 
 
 # If the brewfile script exists and is executable, run it
-[[ -x "${BREWFILE}" ]] && . ${BREWFILE} || \
+[[ -x "${BREWFILE}" ]] && . "${BREWFILE}" || \
   { printf "A problem occurred while running brew.\n" >&2; \
     exit 1; }
 
+# Remove out-dated versions and extra files from the cellar
+brew cleanup || \
+  { printf "A problem occured while running brew cleanup.\n" >&2; \
+    exit 1; }
 
 # Make certain that Git is installed
 if [[ ! $(which git) ]]; then
@@ -141,7 +145,7 @@ fi
 
 
 if [[ ! -d "${DOTDIR}" ]]; then
-  git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR} || \
+  git clone git://github.com/"${DOTFILE_GIT_REPO}" "${DOTFILE_DIR}" || \
     { printf "A problem occured while cloning the dotfiles repository." >&2; \
       exit 1; }
 fi
