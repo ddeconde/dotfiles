@@ -7,9 +7,11 @@
 # brew install coreutils
 
 # Enable easy brewing of duplicate utilities
+# (necessary for rsync)
 brew tap homebrew/dupes
 
 packages=(
+  # base
   zsh
   bash
   vim
@@ -20,12 +22,13 @@ packages=(
   git
   rsync
   curl
+  lynx
 )
 
 
 # Install packages via brew
-for package in ${packages}; do
-  brew install ${package}
+for package in "${packages[@]}"; do
+  brew install "${package}"
 done
 
 # Install Cask so that Homebrew can also install OS X Applications
@@ -40,26 +43,28 @@ brew install caskroom/cask/brew-cask
 # brew cask install gpgtools
 
 applications=(
+  # open source
   iterm2
   spectacle
   the-unarchiver
   macvim
   mactex
   icecat
+  virtualbox
+  vagrant
+  vlc
+  # proprietary
   little-snitch
   onepassword
   things
   viscosity
-  virtualbox
-  vagrant
-  vlc
   flux
 )
 
 
 # Install applications via brew cask
-for application in ${applications}; do
-  brew cask install ${application}
+for application in "${applications[@]}"; do
+  brew cask install "${application}"
 done
 
 

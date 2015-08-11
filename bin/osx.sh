@@ -26,7 +26,7 @@ BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
 
 
 # Make certain that sudo is used to run this script
-if [[ $(id -u) != 0 ]]; then
+if (( $(id -u) != 0 )); then
   printf "This command must be run with superuser privileges:\n" >&2
   printf "$ sudo install\n" >&2
   exit 1
@@ -38,7 +38,7 @@ fi
 #
 
 # Install Xcode command line developer tools (required for Homebrew)
-if [[ ! $(xcode-select --print-path) ]]; then
+if ! xcode-select --print-path > /dev/null 2>&1; then
   xcode-select --install || \
     { printf "Xcode command line developer tools installation failed\n." >&2; \
       exit 1; }
@@ -46,7 +46,7 @@ fi
 
 
 # Install Homebrew
-if [[ ! $(which brew) ]]; then
+if ! which brew > /dev/null 2>&1; then
   ruby -e \
   "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || \
     { printf "No installation of Homebrew found; installation failed.\n" >&2; \
@@ -79,7 +79,7 @@ brew cleanup || \
     exit 1; }
 
 # Make certain that Git is installed
-if [[ ! $(which git) ]]; then
+if ! which git > /dev/null 2>&1; then
   printf "No installation of Git was found.\n" >&2
   printf "Install Git via Homebrew or Xcode command line tools.\n" >&2
   exit 1
@@ -93,7 +93,7 @@ fi
 # Append Homebrewed Zsh path to /etc/shells to authorize it as a login shell
 # and then change this user's login shell to this Zsh
 if [[ -h "/usr/local/bin/zsh" ]]; then
-  if [[ -z $(grep /usr/local/bin/zsh /etc/shells) ]]; then
+  if ! grep -q /usr/local/bin/zsh /etc/shells; then
       echo "/usr/local/bin/zsh" | tee -a /etc/shells && \
         chsh -s /usr/local/bin/zsh "${USER}" || \
           { printf "A problem occurred while changing the login shell.\n" >&2; \
@@ -114,9 +114,9 @@ fi
 #
 
 # Install Solarized
-if [[ ! -d "${HOME}/.colorscheme" ]]; then
-  git clone git://github.com/altercation/solarized.git ~/.colorscheme && \
-    printf "Solarized color scheme files are in ${HOME}/.colorscheme\n" || \
+if [[ ! -d "${HOME}/.colorschemes" ]]; then
+  git clone git://github.com/altercation/solarized.git ~/.colorschemes && \
+    printf "Solarized color scheme files are in ${HOME}/.colorschemes\n" || \
       { printf "A problem occured while cloning the Solarized repository." >&2; \
         exit 1; }
 if
@@ -127,7 +127,7 @@ if
 #
 
 # Install Vundle, then use it to install Vim plugins
-if [[ $(which vim) ]]; then
+if which vim > /dev/null 2>&1; then
   if [[ ! -d "${HOME}/.vim/bundle/Vundle.vim" ]]; then
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim && \
       vim +PluginInstall +qall || \
@@ -172,7 +172,7 @@ done
 
 # Reminder of where the iTerm2 preferences file is
 printf "Reminder: set iTerm2 -> Preferences -> General to use
-${DOTFILE_DIR}/install/iterm2.plist\n"
+${DOTFILE_BIN_DIR}/iterm2.plist\n"
 
 
 #

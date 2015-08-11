@@ -5,6 +5,7 @@
 #
 
 packages=(
+  # base
   zsh
   bash
   vim
@@ -13,14 +14,15 @@ packages=(
   curl
   the_silver_searcher
   ctags-exuberant
+  # development
   build-essentials
   python-pip
 )
 
 
 # Install packages via apt-get
-for package in ${packages}; do
-  apt-get install -y ${package}
+for package in "${packages[@]}"; do
+  apt-get install -y "${package}"
 done
 
 

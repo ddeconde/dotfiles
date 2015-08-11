@@ -195,19 +195,11 @@ WORDCHARS=${WORDCHARS/\/}
 #
 
 SUBSTRING_SEARCH_PLUGIN="zsh-history-substring-search.zsh"
-
-# If on OSX Homebrew will put zsh-history-substring-search here:
 SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
 SUBSTRING_SEARCH="${SUBSTRING_SEARCH_PATH}${SUBSTRING_SEARCH_PLUGIN}"
 
-# If on Linux install zsh-history-substring-search here:
-SUBSTRING_SEARCH_PATH_ALT="/usr/local/zsh-history-substring-search/"
-SUBSTRING_SEARCH_ALT="${SUBSTRING_SEARCH_PATH_ALT}${SUBSTRING_SEARCH_PLUGIN}"
-
 if [[ -f "${SUBSTRING_SEARCH}" ]]; then
   source "${SUBSTRING_SEARCH}"
-elif [[ -f "${SUBSTRING_SEARCH_ALT}" ]]; then
-  source "${SUBSTRING_SEARCH_ALT}"
 else
   print "No zsh-history-substring-search plugin found.\n"
 fi
@@ -230,10 +222,19 @@ bindkey -M vicmd 'j' history-substring-search-down
 # ALIASES
 #
 
-alias ls='ls -Ghp'
-alias la='ls -aGhp'
-alias ll='ls -GFhlp'
-alias lla='ls -aGFhlp'
+# Make certain that ls uses color in OSX/BSD or Linux contexts
+if ! ls --color > /dev/null 2>&1; then
+  alias ls='ls -Ghp'
+  alias la='ls -aGhp'
+  alias ll='ls -GFhl'
+  alias lla='ls -aGFhl'
+else
+  alias ls='ls -hp --color'
+  alias la='ls -ahp --color'
+  alias ll='ls -Fhl --color'
+  alias lla='ls -aFhl --color'
+fi
+
 alias mvim='mvim -v'
 
 # Use Homebrewed versions of some programs

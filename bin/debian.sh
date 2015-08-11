@@ -26,7 +26,7 @@ PKGFILE="${DOTFILE_BIN_DIR}/packages.sh"
 
 
 # Make certain that sudo is used to run this script
-if [[ $(id -u) != 0 ]]; then
+if (( $(id -u) != 0 )); then
   printf "This command must be run with superuser privileges:\n" >&2
   printf "$ sudo install\n" >&2
   exit 1
@@ -57,14 +57,14 @@ apt-get clean || \
     exit 1; }
 
 # Make certain that Git is installed
-if [[ ! $(which git) ]]; then
+if ! which git > /dev/null 2>&1; then
   printf "No installation of Git was found.\n" >&2
   printf "Install Git via apt-get.\n" >&2
   exit 1
 fi
 
 # Make certain that Curl is installed
-if [[ ! $(which curl) ]]; then
+if ! which curl > /dev/null 2>&1; then
   printf "No installation of Curl was found.\n" >&2
   printf "Install Curl via apt-get.\n" >&2
   exit 1
@@ -95,7 +95,7 @@ MASTER_BRANCH="zsh-history-substring-search/master/"
 ZSH_FILE="zsh-history-substring-search.zsh"
 ZSH_HISTORY_SUBSTRING_SEARCH_URL="${ZSH_USERS_REPO}${MASTER_BRANCH}${ZSH_FILE}"
 
-ZSH_HISTORY_SUBSTRING_SEARCH_PATH="/usr/local/zsh-history-substring-search/"
+ZSH_HISTORY_SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
 
 curl -fsSL \
   --create-dirs \
@@ -110,7 +110,7 @@ curl -fsSL \
 #
 
 # Install Vundle, then use it to install Vim plugins
-if [[ $(which vim) ]]; then
+if which vim > /dev/null 2>&1; then
   if [[ ! -d "${HOME}/.vim/bundle/Vundle.vim" ]]; then
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim && \
       vim +PluginInstall +qall || \
