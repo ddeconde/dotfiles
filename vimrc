@@ -87,11 +87,12 @@ call togglebg#map("<F5>")
 " syntastic
 let g:syntastic_mode_map = { "mode":"passive",
             \"active_filetypes": ["haskell", "tex", "python",
-            \ "ruby", "scala"],
+            \ "sh", "ruby", "scala"],
             \"passive_filetypes": [ ]}
 let g:syntastic_haskell_checkers = ['hdevtools', 'hlint']
 let g:syntastic_tex_checkers = ['chktex', 'lacheck']
 let g:syntastic_python_checkers = ['flake8', 'python']
+let g:syntastic_sh_checkers = ['shellcheck', 'sh']
 let g:syntastic_ruby_checkers = ['mri', 'ruby']
 let g:syntastic_scala_checkers = ['scalac', 'scalastyle']
 let g:syntastic_markdown_checkers = ['mdl']
