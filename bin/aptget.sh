@@ -26,4 +26,19 @@ for package in "${packages[@]}"; do
 done
 
 
+#
+# PIP
+#
+
+pip_packages=(
+  pip install virtualenv
+  pip install virtualenvwrapper
+)
+
+# Install packages via pip
+for package in "${pip_packages[@]}"; do
+  pip install "${package}"
+done
+
+
 exit 0
