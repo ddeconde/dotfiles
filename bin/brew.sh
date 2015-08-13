@@ -49,7 +49,7 @@ applications=(
   the-unarchiver
   macvim
   mactex
-  icecat
+  firefox
   virtualbox
   vagrant
   vlc

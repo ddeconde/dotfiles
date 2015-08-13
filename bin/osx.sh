@@ -24,6 +24,8 @@ DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
 BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
 
+INSTRUCTIONS="${DOTFILE_BIN_DIR}/instructions.txt"
+
 
 # Make certain that sudo is used to run this script
 if (( $(id -u) != 0 )); then
@@ -185,6 +187,9 @@ if [[ ! -d "~/bin" ]]; then
     echo "To use specific homebrewed executables over defaults link them to ~/bin."
 fi
 # Actual linking of executables to ~/bin should be done by hand
+
+
+printf "See ${INSTRUCTIONS} for installation and configuration instructions."
 
 
 exit 0
