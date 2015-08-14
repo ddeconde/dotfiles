@@ -66,7 +66,7 @@ zstyle ':completion:*' original true
 zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
 zstyle ':completion:*' squeeze-slashes true
 zstyle ':completion:*' verbose true
-zstyle :compinstall filename '/Users/ddeconde/.zshrc'
+zstyle :compinstall filename "${HOME}/.zshrc"  # manually altered to use $HOME
 
 autoload -Uz compinit
 compinit
