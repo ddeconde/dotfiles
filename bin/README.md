@@ -31,6 +31,12 @@ Immediately upon finishing a new system installation update the system:
 
 ## System preferences
 
+It is possible to script System Preferences changes (including options
+not available in the GUI) via the `defaults` command, however defaults can
+be structured in complex ways and change significantly with operating
+system versions so automating these changes can involve excessive
+amounts of maintenance.
+
 Make the following manual changes to the System Preferences.
 
 In **Apple Icon > System Preferences**:
@@ -116,7 +122,7 @@ To see what you have installed (with their version numbers):
 
 ## Firefox
 
-[Firefox](https://www.mozilla.org/en-US/firefox/desktop/) was installed via
+[Firefox](https://www.mozilla.org/en-US/firefox/desktop/) is installed via
 Homebrew, but it still needs [Add-ons](https://addons.mozilla.org/en-US/firefox/)
 and some configuration.
 
@@ -135,10 +141,10 @@ Go to each of the following websites and select **Add to Firefox**:
 
 ## iTerm2
 
-[iTerm2](http://www.iterm2.com/) was installed via Homebrew but needs
+[iTerm2](http://www.iterm2.com/) is installed via Homebrew but needs
 configuring.
 
-Let's just quickly change some preferences. In **iTerm > Preferences...**, under the tab **General**, uncheck **Confirm closing multiple sessions** and **Confirm "Quit iTerm2 (Cmd+Q)" command** under the section **Closing**.
+In **iTerm > Preferences...**, under the tab **General**, uncheck **Confirm closing multiple sessions** and **Confirm "Quit iTerm2 (Cmd+Q)" command** under the section **Closing**.
 
 In the tab **Profiles**, create a new one with the "+" icon, and rename it to your first name for example. Then, select **Other Actions... > Set as Default**. Finally, under the section **Window**, change the size to something better, like **Columns: 125** and **Rows: 35**.
 
@@ -155,7 +161,6 @@ Scroll down the page and download the latest version. Unzip the archive. In it y
 - In **iTerm2 Preferences**, under **Profiles** and **Colors**, go to **Load Presets... > Import...**, find and open the two **.itermcolors** files we downloaded.
 - Go back to **Load Presets...** and select **Solarized Dark** to activate it. Voila!
 
-**Note**: You don't have to do this, but there is one color in the **Solarized Dark** preset I don't agree with, which is *Bright Black*. You'll notice it's too close to *Black*. So I change it to be the same as *Bright Yellow*, i.e. **R 83 G 104 B 112**.
 
 Not a lot of colors yet. We need to tweak a little bit our Unix user's profile for that. This is done (on OS X and Linux), in the `~/.bash_profile` text file (`~` stands for the user's home directory).
 
@@ -176,35 +181,10 @@ Now we have a terminal we can work with!
 
 ## Git
 
-What's a developer without [Git](http://git-scm.com/)? To install, simply run:
-
-    $ brew install git
-    
-When done, to test that it installed fine you can run:
-
-    $ git --version
-    
-And `$ which git` should output `/usr/local/bin/git`.
-
-Let's set up some basic configuration. Download the [.gitconfig](https://raw.githubusercontent.com/nicolashery/mac-dev-setup/master/.gitconfig) file to your home directory:
-
-    $ cd ~
-    $ curl -O https://raw.githubusercontent.com/nicolashery/mac-dev-setup/master/.gitconfig
-
-It will add some color to the `status`, `branch`, and `diff` Git commands, as well as a couple aliases. Feel free to take a look at the contents of the file, and add to it to your liking.
-
-Next, we'll define your Git user (should be the same name and email you use for [GitHub](https://github.com/) and [Heroku](http://www.heroku.com/)):
-
-    $ git config --global user.name "Your Name Here"
-    $ git config --global user.email "your_email@youremail.com"
-
-They will get added to your `.gitconfig` file.
-
-To push code to your GitHub repositories, we're going to use the recommended HTTPS method (versus SSH). So you don't have to type your username and password everytime, let's enable Git password caching as described [here](https://help.github.com/articles/set-up-git):
-
-    $ git config --global credential.helper osxkeychain
-    
-**Note**: On a Mac, it is important to remember to add `.DS_Store` (a hidden OS X system file that's put in folders) to your `.gitignore` files. You can take a look at this repository's [.gitignore](https://github.com/nicolashery/mac-dev-setup/blob/master/.gitignore) file for inspiration.
+[Git](http://git-scm.com/) is installed via Homebrew and
+`$HOME/.gitconfig` is linked to `$HOME/.dotfiles/gitconfig` by the
+bootstrap script, but `$HOME/.gitconfig_local` must be placed manually
+as it may contain sensitive material.
     
 ## Vim
 
