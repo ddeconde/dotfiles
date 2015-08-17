@@ -10,7 +10,7 @@
 # begin path with ~/bin directory so that homebrewed symlinks here are seen
 # PATH might be better in a ~/.zshenv file but for now an export of it is
 # included here
-export PATH=$HOME/bin:$PATH
+export PATH=${HOME}/bin:${PATH}
 export EDITOR=vim
 export VISUAL=vim
 

@@ -20,7 +20,6 @@ The steps below were tested on **OS X Mountain Lion**.
 - [Node.js](#nodejs)
 - [JSHint](#jshint)
 - [Ruby and RVM](#ruby-and-rvm)
-- [LESS](#less)
 - [Projects folder](#projects-folder)
 - [Apps](#apps)
 
@@ -34,7 +33,7 @@ Immediately upon finishing a new system installation update the system:
 It is possible to script System Preferences changes (including options
 not available in the GUI) via the `defaults` command, however defaults can
 be structured in complex ways and change significantly with operating
-system versions so automating these changes can involve excessive
+system versions so automating these changes can involve considerable
 amounts of maintenance.
 
 Make the following manual changes to the System Preferences.
@@ -46,6 +45,7 @@ In **Apple Icon > System Preferences**:
 - General > Show scroll bars > Always
 - Language & Region > Time format > 24-Hour Time
 - Trackpad > Tap to click
+- Trackpad > Tracking Speed > Fast (most of the way to the right)
 - Energy Saver > Turn display off after: 1 hr
 - Keyboard > Key Repeat > Fast (all the way to the right)
 - Keyboard > Delay Until Repeat > Short (all the way to the right)
@@ -68,17 +68,15 @@ In **Apple Icon > System Preferences**:
 
 ## Homebrew
 
-Package managers make it so much easier to install and update applications (for Operating Systems) or libraries (for programming languages). The most popular one for OS X is [Homebrew](http://brew.sh/).
+The [Homebrew](http://brew.sh/) package manager for OS X is installed by
+the command
+`ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)` 
+which is run by the bootstrap script and then Homebrew is used to install
+most other applications.
 
-### Install
-
-An important dependency before Homebrew can work is the **Command Line Tools** for **Xcode**. These include compilers that will allow you to build things from source.
-
-**Note**: If you are running **OS X 10.9 Mavericks**, then you can install the Xcode Command Line Tools directly from the command line with `$ xcode-select --install`, and you don't have to go through the download page and the questionnaire.
-
-Finally, we can install Hombrew! In the terminal paste the following line (without the `$`), hit **Enter**, and follow the steps on the screen:
-
-    $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+Homebrew depends on the **Command Line Tools** for **Xcode**. These can
+be installed directly from the command line with `xcode-select --install`
+and the bootstrap script does this before installing Homebrew.
 
 One thing we need to do is tell the system to use programs installed by Hombrew (in `/usr/local/bin`) rather than the OS default if it exists. We do this by adding `/usr/local/bin` to your `$PATH` environment variable:
 
@@ -274,253 +272,6 @@ It will get installed in the `venv` folder, and not conflict with other projects
 
 As mentioned earlier, I like to install big packages (like Numpy), or packages I always use (like IPython) globally. All the rest I install in a virtualenv.
 
-## IPython
-
-[IPython](http://ipython.org/) is an awesome project which provides a much better Python shell than the one you get from running `$ python` in the command-line. It has many cool functions (running Unix commands from the Python shell, easy copy & paste, creating Matplotlib charts in-line, etc.) and I'll let you refer to the [documentation](http://ipython.org/ipython-doc/stable/index.html) to discover them.
-
-### Install
-
-Before we install IPython, we'll need to get some dependencies. Run the following:
-
-    $ brew update # Always good to do
-    $ brew install zeromq # Necessary for pyzmq
-    $ brew install pyqt # Necessary for the qtconsole
-    
-It may take a few minutes to build these.
-
-Once it's done, we can install IPython with all the available options:
-
-    $ pip install ipython[zmq,qtconsole,notebook,test]
-
-### Usage
-
-You can launch IPython from the command line with `$ ipython`, but what's more interesting is to use its [QT Console](http://ipython.org/ipython-doc/stable/interactive/qtconsole.html). Launch the QT Console by running:
-
-    $ ipython qtconsole
-    
-You can also customize the font it uses:
-
-    $ ipython qtconsole --ConsoleWidget.font_family="Consolas" --ConsoleWidget.font_size=13
-    
-And since I'm lazy and I don't want to type or copy & paste that all the time, I'm going to create an alias for it. Create a `.extra` text file in your home directory with `$ subl ~/.extra` (I've set up `.bash_profile` to load `.extra`), and add the following line:
-
-```bash
-alias ipy='ipython qtconsole --ConsoleWidget.font_family="Consolas" --ConsoleWidget.font_size=13'
-```
-    
-Open a fresh terminal. Now when you run `$ ipy`, it will launch the QT Console with your configured options.
-
-To use the in-line Matplotlib functionality (nice for scientific computing), run `$ ipy --pylab=inline`.
-
-## Numpy and Scipy
-
-The [Numpy](http://numpy.scipy.org/) and [Scipy](http://www.scipy.org/SciPy) scientific libraries for Python are always a little tricky to install from source because they have all these dependencies they need to build correctly. Luckily for us, [Samuel John](http://www.samueljohn.de/) has put together some [Homebrew formulae](https://github.com/samueljohn/homebrew-python) to make it easier to install these Python libraries.
-
-First, grab the special formulae (which are not part of Homebrew core):
-
-    $ brew tap samueljohn/python
-    $ brew tap homebrew/science
-    
-Then, install the `gfortran` dependency (now in `gcc`) which we will need to build the libraries:
-
-    $ brew install gcc
-    
-Finally, you can install Numpy and Scipy with:
-
-    $ brew install numpy
-    $ brew install scipy
-    
-(It may take a few minutes to build.)
-
-## Node.js
-
-Install [Node.js](http://nodejs.org/) with Homebrew:
-
-    $ brew update
-    $ brew install node
-    
-The formula also installs the [npm](https://npmjs.org/) package manager. However, as suggested by the Homebrew output, we need to add `/usr/local/share/npm/bin` to our path so that npm-installed modules with executables will have them picked up.
-
-To do so, add this line to your `~/.path` file, before the `export PATH` line:
-
-```bash
-PATH=/usr/local/share/npm/bin:$PATH
-```
-        
-Open a new terminal for the `$PATH` changes to take effect.
-
-We also need to tell npm where to find the Xcode Command Line Tools, by running:
-
-    $ sudo xcode-select -switch /usr/bin
-
-(If Xcode Command Line Tools were installed by Xcode, try instead:)
-
-    $ sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
-
-Node modules are installed locally in the `node_modules` folder of each project by default, but there are at least two that are worth installing globally. Those are [CoffeeScript](http://coffeescript.org/) and [Grunt](http://gruntjs.com/):
-
-    $ npm install -g coffee-script
-    $ npm install -g grunt-cli
-
-### Npm usage
-
-To install a package:
-
-    $ npm install <package> # Install locally
-    $ npm install -g <package> # Install globally
-
-To install a package and save it in your project's `package.json` file:
-
-    $ npm install <package> --save
-
-To see what's installed:
-
-    $ npm list # Local
-    $ npm list -g # Global
-
-To find outdated packages (locally or globally):
-
-    $ npm outdated [-g]
-
-To upgrade all or a particular package:
-
-    $ npm update [<package>]
-
-To uninstall a package:
-
-    $ npm uninstall <package>
-
-##JSHint
-
-JSHint is a JavaScript developer's best friend. 
-
-If the extra credit assignment to install Sublime Package Manager was completed, JSHint can be run as part of Sublime Text. 
-
-Install JSHint via npm (global install preferred)
-
-    $ npm install -g jshint
-
-Follow additional instructions on the [JSHint Package Manager page](https://sublime.wbond.net/packages/JSHint) or [build it manually](https://github.com/jshint/jshint).
-
-## Ruby and RVM
-
-Like Python, [Ruby](http://www.ruby-lang.org/) is already installed on Unix systems. But we don't want to mess around with that installation. More importantly, we want to be able to use the latest version of Ruby.
-
-### Install
-
-When installing Ruby, best practice is to use [RVM](https://rvm.io/) (Ruby Version Manager) which allows you to manage multiple versions of Ruby on the same machine. Installing RVM, as well as the latest version of Ruby, is very easy. Just run:
-
-    $ curl -L https://get.rvm.io | bash -s stable --ruby
-    
-When it is done, both RVM and a fresh version of Ruby 2.0 are installed. The following line was also automatically added to your `.bash_profile`:
-
-```bash
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-```
-
-I prefer to move that line to the `.extra` file, keeping my `.bash_profile` clean. I suggest you do the same.
-
-After that, start a new terminal and run:
-
-    $ type rvm | head -1
-    
-You should get the output `rvm is a function`.
-
-### Usage
-
-The following command will show you which versions of Ruby you have installed:
-
-    $ rvm list
-
-The one that was just installed, Ruby 2.0, should be set as default. When managing multiple versions, you switch between them with:
-
-    $ rvm use system # Switch back to system install (1.8)
-    $ rvm use 2.0.0 --default # Switch to 2.0.0 and sets it as default
-
-Run the following to make sure the version you want is being used (in our case, the just-installed Ruby 1.9.3):
-
-    $ which ruby
-    $ ruby --version
-
-You can install another version with:
-
-    $ rvm install 1.9.3
-
-To update RVM itself, use:
-
-    $ rvm get stable
-    
-[RubyGems](http://rubygems.org/), the Ruby package manager, was also installed:
-
-    $ which gem
-    
-Update to its latest version with:
-
-    $ gem update --system
-    
-To install a "gem" (Ruby package), run:
-
-    $ gem install <gemname>
-        
-To install without generating the documentation for each gem (faster):
-
-    $ gem install <gemname> --no-document
-        
-To see what gems you have installed:
-
-    $ gem list
-    
-To check if any installed gems are outdated:
-
-    $ gem outdated
-    
-To update all gems or a particular gem:
-
-    $ gem update [<gemname>]
-    
-RubyGems keeps old versions of gems, so feel free to do come cleaning after updating:
-
-    $ gem cleanup
-    
-I mainly use Ruby for the CSS pre-processor [Compass](http://compass-style.org/), which is built on top of [Sass](http://sass-lang.com/):
-
-    $ gem install compass --no-document
-
-## LESS
-
-CSS preprocessors are becoming quite popular, the most popular processors are [LESS](http://lesscss.org/) and [SASS](http://sass-lang.com). Preprocessing is a lot like compiling code for CSS. It allows you to reuse CSS in many different ways. Let's start out with using LESS as a basic preprocessor, it's used by a lot of popular CSS frameworks like [Bootstrap](http://getbootstrap.com/).
-
-### Install
-
-To install LESS you have to use NPM / Node, which you installed earlier using Homebrew. In the terminal use:
-
-    $ npm install less --global
-
-Note: the `--global` flag is optional but it prevents having to mess around with file paths. You can install without the flag, just know what you're doing.
-
-You can check that it installed properly by using:
-
-    $ lessc --version
-
-This should output some information about the compiler:
-
-    lessc 1.5.1 (LESS Compiler) [JavaScript]
-
-Okay, LESS is installed and running. Great! 
-
-### Usage
-
-There's a lot of different ways to use LESS. Generally I use it to compile my stylesheet locally. You can do that by using this command in the terminal:
-
-    $ lessc template.less template.css
-
-The two options are the "input" and "output" files for the compiler. The command looks in the current directory for the LESS stylesheet, compiles it, and outputs it to the second file in the same directory. You can add in paths to keep your project files organized:
-
-    $ lessc less/template.less css/template.css
-
-Read more about LESS on their page here: http://lesscss.org/
-
-
 ## Projects folder
 
 This really depends on how you want to organize your files, but I like to put all my version-controlled projects in `~/Projects`. Other documents I may have, or things not yet under version control, I like to put in `~/Dropbox` (if you have Dropbox installed), or `~/Documents`.
@@ -529,14 +280,5 @@ This really depends on how you want to organize your files, but I like to put al
 
 Here is a quick list of some apps I use, and that you might find useful as well:
 
-- [Dropbox](https://www.dropbox.com/): File syncing to the cloud. I put all my documents in Dropbox. It syncs them to all my devices (laptop, mobile, tablet), and serves as a backup as well! **(Free for 2GB)**
-- [Google Drive](https://drive.google.com/): File syncing to the cloud too! I use Google Docs a lot to collaborate with others (edit a document with multiple people in real-time!), and sometimes upload other non-Google documents (pictures, etc.), so the app comes in handy for that. **(Free for 5GB)**
 - [1Password](https://agilebits.com/onepassword): Allows you to securely store your login and passwords. Even if you only use a few different passwords (they say you shouldn't!), this is really handy to keep track of all the accounts you sign up for! Also, they have a mobile app so you always have all your passwords with you (syncs with Dropbox). A little pricey though. There are free alternatives. **($50 for Mac app, $18 for iOS app)**
 - [Marked](http://markedapp.com/): As a developer, most of the stuff you write ends up being in [Markdown](http://daringfireball.net/projects/markdown/). In fact, this `README.md` file (possibly the most important file of a GitHub repo) is indeed in Markdown, written in Sublime Text, and I use Marked to preview the results everytime I save. **($4)**
-- [Path Finder](http://cocoatech.com/pathfinder/): I love OSX, it's Unix so great for developers, and all of it just works and looks pretty! Only thing I "miss" from Windows (OMG what did he say?), is a decent file explorer. I think Finder is a pain to use. So I gladly paid for this alternative, but I understand others might find it expensive just to not have to use Finder. **($40)**
-- [Evernote](https://evernote.com/): If I don't write something down, I'll forget it. As a developer, you learn so many new things every day, and technology keeps changing, it would be insane to want to keep it all in your head. So take notes, sync them to the cloud, and have them on all your devices. To be honest, I switched to [Simplenote](http://simplenote.com/) because I only take text notes, and I got tired of Evernote putting extra spaces between paragraphs when I copy & pasted into other applications. Simplenote is so much better for text notes (and it supports Markdown!). **(Both are free)**
-- [Moom](http://manytricks.com/moom/): Don't waste time resizing and moving your windows. Moom makes this very easy. **($10)**
-
-
-
-
