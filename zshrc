@@ -223,6 +223,7 @@ bindkey -M vicmd 'j' history-substring-search-down
 #
 
 # Make certain that ls uses color in OSX/BSD or Linux contexts
+# 'ls --color' works in GNU 'ls' but not in OSX/BSD 'ls'
 if ! ls --color > /dev/null 2>&1; then
   alias ls='ls -Ghp'
   alias la='ls -aGhp'
