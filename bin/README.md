@@ -188,6 +188,14 @@ as it may contain sensitive material.
 
 [Vim](http://www.vim.org/)
 
+## Vagrant
+
+[Vagrant]() and its dependencies [VirtualBox]() and [Virtualbox
+Extension Pack]() are installed by Homebrew, but to keep the VirtualBox
+Guest Additions up to date on guest systems automatically the Vagrant
+plugin [vagrant-vbguest]() is needed. This must be install by running
+`vagrant plugin install vagrant-vbguest`.
+
 ## Python
 
 OS X, like Linux, ships with [Python](http://python.org/) already installed. But you don't want to mess with the system Python (some system tools rely on it, etc.), so we'll install our own version with Homebrew. It will also allow us to get the very latest version of Python 2.7.

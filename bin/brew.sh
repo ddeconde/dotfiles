@@ -51,6 +51,7 @@ applications=(
   mactex
   firefox
   virtualbox
+  virtualbox-extension-pack
   vagrant
   vlc
   # proprietary

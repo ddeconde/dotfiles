@@ -27,88 +27,100 @@ BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
 INSTRUCTIONS="${DOTFILE_BIN_DIR}/instructions.txt"
 
 
-# Make certain that sudo is used to run this script
-if (( $(id -u) != 0 )); then
-  printf "This command must be run with superuser privileges:\n" >&2
-  printf "$ sudo install\n" >&2
-  exit 1
-fi
+# # Make certain that sudo is used to run this script
+# if (( $(id -u) != 0 )); then
+#   printf "This command must be run with superuser privileges:\n" >&2
+#   printf "$ sudo install\n" >&2
+#   exit 1
+# fi
 
 
-#
-# HOMEBREW
-#
+# #
+# # HOMEBREW
+# #
 
-# Install Xcode command line developer tools (required for Homebrew)
-if ! xcode-select --print-path > /dev/null 2>&1; then
-  xcode-select --install || \
-    { printf "Xcode command line developer tools installation failed\n." >&2; \
-      exit 1; }
-fi
-
-
-# Install Homebrew
-if ! which brew > /dev/null 2>&1; then
-  ruby -e \
-  "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || \
-    { printf "No installation of Homebrew found; installation failed.\n" >&2; \
-      exit 1; }
-fi
+# # Install Xcode command line developer tools (required for Homebrew)
+# if ! xcode-select --print-path > /dev/null 2>&1; then
+#   xcode-select --install || \
+#     { printf "Xcode command line developer tools installation failed\n." >&2; \
+#       exit 1; }
+# fi
 
 
-# Make certain that formulae are up-to-date
-brew update || \
-  { printf "A problem occurred while updating Homebrew formulae.\n" >&2; \
-    exit 1; }
+# # Install Homebrew
+# if ! which brew > /dev/null 2>&1; then
+#   ruby -e \
+#   "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || \
+#     { printf "No installation of Homebrew found; installation failed.\n" >&2; \
+#       exit 1; }
+# fi
 
 
-# Make certain that homebrew is ready for brewing
-# Right now brew doctor must be completely satisfied to continue
-brew doctor || \
-  { printf "Brew doctor \n";
-    printf "Resolve Homebrew warnings and errors before running again.\n";
-    exit 1; }
+# # Make certain that formulae are up-to-date
+# brew update || \
+#   { printf "A problem occurred while updating Homebrew formulae.\n" >&2; \
+#     exit 1; }
 
 
-# If the brewfile script exists and is executable, run it
-[[ -x "${BREWFILE}" ]] && . "${BREWFILE}" || \
-  { printf "A problem occurred while running brew.\n" >&2; \
-    exit 1; }
-
-# Remove out-dated versions and extra files from the cellar
-brew cleanup || \
-  { printf "A problem occured while running brew cleanup.\n" >&2; \
-    exit 1; }
-
-# Make certain that Git is installed
-if ! which git > /dev/null 2>&1; then
-  printf "No installation of Git was found.\n" >&2
-  printf "Install Git via Homebrew or Xcode command line tools.\n" >&2
-  exit 1
-fi
+# # Make certain that homebrew is ready for brewing
+# # Right now brew doctor must be completely satisfied to continue
+# brew doctor || \
+#   { printf "Brew doctor \n";
+#     printf "Unresolved Homebrew warnings or errors.\n" >&2; \
+#     exit 1; }
 
 
-#
-# SHELL
-#
+# # If the brewfile script exists and is executable, run it
+# [[ -x "${BREWFILE}" ]] && . "${BREWFILE}" || \
+#   { printf "A problem occurred while running brew.\n" >&2; \
+#     exit 1; }
 
-# Append Homebrewed Zsh path to /etc/shells to authorize it as a login shell
-# and then change this user's login shell to this Zsh
-if [[ -h "/usr/local/bin/zsh" ]]; then
-  if ! grep -q /usr/local/bin/zsh /etc/shells; then
-      echo "/usr/local/bin/zsh" | tee -a /etc/shells && \
-        chsh -s /usr/local/bin/zsh "${USER}" || \
-          { printf "A problem occurred while changing the login shell.\n" >&2; \
-            exit 1; }
-  fi
-elif [[ -x "/bin/zsh" ]]; then
-  chsh -s /bin/zsh "${USER}" && \
-    printf "Homebrewed Zsh not found, using /bin/zsh as login shell.\n" >&2 || \
-      { printf "A problem occured while changing the login shell.\n" >&2; \
-        exit 1; }
-else
-  printf "Zsh not found, leaving login shell unchanged.\n" >&2
-fi
+# # Remove out-dated versions and extra files from the cellar
+# brew cleanup || \
+#   { printf "A problem occured while running brew cleanup.\n" >&2; \
+#     exit 1; }
+
+# # Make certain that Git is installed
+# if ! which git > /dev/null 2>&1; then
+#   printf "No installation of Git was found.\n" >&2
+#   printf "Install Git via Homebrew or Xcode command line tools.\n" >&2
+#   exit 1
+# fi
+
+# #
+# # VAGRANT
+# #
+
+# if which vagrant > /dev/null 2>&1; then
+#   if ! vagrant plugin list | grep -q vagrant-vbgest; then
+#     vagrant plugin install vagrant-vbguest || \
+#       { printf "A problem occured while installing vagrant-vbguest.\n" >&2; \
+#         exit 1; }
+#   fi
+# fi
+
+
+# #
+# # SHELL
+# #
+
+# # Append Homebrewed Zsh path to /etc/shells to authorize it as a login shell
+# # and then change this user's login shell to this Zsh
+# if [[ -h "/usr/local/bin/zsh" ]]; then
+#   if ! grep -q /usr/local/bin/zsh /etc/shells; then
+#       echo "/usr/local/bin/zsh" | tee -a /etc/shells && \
+#         chsh -s /usr/local/bin/zsh "${USER}" || \
+#           { printf "A problem occurred while changing the login shell.\n" >&2; \
+#             exit 1; }
+#   fi
+# elif [[ -x "/bin/zsh" ]]; then
+#   chsh -s /bin/zsh "${USER}" && \
+#     printf "Homebrewed Zsh not found, using /bin/zsh as login shell.\n" >&2 || \
+#       { printf "A problem occured while changing the login shell.\n" >&2; \
+#         exit 1; }
+# else
+#   printf "Zsh not found, leaving login shell unchanged.\n" >&2
+# fi
 
 
 #
@@ -116,12 +128,13 @@ fi
 #
 
 # Install Solarized
-if [[ ! -d "${HOME}/.colorschemes" ]]; then
-  git clone git://github.com/altercation/solarized.git ~/.colorschemes && \
-    printf "Solarized color scheme files are in ${HOME}/.colorschemes\n" || \
-      { printf "A problem occured while cloning the Solarized repository." >&2; \
+COLORSCHEMES_PATH="${HOME}/.colorschemes"
+if [[ ! -d "${COLORSCHEMES_PATH}" ]]; then
+  git clone git://github.com/altercation/solarized.git ${COLORSCHEMES_PATH} && \
+    printf "Solarized color scheme files are in ${COLORSCHEMES_PATH}\n" || \
+      { printf "A problem occured while cloning the Solarized repository.\n" >&2; \
         exit 1; }
-if
+fi
 
 
 #
@@ -129,9 +142,10 @@ if
 #
 
 # Install Vundle, then use it to install Vim plugins
+VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
 if which vim > /dev/null 2>&1; then
-  if [[ ! -d "${HOME}/.vim/bundle/Vundle.vim" ]]; then
-    git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim && \
+  if [[ ! -d "${VUNDLE_PATH}" ]]; then
+    git clone https://github.com/gmarik/Vundle.vim.git ${VUNDLE_PATH} && \
       vim +PluginInstall +qall || \
         { printf "A problem occured while setting up Vim plugins." >&2; \
           exit 1; }
@@ -173,8 +187,7 @@ done
 #
 
 # Reminder of where the iTerm2 preferences file is
-printf "Reminder: set iTerm2 -> Preferences -> General to use
-${DOTFILE_BIN_DIR}/iterm2.plist\n"
+printf "Reminder: set iTerm2 -> Preferences -> General to use ${DOTFILE_BIN_DIR}/iterm2.plist\n"
 
 
 #
@@ -182,14 +195,14 @@ ${DOTFILE_BIN_DIR}/iterm2.plist\n"
 #
 
 # Make a user bin directory that occurs early in PATH
-if [[ ! -d "~/bin" ]]; then
+if [[ ! -d "${HOME}/bin" ]]; then
   mkdir ~/bin && \
-    echo "To use specific homebrewed executables over defaults link them to ~/bin."
+    echo "To use homebrewed executables over defaults link them to ${HOME}/bin."
 fi
 # Actual linking of executables to ~/bin should be done by hand
 
 
-printf "See ${INSTRUCTIONS} for installation and configuration instructions."
+printf "See ${INSTRUCTIONS} for installation and configuration instructions.\n"
 
 
 exit 0
