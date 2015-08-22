@@ -11,6 +11,10 @@
 # exceedingly simple as it is meant more as a list of commands required to put
 # a new system in order than a configuration management tool and the
 # expectation is that it will need frequent and significant alteration.
+#
+# All portions of this script should have the following two characteristics:
+# - Idempotence: running the script multiple times should not cause problems
+# - Early Failure: if any command fails then the script exits with an error
 
 
 #
@@ -27,100 +31,100 @@ BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
 INSTRUCTIONS="${DOTFILE_BIN_DIR}/instructions.txt"
 
 
-# # Make certain that sudo is used to run this script
-# if (( $(id -u) != 0 )); then
-#   printf "This command must be run with superuser privileges:\n" >&2
-#   printf "$ sudo install\n" >&2
-#   exit 1
-# fi
+# Make certain that sudo is used to run this script
+if (( $(id -u) != 0 )); then
+  printf "This command must be run with superuser privileges:\n" >&2
+  printf "$ sudo install\n" >&2
+  exit 1
+fi
 
 
-# #
-# # HOMEBREW
-# #
+#
+# HOMEBREW
+#
 
-# # Install Xcode command line developer tools (required for Homebrew)
-# if ! xcode-select --print-path > /dev/null 2>&1; then
-#   xcode-select --install || \
-#     { printf "Xcode command line developer tools installation failed\n." >&2; \
-#       exit 1; }
-# fi
-
-
-# # Install Homebrew
-# if ! which brew > /dev/null 2>&1; then
-#   ruby -e \
-#   "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || \
-#     { printf "No installation of Homebrew found; installation failed.\n" >&2; \
-#       exit 1; }
-# fi
+# Install Xcode command line developer tools (required for Homebrew)
+if ! xcode-select --print-path > /dev/null 2>&1; then
+  xcode-select --install || \
+    { printf "Xcode command line developer tools installation failed\n." >&2; \
+      exit 1; }
+fi
 
 
-# # Make certain that formulae are up-to-date
-# brew update || \
-#   { printf "A problem occurred while updating Homebrew formulae.\n" >&2; \
-#     exit 1; }
+# Install Homebrew
+if ! which brew > /dev/null 2>&1; then
+  ruby -e \
+  "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || \
+    { printf "No installation of Homebrew found; installation failed.\n" >&2; \
+      exit 1; }
+fi
 
 
-# # Make certain that homebrew is ready for brewing
-# # Right now brew doctor must be completely satisfied to continue
-# brew doctor || \
-#   { printf "Brew doctor \n";
-#     printf "Unresolved Homebrew warnings or errors.\n" >&2; \
-#     exit 1; }
+# Make certain that formulae are up-to-date
+brew update || \
+  { printf "A problem occurred while updating Homebrew formulae.\n" >&2; \
+    exit 1; }
 
 
-# # If the brewfile script exists and is executable, run it
-# [[ -x "${BREWFILE}" ]] && . "${BREWFILE}" || \
-#   { printf "A problem occurred while running brew.\n" >&2; \
-#     exit 1; }
-
-# # Remove out-dated versions and extra files from the cellar
-# brew cleanup || \
-#   { printf "A problem occured while running brew cleanup.\n" >&2; \
-#     exit 1; }
-
-# # Make certain that Git is installed
-# if ! which git > /dev/null 2>&1; then
-#   printf "No installation of Git was found.\n" >&2
-#   printf "Install Git via Homebrew or Xcode command line tools.\n" >&2
-#   exit 1
-# fi
-
-# #
-# # VAGRANT
-# #
-
-# if which vagrant > /dev/null 2>&1; then
-#   if ! vagrant plugin list | grep -q vagrant-vbgest; then
-#     vagrant plugin install vagrant-vbguest || \
-#       { printf "A problem occured while installing vagrant-vbguest.\n" >&2; \
-#         exit 1; }
-#   fi
-# fi
+# Make certain that homebrew is ready for brewing
+# Right now brew doctor must be completely satisfied to continue
+brew doctor || \
+  { printf "Brew doctor \n";
+    printf "Unresolved Homebrew warnings or errors.\n" >&2; \
+    exit 1; }
 
 
-# #
-# # SHELL
-# #
+# If the brewfile script exists and is executable, run it
+[[ -x "${BREWFILE}" ]] && . "${BREWFILE}" || \
+  { printf "A problem occurred while running brew.\n" >&2; \
+    exit 1; }
 
-# # Append Homebrewed Zsh path to /etc/shells to authorize it as a login shell
-# # and then change this user's login shell to this Zsh
-# if [[ -h "/usr/local/bin/zsh" ]]; then
-#   if ! grep -q /usr/local/bin/zsh /etc/shells; then
-#       echo "/usr/local/bin/zsh" | tee -a /etc/shells && \
-#         chsh -s /usr/local/bin/zsh "${USER}" || \
-#           { printf "A problem occurred while changing the login shell.\n" >&2; \
-#             exit 1; }
-#   fi
-# elif [[ -x "/bin/zsh" ]]; then
-#   chsh -s /bin/zsh "${USER}" && \
-#     printf "Homebrewed Zsh not found, using /bin/zsh as login shell.\n" >&2 || \
-#       { printf "A problem occured while changing the login shell.\n" >&2; \
-#         exit 1; }
-# else
-#   printf "Zsh not found, leaving login shell unchanged.\n" >&2
-# fi
+# Remove out-dated versions and extra files from the cellar
+brew cleanup || \
+  { printf "A problem occured while running brew cleanup.\n" >&2; \
+    exit 1; }
+
+# Make certain that Git is installed
+if ! which git > /dev/null 2>&1; then
+  printf "No installation of Git was found.\n" >&2
+  printf "Install Git via Homebrew or Xcode command line tools.\n" >&2
+  exit 1
+fi
+
+#
+# VAGRANT
+#
+
+if which vagrant > /dev/null 2>&1; then
+  if ! vagrant plugin list | grep -q vagrant-vbgest; then
+    vagrant plugin install vagrant-vbguest || \
+      { printf "A problem occured while installing vagrant-vbguest.\n" >&2; \
+        exit 1; }
+  fi
+fi
+
+
+#
+# SHELL
+#
+
+# Append Homebrewed Zsh path to /etc/shells to authorize it as a login shell
+# and then change this user's login shell to this Zsh
+if [[ -h "/usr/local/bin/zsh" ]]; then
+  if ! grep -q /usr/local/bin/zsh /etc/shells; then
+      echo "/usr/local/bin/zsh" | tee -a /etc/shells && \
+        chsh -s /usr/local/bin/zsh "${USER}" || \
+          { printf "A problem occurred while changing the login shell.\n" >&2; \
+            exit 1; }
+  fi
+elif [[ -x "/bin/zsh" ]]; then
+  chsh -s /bin/zsh "${USER}" && \
+    printf "Homebrewed Zsh not found, using /bin/zsh as login shell.\n" >&2 || \
+      { printf "A problem occured while changing the login shell.\n" >&2; \
+        exit 1; }
+else
+  printf "Zsh not found, leaving login shell unchanged.\n" >&2
+fi
 
 
 #

@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-EXCLUDE=${HOME}/.rsync/exclude
+EXCLUDE=${HOME}/.rsync_exclude
 BACKUP_PATH="/Backups"
 DTS=$(date "+%Y%m%d-%H%M%S")
 HOSTNAME=$(hostname)
@@ -10,7 +10,7 @@ TARGET="${BACKUP_PATH}/${DTS}-${HOSTNAME}-${SOURCE}-backup"
 TARGET_HOST="localhost"
 TARGET_USER="${USER}"
 
-rsync -axzP \
+rsync -ahvxPE \
   --delete \
   --delete-excluded \
   --exclude-from=${EXCLUDE} \
