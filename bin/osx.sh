@@ -28,7 +28,7 @@ DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
 BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
 
-INSTRUCTIONS="${DOTFILE_BIN_DIR}/instructions.txt"
+README="${DOTFILE_BIN_DIR}/README.md"
 
 
 # Make certain that sudo is used to run this script
@@ -39,50 +39,119 @@ if (( $(id -u) != 0 )); then
 fi
 
 
+do_or_exit () {
+  "$@"
+  retval=$?
+  if (( $retval != 0 )); then
+    echo_error "[ $@ ] failed."
+    exit $retval
+  fi
+}
+
+
+do_or_exit_2 () {
+  "$@" || \
+    echo_error "[ $@ ] failed." && \
+      exit 1
+}
+
+
+if_which () {
+  if which "$1" > /dev/null 2>&1; then
+    "$2"
+  fi
+}
+
+
+echo_error () {
+  printf "ERROR: $@\n" >&2
+}
+
+
+require () {
+  # exit if first argument command does not succeed
+  if ! "$1" > /dev/null 2>&1; then
+    if (( $# > 1 )); then
+      echo_error "Requirement [ $2 ] unfullfilled."
+    fi
+    exit 1
+  fi
+}
+
+if_not_do () {
+  # if first argument command does not succeed then do second
+  if ! "$1" > /dev/null 2>&1; then
+    do_or_exit "$2"
+  fi
+}
+
+if_path_do () {
+  if [[ "$1" ]]; then
+    do_or_exit "$2"
+  fi
+}
+
+
 #
 # HOMEBREW
 #
 
 # Install Xcode command line developer tools (required for Homebrew)
 if ! xcode-select --print-path > /dev/null 2>&1; then
-  xcode-select --install || \
-    { printf "Xcode command line developer tools installation failed\n." >&2; \
-      exit 1; }
+  xcode-select --install && \
+    printf "+ Xcode Command Line Tools installed.\n" || \
+      { printf "- FAILED: Xcode command line tools not installed.\n"; \
+        exit 1; }
 fi
 
+if_not_do "xcode-select --print-path" "xcode-select --install"
+require "xcode-select --print-path" "Xcode Command Line Tools installed"
+if_not_do "which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+require "which brew" "Homebrew installed"
+do_or_exit "brew update"
+do_or_exit "brew doctor"
+if_path_do "-x ${BREWFILE}" "source ${BREWFILE}"
+do_or_exit "brew cleanup"
+require "which git" "Git installed"
+require "which vagrant" "Vagrant installed"
 
 # Install Homebrew
 if ! which brew > /dev/null 2>&1; then
   ruby -e \
-  "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || \
-    { printf "No installation of Homebrew found; installation failed.\n" >&2; \
+  "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" && \
+    printf "+ Homebrew installed.\n" || \
+    { printf "- FAILED: Homebrew not installed.\n" >&2; \
       exit 1; }
 fi
 
+if which brew > /dev/null 2>&1; then
+  # Make certain that formulae are up-to-date
+  brew update && \
+    printf "+ Homebrew formulae updated.\n" || \
+      { printf "- FAILED: Homebrew formulae not updated.\n"; \
+        exit 1; }
 
-# Make certain that formulae are up-to-date
-brew update || \
-  { printf "A problem occurred while updating Homebrew formulae.\n" >&2; \
-    exit 1; }
+  # Make certain that homebrew is ready for brewing
+  # Right now brew doctor must be completely satisfied to continue
+  printf "Running 'brew doctor'...\n"
+  brew doctor && \
+    printf "+ Brew doctor satisfied.\n"|| \
+      { printf "- FAILED: Unresolved brew doctor warnings or errors.\n"; \
+        exit 1; }
 
+  # If the brewfile script exists and is executable, run it
+ 
+  [[ -x "${BREWFILE}" ]] && \
+    { printf "Running ${BREWFILE}...\n"; source "${BREWFILE}" } || \
+      { printf "- FAILED: A problem occured while running ${BREWFILE}.\n"; \
+        exit 1; }
 
-# Make certain that homebrew is ready for brewing
-# Right now brew doctor must be completely satisfied to continue
-brew doctor || \
-  { printf "Brew doctor \n";
-    printf "Unresolved Homebrew warnings or errors.\n" >&2; \
-    exit 1; }
-
-
-# If the brewfile script exists and is executable, run it
-[[ -x "${BREWFILE}" ]] && . "${BREWFILE}" || \
-  { printf "A problem occurred while running brew.\n" >&2; \
-    exit 1; }
-
-# Remove out-dated versions and extra files from the cellar
-brew cleanup || \
-  { printf "A problem occured while running brew cleanup.\n" >&2; \
-    exit 1; }
+  # Remove out-dated versions and extra files from the cellar
+  printf "Running 'brew cleanup'...\n"
+  brew cleanup && \
+    printf "+ Brew cleanup succeeded.\n" || \
+      printf "- FAILED: Brew cleanup failed.\n"
+fi
 
 # Make certain that Git is installed
 if ! which git > /dev/null 2>&1; then
@@ -90,6 +159,7 @@ if ! which git > /dev/null 2>&1; then
   printf "Install Git via Homebrew or Xcode command line tools.\n" >&2
   exit 1
 fi
+
 
 #
 # VAGRANT
@@ -101,7 +171,11 @@ if which vagrant > /dev/null 2>&1; then
       { printf "A problem occured while installing vagrant-vbguest.\n" >&2; \
         exit 1; }
   fi
+  # Initialize a mininalist Debian box
+  vagrant init minimal/jessie64 || \
+    printf "- FAILED: Vagrant box minimal/jessie64 not initialized.\n"
 fi
+
 
 
 #
@@ -170,7 +244,6 @@ if [[ ! -d "${DOTDIR}" ]]; then
       exit 1; }
 fi
 
-
 # Save any existing dotfiles and then sym-link from DOTFILE_DIR to HOME
 for dotfile in "$DOTFILE_DIR/*"; do
   if [[ -f "${HOME}/.${dotfile}" ]]; then
@@ -206,7 +279,7 @@ fi
 # Actual linking of executables to ~/bin should be done by hand
 
 
-printf "See ${INSTRUCTIONS} for installation and configuration instructions.\n"
+printf "See ${README} for installation and configuration instructions.\n"
 
 
 exit 0
