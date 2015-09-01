@@ -1,6 +1,48 @@
 # Mac OS X Setup
 
-This document describes how I set up a new Mac. 
+This document describes one way to set up a new Mac. These instructions
+are meant to prescribe manual configuration steps to be taken in
+addition to the automated actions included in the `osx.sh` script.
+
+Go straight to the [setup instructions](#)
+
+## Philosophy
+
+There are many tools available now for setting up a new system, ranging
+from full-fledged professional configuration management tools to impressively
+sophisticated ad hoc shell scripts. At the simplest, and hence most
+robust end of the spectrum are **README** files describing what steps
+should be taken manually to bring a new system to a state of readiness.
+
+This document falls quite near that latter approach, but with a bit of
+minimal shell scripting to automate those steps that seem most likely to
+remain somewhat stable in the short term. As the underlying components
+of this system can be expected to change with some rapidity, frequent
+updates to this document and associated scripts are to be expected and
+some guiding principles selected for the construction of these may be
+useful to remember:
+
+- Simplicity first, capacity second (maintenance is the highest cost).
+- The greater the historical stability of a component, the greater the
+  investment in automated configuration (cf. vim, zsh vs. OS X, Firefox).
+- Abide defaults whenever possible, but configure when necessary.
+- Security and privacy to the extent they are possible, usability to the
+  extent it is necessary.
+
+Some immediate corollaries:
+
+- Use as little software as possible.
+- Prefer programs that do one thing well.
+- When possible use software that still functions without a network
+  connection.
+- Do not use beta software unless unavoidable.
+- Prefer plain text over all other formats.
+- Use only open formats.
+- Avoid DRM encumbered media.
+- Prefer open source software whenever possible.
+- Pay for software of quality (paying for open source software is best).
+- Only use maintained software.
+
 
 The steps below were tested on **OS X Mountain Lion**.
 
@@ -179,10 +221,10 @@ Now we have a terminal we can work with!
 
 ## Git
 
-[Git](http://git-scm.com/) is installed via Homebrew and
-`$HOME/.gitconfig` is linked to `$HOME/.dotfiles/gitconfig` by the
-bootstrap script, but `$HOME/.gitconfig_local` must be placed manually
-as it may contain sensitive material.
+[Git](http://git-scm.com/) is installed via Homebrew and `$HOME/.gitconfig`
+and `$HOME/.gitignore` are linked to `$HOME/.dotfiles/gitconfig` by the
+bootstrap script, but `$HOME/.gitconfig_local` must be placed manually as
+it may contain sensitive material.
     
 ## Vim
 

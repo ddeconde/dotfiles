@@ -33,6 +33,8 @@ COLORSCHEMES_PATH="${HOME}/.colorschemes"
 VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
 README="${DOTFILE_BIN_DIR}/README.md"
 
+SYSTEM_NAME="$1"
+
 
 ## FUNCTIONS
 
@@ -101,6 +103,11 @@ if_path_do () {
 # Run this script with superuser privileges - BE CAREFUL!
 # This is necessary for some of these commands
 run_with_sudo "$@"
+
+# Set the system name
+scutil --set ComputerName ${SYSTEM_NAME}
+scutil --set LocalHostName ${SYSTEM_NAME}
+scutil --set HostnameName ${SYSTEM_NAME}
 
 # Install Xcode Command Line Tools
 if_cmd_do "! xcode-select --print-path" "xcode-select --install"

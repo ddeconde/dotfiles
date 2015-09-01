@@ -11,7 +11,6 @@
 brew tap homebrew/dupes
 
 packages=(
-  # base
   zsh
   bash
   vim
@@ -24,7 +23,6 @@ packages=(
   curl
   lynx
 )
-
 
 # Install packages via brew
 for package in "${packages[@]}"; do
@@ -39,7 +37,6 @@ brew install caskroom/cask/brew-cask
 # brew install alfred
 # brew cask install ghc
 # brew cask install arq
-# brew cask install adium
 # brew cask install gpgtools
 
 applications=(
@@ -54,6 +51,8 @@ applications=(
   virtualbox-extension-pack
   vagrant
   vlc
+  adium
+  transmission
   # proprietary
   little-snitch
   onepassword
@@ -62,11 +61,9 @@ applications=(
   flux
 )
 
-
 # Install applications via brew cask
 for application in "${applications[@]}"; do
   brew cask install "${application}"
 done
-
 
 exit 0
