@@ -33,7 +33,7 @@ COLORSCHEMES_PATH="${HOME}/.colorschemes"
 VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
 README="${DOTFILE_BIN_DIR}/README.md"
 
-SYSTEM_NAME="$1"
+SYSTEM_NAME="${1:-default_hostname}"
 
 
 ## FUNCTIONS
@@ -116,6 +116,18 @@ if_cmd_do "! xcode-select --print-path" "xcode-select --install"
 require_cmd "xcode-select --print-path" "Xcode Command Line Tools installed"
 if_cmd_do "! which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
 
+# Install Git via Homebrew
+require_cmd "which brew" "Homebrew installed"
+do_or_exit "brew install git"
+
+# Clone dotfiles repositroy if necessary and link dotfiles to $HOME
+require_cmd "which git" "Git installed"
+if_path_do "! -d ${DOTDIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+for dotfile in "$DOTFILE_DIR/*"; do
+  if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
+  if_path_do "-f ${DOTFILE_DIR}/${dotfile}" "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME}/.${dotfile}"
+done
+
 # Install applications via Homebrew
 require_cmd "which brew" "Homebrew installed"
 do_or_exit "brew update"
@@ -137,16 +149,8 @@ printf "Solarized color scheme files are in ${COLORSCHEMES_PATH}\n"
 # Install Vundle and use it to install Vim plugins
 require_cmd "which git" "Git installed"
 require_cmd "which vim" "Vim installed"
-if_path_do "! -d ${VUNDLE_PATH}" "git clone https://github.com/gmarik/Vundle.vim.git ${VUNDLE_PATH}"
+if_path_do "! -d ${VUNDLE_PATH}" "git clone git://github.com/gmarik/Vundle.vim.git ${VUNDLE_PATH}"
 do_or_exit "vim +PluginInstall +qall"
-
-# Link dotfiles to $HOME
-require_cmd "which git" "Git installed"
-if_path_do "! -d ${DOTDIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
-for dotfile in "$DOTFILE_DIR/*"; do
-  if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
-  if_path_do "-f ${DOTFILE_DIR}/${dotfile}" "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME}/.${dotfile}"
-done
 
 # Setup Vagrant
 require_cmd "which vagrant" "Vagrant installed"

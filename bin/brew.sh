@@ -10,6 +10,7 @@
 # (necessary for rsync)
 brew tap homebrew/dupes
 
+# git is left out as it will always be installed outside of brew.sh
 packages=(
   zsh
   bash
@@ -18,7 +19,6 @@ packages=(
   tmux
   the_silver_searcher
   ctags-exuberant
-  git
   rsync
   curl
   lynx
