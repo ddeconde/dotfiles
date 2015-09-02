@@ -101,7 +101,7 @@ if_path_do () {
 ## SCRIPT
 
 # Run this script with superuser privileges - BE CAREFUL!
-# This is necessary for some of these commands
+# This is necessary for some of these actions
 run_with_sudo "$@"
 
 # Set the system name
@@ -120,7 +120,7 @@ if_cmd_do "! which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.co
 require_cmd "which brew" "Homebrew installed"
 do_or_exit "brew install git"
 
-# Clone dotfiles repositroy if necessary and link dotfiles to $HOME
+# Clone dotfiles repository if necessary and link dotfiles to $HOME
 require_cmd "which git" "Git installed"
 if_path_do "! -d ${DOTDIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
 for dotfile in "$DOTFILE_DIR/*"; do

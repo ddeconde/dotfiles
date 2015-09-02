@@ -85,7 +85,7 @@ Setting a firmware password prevents a Mac from starting up from any
 device other than the startup disk. It can only be reset at an
 [Apple Retail Store](https://www.apple.com/retail/storelist/) or 
 [Apple Authorized Service Provider](https://locate.apple.com/country)
-so be careful not to lose it.
+so be careful not to lose or forget it.
 
 1. Shut down the Mac.
 2. Start up the Mac again and immediately hold the keys `Command` `R`
@@ -106,7 +106,7 @@ Immediately upon finishing a new system installation update the system:
 
 ### System preferences
 
-It is possible to script System Preferences changes (including options
+It is possible to script System Preferences changes (including some options
 not available in the GUI) via the `defaults` command, however defaults can
 be structured in complex ways and change significantly with operating
 system versions so automating these changes can involve considerable
@@ -123,6 +123,7 @@ In **Apple Icon > System Preferences**:
 - Trackpad > Tap to click
 - Trackpad > Tracking Speed > Fast (most of the way to the right)
 - Energy Saver > Turn display off after: 1 hr
+- Energy Saver > Turn computer off after: 1 hr
 - Keyboard > Key Repeat > Fast (all the way to the right)
 - Keyboard > Delay Until Repeat > Short (all the way to the right)
 - Keyboard > Modifier Keys > Caps Lock = Control
@@ -131,7 +132,7 @@ In **Apple Icon > System Preferences**:
 - Spotlight > Search Results > Uncheck Spotlight Suggestions and Bing Web
   Searches
 - Security & Privacy > Location Services > Disable Location Services
-- Security & Privacy > Diagnostics & Usage > Uncheck everything
+- Security & Privacy > Diagnostics & Usage > Disable everything
 - Security & Privacy > General > Require password immediately after sleep or
   screen saver begins
 - Security & Privacy > Firewall > Turn On Firewall
@@ -150,7 +151,7 @@ download and run the setup script:
 ```
 cd ~
 curl -fsSL "https://raw.githubusercontent.com/ddeconde/dotfiles/master/bin/osx.sh"
-bash osx.sh
+bash osx.sh [hostname]
 ```
 
 ### Firefox
@@ -194,11 +195,80 @@ Scroll down the page and download the latest version. Unzip the archive. In it y
 - In **iTerm2 Preferences**, under **Profiles** and **Colors**, go to **Load Presets... > Import...**, find and open the two **.itermcolors** files we downloaded.
 - Go back to **Load Presets...** and select **Solarized Dark** to activate it. Voila!
 
+### Vagrant
+
+- At the terminal run `vagrant up`.
+- Login to the vagrant guest by running `vagrant ssh`.
+
 ### Little Snitch
+
+In **Preferences**:
+
 
 ### 1Password
 
 ### Viscosity
+
+### Sensitive Material
+
+Sensitive material includes encryption keys, personal data, and other
+files that cannot be hosted publicly for obvious reasons. These must be
+backed up locally and restored separately.
+
+#### Identifiers
+
+You have already selected the following potentially identifying labels:
+
+- host name
+- user account name
+
+#### Local Configuration Files
+
+gitgonfig_local
+zshrc_local
+
+#### Credentials
+
+ssh
+aws
+gpg
+
+#### Miscellaneous
+
+bookmarks
+contacts
+1Password data
+backed up data
+
+## Maintenance
+
+### Backup
+
+The script `backup` is based around the `rsync` utility and should be
+run daily. The **Time Machine** application may be used in addition. On
+a weekly basis `backup` should be used to place backups in one
+additional physical location (like the workplace).
+
+```
+```
+
+### System Updates
+
+In the **Apple Menu** select **Software Update...**
+
+### Application Updates
+
+#### Homebrew
+
+#### Homebrew Cask
+
+### Dotfiles Repository
+
+This repository must be maintained for it to remain useful. While
+changes to dotfiles themselves are automatically saved via git and the
+regular backups, this file **README.md** and the bootstrap scripts
+**osx.sh** and **debian.sh** are likely to need modification as
+operating system and application versions change.
 
 ## Homebrew
 
@@ -265,11 +335,12 @@ it may contain sensitive material.
 
 ## Vagrant
 
-[Vagrant]() and its dependencies [VirtualBox]() and [Virtualbox
-Extension Pack]() are installed by Homebrew, but to keep the VirtualBox
-Guest Additions up to date on guest systems automatically the Vagrant
-plugin [vagrant-vbguest]() is needed. This must be install by running
-`vagrant plugin install vagrant-vbguest`.
+[Vagrant](https://www.vagrantup.com/) and its dependencies
+[VirtualBox](https://www.virtualbox.org/) and **Virtualbox Extension Pack**
+are installed by Homebrew, but to keep the **VirtualBox Guest Additions**
+up to date on guest systems automatically the Vagrant plugin
+[vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest) is needed.
+This plugin is installed by the bootstrap script.
 
 ## Python
 
