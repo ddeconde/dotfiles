@@ -33,6 +33,8 @@ useful to remember:
 
 Some immediate corollaries:
 
+- Use Mac hardware and software for direct interface use, BSD/Linux
+  otherwise.
 - Use as little software as possible.
 - Prefer programs that do one thing well.
 - When possible use software that still functions without a network
@@ -104,7 +106,7 @@ so be careful not to lose or forget it.
 Immediately upon finishing a new system installation update the system:
 **Apple Icon > Software Update...**
 
-### System preferences
+### System Preferences
 
 It is possible to script System Preferences changes (including some options
 not available in the GUI) via the `defaults` command, however defaults can
@@ -127,8 +129,10 @@ In **Apple Icon > System Preferences**:
 - Keyboard > Key Repeat > Fast (all the way to the right)
 - Keyboard > Delay Until Repeat > Short (all the way to the right)
 - Keyboard > Modifier Keys > Caps Lock = Control
+- Keyboard >
 - Dock > Automatically hide and show the Dock
-- Dock > Size > Small (all the way to the left)
+- Dock > Size > 
+- Dock > 
 - Spotlight > Search Results > Uncheck Spotlight Suggestions and Bing Web
   Searches
 - Security & Privacy > Location Services > Disable Location Services
@@ -143,6 +147,42 @@ In **Apple Icon > System Preferences**:
 - Network > Advanced > DNS > DNS Servers > 84.200.70.40
   [dns.watch](https://dns.watch/index)
 
+### Safari
+
+Even if it is not going to be used as default browser it is wise to
+configure the built-in web browser Safari to be relatively safe if used.
+In particular **Search > Smart Search Field > Include Spotlight
+Suggestions** should be disabled.
+
+In **Preferences...**:
+
+- General > Homepage > https://startpage.com
+- General > New windows open with > Homepage
+- General > New tabs open with > Homepage
+- General > Remove history items > After one day
+- General > Remove download list items > When Safari quits
+- General > Do not Open "safe" files after downloading
+- AutoFill > Disable all
+- Passwords > Do not AutoFill user names and passwords
+- Search > Search engine > Do not Include search engine suggestions
+- Search > Smart Search Field > Disable all
+- Security > Fraudulent sites > Do not Warn when visiting a fraudulent
+  website
+- Security > Web content > Disable JavaScript
+- Security > Web content > Block pop-up windows
+- Security > Web content > Do not Allow WebGL
+- Security > Internet plug-ins > Do not Allow Plug-ins
+- Privacy > Cookies and website data > Always block
+- Privacy > Website use of location services > Deny without prompting
+- Notifications > Do not Allow websites to ask for permission to send
+  push notifications
+- Advanced > Smart Search Field > Show full website address
+- Advanced > Accessibility > Never use font sizes smaller than 9
+- Advanced > Accessibility > Press Tab to highlight each item on a
+  webpage
+
+[1Password Browser Extension](https://agilebits.com/onepassword/extensions)
+
 ### Setup Script
 
 Open `Terminal.app` and run the following commands at the prompt to
@@ -156,9 +196,9 @@ bash osx.sh [hostname]
 
 ### Firefox
 
-[Firefox](https://www.mozilla.org/en-US/firefox/desktop/) is installed via
-Homebrew, but it still needs [Add-ons](https://addons.mozilla.org/en-US/firefox/)
-and some configuration.
+[Firefox](https://www.mozilla.org/en-US/firefox/desktop/) will be our default
+browser and is installed via Homebrew, but it still needs
+[Add-ons](https://addons.mozilla.org/en-US/firefox/) and some configuration.
 
 #### Add-ons
 
@@ -166,6 +206,8 @@ Install the following Firefox Add-ons:
 - [uMatrix](https://addons.mozilla.org/en-US/firefox/addon/umatrix/)
 - [Privacy Settings](https://addons.mozilla.org/en-US/firefox/addon/privacy-settings/)
 In **Privacy Settings** select the **Full Privacy** settings group.
+
+[1Password Browser Extension](https://agilebits.com/onepassword/extensions)
 
 #### Search Engines
 
@@ -199,15 +241,63 @@ Scroll down the page and download the latest version. Unzip the archive. In it y
 
 - At the terminal run `vagrant up`.
 - Login to the vagrant guest by running `vagrant ssh`.
+...
+
+### Adium
+
+See the eff page on this...
+
+### GPGTools
+
+...
 
 ### Little Snitch
 
-In **Preferences**:
+#### Add License
 
+#### Preferences
+
+In **Preferences**:
+...
 
 ### 1Password
 
+#### Add License
+
+1. Choose **1Password > License** from the menu bar.
+2. Click the **Add License** button.
+3. Select the license file and click **Open**.
+
+#### Restore from Backup
+
+**1Password** stores backup files in
+```
+~/Library/Application Support/1Password 4/Backups/
+```
+so copying the most recent backup from this directory in the system
+backup to this same directory in the new system will make it possible to
+restore the 1Password vault database. After copying go to **File >
+Restore**.
+
+#### Start Over
+
 ### Viscosity
+
+A directory (we will call **openvpn**) of OpenVPN configuration files
+should be obtained from your VPN provider.
+
+- In **Preferences... > Connections > + > Import Connection > From
+  File...** select the **openvpn** folder and **Open** it.
+- Click **OK** after the connection import confirmation.
+
+### Things
+
+#### Add License
+
+1. Choose **Things > License...** form the menu bar.
+2. ...
+
+#### ...
 
 ### Sensitive Material
 
@@ -240,6 +330,14 @@ contacts
 1Password data
 backed up data
 
+### F.lux
+
+In **Preferences...** set:
+- **Recommended colors**
+- Location (as appropriate)
+- Wake up time
+- **Start f.lux at login**1
+
 ## Maintenance
 
 ### Backup
@@ -260,7 +358,31 @@ In the **Apple Menu** select **Software Update...**
 
 #### Homebrew
 
+Run `brew doctor` and resolve any **Warning** issues.
+
+Run the following commands to update the Homebrew formula directory, see
+what installed packages are outdated, and upgrade all installed
+packages:
+
+```
+brew update
+brew outdated
+brew upgrade --all
+```
+
+Homebrew keeps old versions in case you want to roll-back so
+periodically you may want to clean this out with
+
+```
+brew cleanup
+```
+
 #### Homebrew Cask
+
+As the homebrew-cask repository is a Homebrew Tap, casks should be
+updated by the `brew update` command, however currently homebrew-cask
+does not always detect if an application has been updated. Cask updates
+can be forced via the `brew cask install --force` command if necessary.
 
 ### Dotfiles Repository
 

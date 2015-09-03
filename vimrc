@@ -132,11 +132,8 @@ set background=dark
 colorscheme solarized
 " When using solarized without custom terminal colors use the following
 " let g:solarized_termcolors=256
-" colorscheme base16
 " When running without plugins use the desert colorscheme
 " colorscheme desert " a nice dark built-in colorscheme
-" Modify the highlighting of cursorline number to make it stand out
-highlight CursorLineNr term=bold ctermfg=7 gui=bold guifg=Yellow
 
 " Editing
 set backspace=indent,eol,start  " backspace over line breaks, insertion start

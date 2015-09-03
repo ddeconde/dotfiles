@@ -38,6 +38,7 @@ brew install caskroom/cask/brew-cask
 # brew cask install ghc
 # brew cask install arq
 # brew cask install gpgtools
+# brew cask install torbrowser
 
 applications=(
   # open source
