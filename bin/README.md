@@ -47,6 +47,11 @@ Some immediate corollaries:
 - Pay for software of quality (paying for open source software is best).
 - Only use maintained software.
 
+N.B. These setup instructions represent one particular compromise between
+security/privacy and accessibility/usability, thus they produce some
+notable inconveniences not present in some defaults for this software
+and at the same time are quite unsuitably insecure for high risk threat
+models.
 
 The steps below were tested on **OS X Mountain Lion**.
 
@@ -64,7 +69,6 @@ The steps below were tested on **OS X Mountain Lion**.
 - [IPython](#ipython)
 - [Numpy and Scipy](#numpy-and-scipy)
 - [Node.js](#nodejs)
-- [JSHint](#jshint)
 - [Ruby and RVM](#ruby-and-rvm)
 - [Projects folder](#projects-folder)
 - [Apps](#apps)
@@ -129,7 +133,7 @@ In **Apple Icon > System Preferences**:
 - Keyboard > Key Repeat > Fast (all the way to the right)
 - Keyboard > Delay Until Repeat > Short (all the way to the right)
 - Keyboard > Modifier Keys > Caps Lock = Control
-- Keyboard >
+- Keyboard > Use all F1, F2, etc. keys as standard function keys
 - Dock > Automatically hide and show the Dock
 - Dock > Size > 
 - Dock > 
@@ -203,11 +207,11 @@ browser and is installed via Homebrew, but it still needs
 #### Add-ons
 
 Install the following Firefox Add-ons:
+- [1Password Browser Extension](https://agilebits.com/onepassword/extensions)
 - [uMatrix](https://addons.mozilla.org/en-US/firefox/addon/umatrix/)
 - [Privacy Settings](https://addons.mozilla.org/en-US/firefox/addon/privacy-settings/)
-In **Privacy Settings** select the **Full Privacy** settings group.
 
-[1Password Browser Extension](https://agilebits.com/onepassword/extensions)
+In **Privacy Settings** select the **Full Privacy** settings group.
 
 #### Search Engines
 
@@ -239,13 +243,29 @@ Scroll down the page and download the latest version. Unzip the archive. In it y
 
 ### Vagrant
 
-- At the terminal run `vagrant up`.
-- Login to the vagrant guest by running `vagrant ssh`.
-...
+[Vagrant](https://www.vagrantup.com/) and its dependencies
+[VirtualBox](https://www.virtualbox.org/) and **Virtualbox Extension Pack**
+are installed by Homebrew, but to keep the **VirtualBox Guest Additions**
+up to date on guest systems automatically the Vagrant plugin
+[vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest) is needed.
+This plugin is installed by the bootstrap script.
+
+### Spectacle
+
+Choose **Preferences...** from the status icon menu in the menu bar and
+enable **Launch Spectacle at login**.
 
 ### Adium
 
-See the eff page on this...
+[Adium](https://adium.im/) has Off-the-Record (OTR) encryption for chat,
+but by default it logs all chats and sends the contents of some messages
+through the **OS X Notification Center**. For greater privacy disable
+these features.
+
+In **Adium > Preferences...**:
+
+- General > Messages > Do not Log Messages
+- Events > Remove any Display a notification entries
 
 ### GPGTools
 
@@ -255,9 +275,12 @@ See the eff page on this...
 
 #### Add License
 
+1. Choose **Open Little Snitch Preferences...** from the Little Snitch
+   status icon menu in the menu bar.
+2. In **Registration** enter license information.
+
 #### Preferences
 
-In **Preferences**:
 ...
 
 ### 1Password
@@ -281,23 +304,33 @@ Restore**.
 
 #### Start Over
 
+...
+
 ### Viscosity
 
 A directory (we will call **openvpn**) of OpenVPN configuration files
 should be obtained from your VPN provider.
 
-- In **Preferences... > Connections > + > Import Connection > From
-  File...** select the **openvpn** folder and **Open** it.
-- Click **OK** after the connection import confirmation.
+1. In **Preferences... > Connections > + > Import Connection > From
+   File...** select the **openvpn** folder and **Open** it.
+2. Click **OK** after the connection import confirmation.
 
 ### Things
 
 #### Add License
 
-1. Choose **Things > License...** form the menu bar.
+1. Choose **Things > License...** from the menu bar.
 2. ...
 
 #### ...
+
+### F.lux
+
+In **Preferences...** from the status icon menu in the menu bar:
+- **Recommended colors**
+- Location (as appropriate)
+- Wake up time
+- **Start f.lux at login**1
 
 ### Sensitive Material
 
@@ -329,14 +362,6 @@ bookmarks
 contacts
 1Password data
 backed up data
-
-### F.lux
-
-In **Preferences...** set:
-- **Recommended colors**
-- Location (as appropriate)
-- Wake up time
-- **Start f.lux at login**1
 
 ## Maintenance
 
@@ -454,15 +479,6 @@ it may contain sensitive material.
 ## Vim
 
 [Vim](http://www.vim.org/)
-
-## Vagrant
-
-[Vagrant](https://www.vagrantup.com/) and its dependencies
-[VirtualBox](https://www.virtualbox.org/) and **Virtualbox Extension Pack**
-are installed by Homebrew, but to keep the **VirtualBox Guest Additions**
-up to date on guest systems automatically the Vagrant plugin
-[vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest) is needed.
-This plugin is installed by the bootstrap script.
 
 ## Python
 

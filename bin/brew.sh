@@ -33,11 +33,11 @@ done
 brew install caskroom/cask/brew-cask
 
 # Installations via BREW CASK
+
 # brew cask install fantastical
 # brew install alfred
 # brew cask install ghc
 # brew cask install arq
-# brew cask install gpgtools
 # brew cask install torbrowser
 
 applications=(
@@ -52,6 +52,7 @@ applications=(
   virtualbox-extension-pack
   vagrant
   vlc
+  gpgtools
   adium
   transmission
   # proprietary
