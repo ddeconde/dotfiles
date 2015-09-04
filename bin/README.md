@@ -282,6 +282,7 @@ In **Adium > Preferences...**:
 #### Preferences
 
 ...
+Set rules to maximum restrictiveness -- block _all_ by default.
 
 ### 1Password
 

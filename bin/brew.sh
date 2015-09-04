@@ -40,6 +40,8 @@ brew install caskroom/cask/brew-cask
 # brew cask install arq
 # brew cask install torbrowser
 
+# brew cask install launchcontrol
+
 applications=(
   # open source
   iterm2
