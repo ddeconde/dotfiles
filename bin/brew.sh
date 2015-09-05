@@ -35,12 +35,13 @@ brew install caskroom/cask/brew-cask
 # Installations via BREW CASK
 
 # brew cask install fantastical
-# brew install alfred
 # brew cask install ghc
 # brew cask install arq
 # brew cask install torbrowser
 
 # brew cask install launchcontrol
+# brew cask install things
+# brew cask install launchbar
 
 applications=(
   # open source

@@ -4,13 +4,20 @@
 # Last Changed: Sun, 12 Jul 2015 22:06:02 -0700
 #
 # Usage:
-# $ sudo install
+# Set "shell" as provisioner in the appropriate Vagrantfile and the path to
+# point to this script, i.e. the Vagrantfile should include a line like:
 #
-# A simple installation script to automate many of the tasks involved in
-# setting up a new system. The structure of this script has been kept
-# exceedingly simple as it is meant more as a list of commands required to put
-# a new system in order than a configuration management tool and the
-# expectation is that it will need frequent and significant alteration.
+# config.vm.provision "shell", path: "/path/to/debian.sh"
+#
+# A simple provisioning script to make a minimal comfortable development
+# environment out of a Debian Vagrant box. The structure of this script has
+# been kept exceedingly simple as it is meant more as a list of commands
+# required to put a new system in order than a configuration management tool
+# and the expectation is that it will need frequent and significant alteration.
+#
+# All portions of this script should have the following two characteristics:
+# - Idempotence: running the script multiple times should not cause problems
+# - Early Failure: if any command fails then the script exits with an error
 
 
 #
@@ -24,129 +31,128 @@ DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
 PKGFILE="${DOTFILE_BIN_DIR}/packages.sh"
 
+ZSH_PATH="/usr/bin/zsh"
 
-# Make certain that sudo is used to run this script
-if (( $(id -u) != 0 )); then
-  printf "This command must be run with superuser privileges:\n" >&2
-  printf "$ sudo install\n" >&2
-  exit 1
-fi
-
-
-#
-# APT-GET
-#
-
-
-# Make certain that formulae are up-to-date
-apt-get update || \
-  { printf "A problem occurred while updating package indices.\n" >&2; \
-    exit 1; }
-
-apt-get upgrade || \
-  { printf "A problem occurred while upgrading packages.\n" >&2; \
-    exit 1; }
-
-# If the pkgfile script exists and is executable, run it
-[[ -x "${PKGFILE}" ]] && . "${PKGFILE}" || \
-  { printf "A problem occurred while running apt-get.\n" >&2; \
-    exit 1; }
-
-apt-get clean || \
-  { printf "A problem occurred while cleaning up local .deb files.\n" >&2; \
-    exit 1; }
-
-# Make certain that Git is installed
-if ! which git > /dev/null 2>&1; then
-  printf "No installation of Git was found.\n" >&2
-  printf "Install Git via apt-get.\n" >&2
-  exit 1
-fi
-
-# Make certain that Curl is installed
-if ! which curl > /dev/null 2>&1; then
-  printf "No installation of Curl was found.\n" >&2
-  printf "Install Curl via apt-get.\n" >&2
-  exit 1
-fi
-
-
-#
-# SHELL
-#
-
-# Change this user's login shell to Zsh
-if [[ -h "/usr/bin/zsh" ]]; then
-  chsh -s /usr/bin/zsh "${USER}" || \
-    { printf "A problem occurred while changing the login shell.\n" >&2; \
-      exit 1; }
-elif [[ -x "/bin/zsh" ]]; then
-  chsh -s /bin/zsh "${USER}" && \
-    printf "/usr/bin/zsh not found, using /bin/zsh as login shell.\n" >&2 || \
-      { printf "A problem occured while changing the login shell.\n" >&2; \
-        exit 1; }
-else
-  printf "Zsh not found, leaving login shell unchanged.\n" >&2
-fi
-
-# Install zsh-history-substring-search
 ZSH_USERS_REPO="https://raw.githubusercontent.com/zsh-users/"
 MASTER_BRANCH="zsh-history-substring-search/master/"
 ZSH_FILE="zsh-history-substring-search.zsh"
 ZSH_HISTORY_SUBSTRING_SEARCH_URL="${ZSH_USERS_REPO}${MASTER_BRANCH}${ZSH_FILE}"
-
 ZSH_HISTORY_SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
 
-curl -fsSL \
-  --create-dirs \
-  --output "${ZSH_HISTORY_SUBSTRING_SEARCH_PATH}${ZSH_FILE}" \
-  "${ZSH_HISTORY_SUBSTRING_SEARCH_URL}" || \
-    { printf "A problem occurred while installing zsh-history-substring-search.\n" >&2; \
-    exit 1; }
+COLORSCHEMES_PATH="${HOME}/.colorschemes"
+VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
+README="${DOTFILE_BIN_DIR}/README.md"
+
+USER_HOME=$
 
 
 #
-# VIM PLUGINS
+# FUNCTIONS
 #
 
-# Install Vundle, then use it to install Vim plugins
-if which vim > /dev/null 2>&1; then
-  if [[ ! -d "${HOME}/.vim/bundle/Vundle.vim" ]]; then
-    git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim && \
-      vim +PluginInstall +qall || \
-        { printf "A problem occured while setting up Vim plugins." >&2; \
-          exit 1; }
+run_with_sudo () {
+  # run this script with superuser privileges via exec sudo
+  # BE VERY CAREFUL about the commands contained in this script
+  if (( $(id -u) != 0 )); then
+    # printf "Superuser privileges required.\n"
+    exec sudo "$0" "${HOME}" "$@"
+    exit $?
+  else
+    HOME=${1}
+    shift
   fi
-else
-  printf "No installation of Vim was found; Vim plugins not installed.\n" >&2
-fi
+}
+
+echo_error () {
+  # conveniently print errors to stderr
+  printf "ERROR: $@\n" >&2
+}
+
+do_or_exit () {
+  # execute first argument command with success or exit
+  "$@"
+  retval=$?
+  if (( $retval != 0 )); then
+    echo_error "[ $@ ] failed."
+    exit $retval
+  fi
+}
+
+require_cmd () {
+  # exit if first argument command does not succeed
+  if ! "$1" > /dev/null 2>&1; then
+    if (( $# > 1 )); then
+      echo_error "Requirement [ $2 ] unfullfilled."
+    fi
+    exit 1
+  fi
+}
+
+require_path () {
+  # exit if first argument path does not exist as correct type
+  if [[ ! "$1" ]]; then
+    if (( $# > 1 )); then
+      echo_error "Requirement [ $2 ] unfullfilled."
+    fi
+    exit 1
+  fi
+}
+
+if_cmd_do () {
+  # if first argument command has successful exit then do second
+  if "$1" > /dev/null 2>&1; then
+    do_or_exit "$2"
+  fi
+}
+
+if_path_do () {
+  # if first argument yields successful test then do second
+  if [[ "$1" ]]; then
+    do_or_exit "$2"
+  fi
+}
 
 
 #
-# DOTFILES
+# SCRIPT
 #
 
-
-if [[ ! -d "${DOTDIR}" ]]; then
-  git clone git://github.com/"${DOTFILE_GIT_REPO}" "${DOTFILE_DIR}" || \
-    { printf "A problem occured while cloning the dotfiles repository." >&2; \
-      exit 1; }
-fi
+# Run this script with superuser privileges - BE CAREFUL!
+# This is necessary for some of these actions
+run_with_sudo "$@"
 
 
-# Save any existing dotfiles and then sym-link from DOTFILE_DIR to HOME
+# Install Git and Curl via apt-get
+do_or_exit "apt-get update"
+do_or_exit "apt-get install git"
+do_or_exit "apt-get install curl"
+
+# Clone dotfiles repository if necessary and link dotfiles to $HOME
+require_cmd "which git" "Git installed"
+if_path_do "! -d ${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
 for dotfile in "$DOTFILE_DIR/*"; do
-  if [[ -f "${HOME}/.${dotfile}" ]]; then
-    mv "${HOME}/.${dotfile}" "${HOME}/.${dotfile}.old" || \
-      { printf "A problem occured while saving pre-existing dotfiles." >&2; \
-        exit 1; }
-  fi
-  if [[ -f "${DOTFILE_DIR}/${dotfile}" ]]; then
-    ln -s "${DOTFILE_DIR}/${dotfile}" "${HOME}/.${dotfile}" || \
-      { printf "A problem occured while linking dotfiles to ${HOME}." >&2; \
-        exit 1; }
-  fi
+  if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
+  if_path_do "-f ${DOTFILE_DIR}/${dotfile}" "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME}/.${dotfile}"
 done
 
+# Install applications via apt-get
+do_or_exit "apt-get update"
+do_or_exit "apt-get upgrade"
+if_path_do "-x ${PKGFILE}" "source ${PKGFILE}"
+do_or_exit "apt-get clean"
+
+# Install zsh-history-substring-search
+do_or_exit "curl - fsSL --create-dirs --output ${ZSH_HISTORY_SUBSTRING_SEARCH_PATH}/${ZSH_FILE} ${ZSH_HISTORY_SUBSTRING_SEARCH_URL}" 
+
+# Change login shell to (Homebrew installed) Z Shell
+require_path "-h ${ZSH_PATH}" "Z Shell installed"
+if_cmd_do "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | tee -a /etc/shells"
+do_or_exit "chsh -s ${ZSH_PATH} ${USER}"
+
+# Install Vundle and use it to install Vim plugins
+require_cmd "which git" "Git installed"
+require_cmd "which vim" "Vim installed"
+if_path_do "! -d ${VUNDLE_PATH}" "git clone git://github.com/gmarik/Vundle.vim.git ${VUNDLE_PATH}"
+do_or_exit "vim +PluginInstall +qall"
 
 exit 0

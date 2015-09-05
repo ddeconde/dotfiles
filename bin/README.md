@@ -273,6 +273,18 @@ In **Adium > Preferences...**:
 
 ### Little Snitch
 
+[Little Snitch](https://www.obdev.at/products/littlesnitch/index.html)
+is an _outgoing_ application firewall. It monitors and can block
+outgoing network connections on a process by process basis with rules
+that can be configured easily during use to block or allow connections
+for particular process, address, port combinations. These features make
+it a critical privacy tool.
+
+#### Run the Little Snitch Installer
+
+Homebrew-cask installs the Little Snitch installer, but to complete the
+installation this installer must be run manually.
+
 #### Add License
 
 1. Choose **Open Little Snitch Preferences...** from the Little Snitch
@@ -285,6 +297,10 @@ In **Adium > Preferences...**:
 Set rules to maximum restrictiveness -- block _all_ by default.
 
 ### 1Password
+
+[1Password](https://agilebits.com/onepassword/mac) is a password
+generation and management application that makes use of many different
+strong passwords easy.
 
 #### Add License
 
@@ -324,6 +340,16 @@ should be obtained from your VPN provider.
 2. ...
 
 #### ...
+
+### Mail.app
+
+### Calendar.app
+
+### Reminders.app
+
+### Contacts.app
+
+### TextEdit.app
 
 ### F.lux
 
