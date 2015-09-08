@@ -3,7 +3,10 @@
 ### Begin Homebrew commands ###
 
 # Installations via BREW
+
 # brew install zsh-completions
+# brew install mutt ??
+# brew install profanity
 # brew install coreutils
 
 # Enable easy brewing of duplicate utilities
@@ -26,7 +29,7 @@ packages=(
 
 # Install packages via brew
 for package in "${packages[@]}"; do
-  brew install "${package}"
+  brew install ${package}
 done
 
 # Install Cask so that Homebrew can also install OS X Applications
@@ -35,6 +38,7 @@ brew install caskroom/cask/brew-cask
 # Installations via BREW CASK
 
 # brew cask install fantastical
+# brew cask install gas-mask
 # brew cask install ghc
 # brew cask install arq
 # brew cask install torbrowser
@@ -68,7 +72,7 @@ applications=(
 
 # Install applications via brew cask
 for application in "${applications[@]}"; do
-  brew cask install "${application}"
+  brew cask install ${application}
 done
 
 exit 0

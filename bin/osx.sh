@@ -22,18 +22,19 @@
 #
 
 # The paths of the dotfiles directories
-DOTFILE_DIR="${HOME}/.dotfiles"
+HOME_DIR="$(cd ~ && pwd)"
+DOTFILE_DIR="${HOME_DIR}/.dotfiles"
 DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
 BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
 
 ZSH_PATH="/usr/local/bin/zsh"
-COLORSCHEMES_PATH="${HOME}/.colorschemes"
-VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
+COLORSCHEMES_PATH="${HOME_DIR}/.colorschemes"
+VUNDLE_PATH="${HOME_DIR}/.vim/bundle/Vundle.vim"
 README="${DOTFILE_BIN_DIR}/README.md"
 
-SYSTEM_NAME="${1:-default_hostname}"
+SYSTEM_NAME="${1?"Please provide a host name as argument."}"
 
 
 ## FUNCTIONS
@@ -55,7 +56,7 @@ echo_error () {
 
 do_or_exit () {
   # execute first argument command with success or exit
-  "$@"
+  $@
   retval=$?
   if (( $retval != 0 )); then
     echo_error "[ $@ ] failed."
@@ -65,7 +66,7 @@ do_or_exit () {
 
 require_cmd () {
   # exit if first argument command does not succeed
-  if ! "$1" > /dev/null 2>&1; then
+  if ! $1 > /dev/null 2>&1; then
     if (( $# > 1 )); then
       echo_error "Requirement [ $2 ] unfullfilled."
     fi
@@ -85,7 +86,7 @@ require_path () {
 
 if_cmd_do () {
   # if first argument command has successful exit then do second
-  if "$1" > /dev/null 2>&1; then
+  if $1 > /dev/null 2>&1; then
     do_or_exit "$2"
   fi
 }
@@ -97,6 +98,11 @@ if_path_do () {
   fi
 }
 
+if_dir_empty_do () {
+  if [[ -d $1 ]] && [[ ! "$(ls -A $1)" ]]; then
+    do_or_exit "$2"
+  fi
+}
 
 ## SCRIPT
 
@@ -105,9 +111,9 @@ if_path_do () {
 run_with_sudo "$@"
 
 # Set the system name
-scutil --set ComputerName ${SYSTEM_NAME}
-scutil --set LocalHostName ${SYSTEM_NAME}
-scutil --set HostnameName ${SYSTEM_NAME}
+do_or_exit "scutil --set ComputerName ${SYSTEM_NAME}"
+do_or_exit "scutil --set LocalHostName ${SYSTEM_NAME}"
+do_or_exit "scutil --set HostnameName ${SYSTEM_NAME}"
 
 # Install Xcode Command Line Tools
 if_cmd_do "! xcode-select --print-path" "xcode-select --install"
@@ -122,7 +128,10 @@ do_or_exit "brew install git"
 
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
 require_cmd "which git" "Git installed"
-if_path_do "! -d ${DOTDIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+# if_path_do "! -d ${DOTFILE_DIR}" "mkdir -p ${DOTFILE_DIR}"
+# require_path "-d ${DOTFILE_DIR}"
+# if_dir_empty_do "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+if_path_do "! -d ${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
 for dotfile in "$DOTFILE_DIR/*"; do
   if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
   if_path_do "-f ${DOTFILE_DIR}/${dotfile}" "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME}/.${dotfile}"
@@ -143,6 +152,9 @@ do_or_exit "chsh -s ${ZSH_PATH} ${USER}"
 
 # Download Solarized colorscheme
 require_cmd "which git" "Git installed"
+# if_path_do "! -d ${COLORSCHEMES_PATH}" "mkdir -p ${COLORSCHEMES_PATH}"
+# require_path "-d ${COLORSCHEMES_PATH}"
+# if_dir_empty_do "${COLORSCHEMES_PATH}" "git clone git://github.com/altercation/solarized.git ${COLORSCHEMES_PATH}"
 if_path_do "! -d ${COLORSCHEMES_PATH}" "git clone git://github.com/altercation/solarized.git ${COLORSCHEMES_PATH}"
 printf "Solarized color scheme files are in ${COLORSCHEMES_PATH}\n"
 
@@ -153,9 +165,9 @@ if_path_do "! -d ${VUNDLE_PATH}" "git clone git://github.com/gmarik/Vundle.vim.g
 do_or_exit "vim +PluginInstall +qall"
 
 # Setup Vagrant
-require_cmd "which vagrant" "Vagrant installed"
-if_cmd_do "! vagrant plugin list | grep -q vagrant-vbguest" "vagrant plugin install vagrant-vbguest"
-do_or_exit "vagrant init minimal/jessie64"
+# require_cmd "which vagrant" "Vagrant installed"
+# if_cmd_do "! vagrant plugin list | grep -q vagrant-vbguest" "vagrant plugin install vagrant-vbguest"
+# do_or_exit "vagrant init minimal/jessie64"
 
 # Reminder of where the iTerm2 preferences file is
 printf "Reminder: set iTerm2 -> Preferences -> General to use ${DOTFILE_BIN_DIR}/iterm2.plist\n"

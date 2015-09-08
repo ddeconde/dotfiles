@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-USER_HOME=${HOME}
+HOME_DIR="$(cd ~ && pwd)"
+SYS_NAME="${1?"Please provide a host name as argument."}"
 
 run_with_sudo () {
   # run this script with superuser privileges via exec sudo
@@ -41,6 +42,36 @@ require_cmd () {
   fi
 }
 
+require_path () {
+  # exit if first argument path does not exist as correct type
+  if [[ ! "$1" ]]; then
+    if (( $# > 1 )); then
+      echo_error "Requirement [ $2 ] unfullfilled."
+    fi
+    exit 1
+  fi
+}
+
+if_cmd_do () {
+  # if first argument command has successful exit then do second
+  if $1 > /dev/null 2>&1; then
+    do_or_exit "$2"
+  fi
+}
+
+if_path_do () {
+  # if first argument yields successful test then do second
+  if [[ $1 ]]; then
+    do_or_exit "$2"
+  fi
+}
+
+if_dir_empty_do () {
+  if [[ -d $1 ]] && [[ ! "$(ls -A $1)" ]]; then
+    do_or_exit "$2"
+  fi
+}
+
 echo $(id -u)
 run_with_sudo "$@"
 cd ~
@@ -52,10 +83,14 @@ cd ~
 # echo ${USER_NAME}
 # echo $PATH_TEST
 # cd "${PATH_TEST}"
-whoami
-PATH_TEST=$(pwd)/Desktop
-echo $PATH_TEST
-echo "$@"
+# whoami
+# PATH_TEST=$(pwd)/Desktop
+# echo $PATH_TEST
+# echo "$@"
+echo $HOME_DIR
 require_cmd "which brew" "Homebrew installed"
-do_or_exit "brew list"
+# require_path "-d ${PATH_TEST}" "${PATH_TEST} directory exists"
+# do_or_exit "brew list"
+# if_cmd_do "which gitt" "ls -l"
+if_dir_empty_do "$(pwd)/tst" "brew list"
 

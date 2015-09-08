@@ -87,7 +87,7 @@ require_cmd () {
 
 require_path () {
   # exit if first argument path does not exist as correct type
-  if [[ ! $1 ]]; then
+  if [[ ! "$1" ]]; then
     if (( $# > 1 )); then
       echo_error "Requirement [ $2 ] unfullfilled."
     fi
@@ -104,7 +104,7 @@ if_cmd_do () {
 
 if_path_do () {
   # if first argument yields successful test then do second
-  if [[ $1 ]]; then
+  if [[ "$1" ]]; then
     do_or_exit "$2"
   fi
 }
