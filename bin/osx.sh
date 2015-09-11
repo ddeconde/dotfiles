@@ -37,7 +37,9 @@ README="${DOTFILE_BIN_DIR}/README.md"
 SYSTEM_NAME="${1?"Please provide a host name as argument."}"
 
 
-## FUNCTIONS
+#
+# FUNCTIONS
+#
 
 run_with_sudo () {
   # run this script with superuser privileges via exec sudo
@@ -104,7 +106,10 @@ if_dir_empty_do () {
   fi
 }
 
-## SCRIPT
+
+#
+# SCRIPT
+#
 
 # Run this script with superuser privileges - BE CAREFUL!
 # This is necessary for some of these actions
