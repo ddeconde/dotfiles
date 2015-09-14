@@ -13,7 +13,7 @@
 # (necessary for rsync)
 brew tap homebrew/dupes
 
-# git is left out as it will always be installed outside of brew.sh
+# git is excluded as it will always be installed outside of brew.sh
 packages=(
   zsh
   bash
@@ -55,9 +55,9 @@ applications=(
   macvim
   mactex
   firefox
-  virtualbox
-  virtualbox-extension-pack
-  vagrant
+  # virtualbox
+  # virtualbox-extension-pack
+  # vagrant
   vlc
   gpgtools
   adium
@@ -65,7 +65,7 @@ applications=(
   # proprietary
   little-snitch
   onepassword
-  things
+  # things
   viscosity
   flux
 )
