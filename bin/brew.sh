@@ -42,6 +42,7 @@ brew install caskroom/cask/brew-cask
 # brew cask install ghc
 # brew cask install arq
 # brew cask install torbrowser
+# brew cask install dash
 
 # brew cask install launchcontrol
 # brew cask install things

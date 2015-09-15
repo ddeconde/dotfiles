@@ -17,7 +17,7 @@ filetype off  " required for Vundle
 set rtp+=~/.vim/bundle/Vundle.vim  " required for Vundle
 call vundle#begin()  " required for Vundle
 
-Plugin 'gmarik/Vundle.vim'  " let Vundle manage Vundle; required for Vundle
+Plugin 'VundleVim/Vundle.vim'  " let Vundle manage Vundle; required for Vundle
 
 " GitHub-served plugins managed by Vundle are specified in the format:
 " Plugin 'github_account/repository_name'
