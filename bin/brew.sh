@@ -46,6 +46,8 @@ brew install caskroom/cask/brew-cask
 # brew cask install launchcontrol
 # brew cask install things
 # brew cask install launchbar
+# brew cask install hosts
+# brew cask install vmware-fusion
 
 applications=(
   # open source
