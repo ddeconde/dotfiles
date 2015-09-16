@@ -49,9 +49,10 @@ brew install caskroom/cask/brew-cask
 # brew cask install launchbar
 # brew cask install hosts
 # brew cask install vmware-fusion
+# brew cask install flux
 
 applications=(
-  # open source
+  # open-source
   iterm2
   spectacle
   the-unarchiver
@@ -70,7 +71,6 @@ applications=(
   onepassword
   # things
   viscosity
-  flux
 )
 
 # Install applications via brew cask
