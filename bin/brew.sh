@@ -52,25 +52,22 @@ brew install caskroom/cask/brew-cask
 # brew cask install flux
 
 applications=(
-  # open-source
   iterm2
   spectacle
   the-unarchiver
   macvim
   mactex
   firefox
-  # virtualbox
-  # virtualbox-extension-pack
-  # vagrant
   vlc
   gpgtools
   adium
   transmission
-  # proprietary
   little-snitch
+  launchbar
   onepassword
-  # things
   viscosity
+  vmware-fusion
+  dash
 )
 
 # Install applications via brew cask
