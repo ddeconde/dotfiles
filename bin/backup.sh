@@ -1,37 +1,29 @@
 #!/bin/env bash
 
-EXCLUDE=${HOME}/.rsync_exclude
-BACKUP_PATH="/Backups"
-DTS=$(date -u "+%Y%m%d-%H%M%S")
-DATE_TIME=$(date "+%FT%T%z")
-HOSTNAME=$(hostname)
-SOURCE="${HOME}"
-PREVIOUS_BACKUP="${BACKUP_PATH}/current-${HOSTNAME}-${SOURCE}-backup"
-TARGET="${BACKUP_PATH}/${DTS}-${HOSTNAME}-${SOURCE}-backup"
-TARGET_HOST="localhost"
-TARGET_USER="${USER}"
-RSYNC_PATH="/usr/local/bin/rsync"
 
-${RSYNC_PATH} \
-  --archive \
-  --verbose \
-  --xattrs \
-  --hard-links \
-  --acls \
-  --progress \
-  --human-readable \
-  --one-file-system \
-  --delete \
-  --delete-excluded \
-  --exclude-from=${EXCLUDE} \
-  --link-dest=${PREVIOUS_BACKUP} \
-  ${SOURCE} ${TARGET}
+#
+# Constants
+#
 
-# Remove the previous backup directory as the new backup has hard links to it
-rm -f ${PREVIOUS_BACKUP}
-# Restablish the "current backup" symbolic link pointing to the latest backup
-ln -s ${TARGET} ${PREVIOUS_BACKUP}
+readonly EXCLUDE=${HOME}/.backup/exclude
+readonly BACKUP_PATH="/Backups"
+readonly DTS=$(date -u "+%Y%m%d-%H%M%S")
+readonly DATE_TIME=$(date "+%FT%T%z")
+readonly HOSTNAME=$(hostname -s)
+readonly SOURCE="${HOME}"
+readonly SOURCE_NAME="$(basename ${HOME})"
+readonly PREVIOUS="${BACKUP_PATH}/current-${HOSTNAME}-${SOURCE_NAME}-backup"
+readonly TARGET="${BACKUP_PATH}/${DTS}-${HOSTNAME}-${SOURCE_NAME}-backup"
+readonly TARGET_HOST="localhost"
+readonly TARGET_USER="${USER}"
+readonly RSYNC_PATH="/usr/local/bin/rsync"
+readonly MAX_LOG_LENGTH=1000
+readonly TRUNC_LOG_LENGTH=10
 
+
+#
+# Functions
+#
 
 echo_error () {
   # conveniently print errors to stderr
@@ -68,18 +60,63 @@ if_path_do () {
 }
 
 backup_log () {
-  # write to a logfile
-  if_path_do "! -d $(dirname ${LOG_PATH})" "mkdir -p $(dirname ${LOG_PATH})"
-  cat "${DATE_TIME} ${HOSTNAME} ${1}" >> "${LOG_PATH}"
+  # write to a logfile if it exists; stay quiet if no log file exists
+  local log_line="${DATE_TIME} ${HOSTNAME} ${1}"
+  if_path_do "-w ${LOG_PATH}" "echo ${log_line} >> ${LOG_PATH}"
 }
 
+trim_backup_log () {
+  # truncate the backup log file so it never gets too long
+  if [[ $(wc -l < ${LOG_PATH}) -gt ${MAX_LOG_LENGTH} ]]; then
+    tail -n ${TRUNC_LOG_LENGTH} ${LOG_PATH} > ${LOG_PATH}.tmp && \
+    cat ${LOG_PATH}.tmp > ${LOG_PATH} && \
+    rm ${LOG_PATH}.tmp || \
+    { echo_error "log file truncation of ${LOG_PATH} failed"; exit 1; }
+  fi
+}
+
+
+#
+# Script
+#
+
+# # Validate sudo privileges first so it can be used with rsync
+# printf "Superuser privileges required.\n"
+# sudo -v
+#
+# Too many sudo-requring commands, just use run_as_sudo instead
+
+# Default rsync is out of date and lacks some necessary options
 require_path "-x ${RSYNC_PATH}" "updated rsync found"
 
-# make certain target drive is mounted
-require_path "-e ${TARGET}" "backup drive mounted"
-
-# verify that source is readable
+# Verify that source is readable
 require_path "-r ${SOURCE}" "source directory readable"
 
-# verify that target is writable
+# Verify that target is available and writable
 require_path_ "-w ${TARGET}" "target directory writable"
+
+# Use rsync to make a backup with '--link-dest' used to save space
+do_or_exit "${RSYNC_PATH} \
+  --archive \
+  --verbose \
+  --xattrs \
+  --hard-links \
+  --acls \
+  --progress \
+  --human-readable \
+  --one-file-system \
+  --delete \
+  --delete-excluded \
+  --exclude-from=${EXCLUDE} \
+  --link-dest=${PREVIOUS} \
+  ${SOURCE} ${TARGET}"
+
+# Remove the previous backup directory as the new backup has hard links to it
+do_or_exit "rm -f ${PREVIOUS}"
+# Restablish the "current backup" symbolic link pointing to the latest backup
+do_or_exit "ln -s ${TARGET} ${PREVIOUS}"
+# Log successful backup
+backup_log "SUCCESS: backup of ${SOURCE} to ${TARGET} completed"
+
+# Truncate the logfile if necessary
+if_path_do "-w ${LOG_PATH}" "trim_backup_log"

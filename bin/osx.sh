@@ -22,19 +22,19 @@
 #
 
 # The paths of the dotfiles directories
-HOME_DIR="$(cd ~ && pwd)"
-DOTFILE_DIR="${HOME_DIR}/.dotfiles"
-DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
-DOTFILE_GIT_REPO="https://github.com/ddeconde/dotfiles.git"
+readonly HOME_DIR="$(cd ~ && pwd)"
+readonly DOTFILE_DIR="${HOME_DIR}/.dotfiles"
+readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
+readonly DOTFILE_GIT_REPO="https://github.com/ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
-BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
+readonly BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
 
-ZSH_PATH="/usr/local/bin/zsh"
-COLORSCHEMES_PATH="${HOME_DIR}/.colorschemes"
-VUNDLE_PATH="${HOME_DIR}/.vim/bundle/Vundle.vim"
-README="${DOTFILE_BIN_DIR}/README.md"
+readonly ZSH_PATH="/usr/local/bin/zsh"
+readonly COLORSCHEMES_PATH="${HOME_DIR}/.colorschemes"
+readonly VUNDLE_PATH="${HOME_DIR}/.vim/bundle/Vundle.vim"
+readonly README="${DOTFILE_BIN_DIR}/README.md"
 
-SYSTEM_NAME="${1?"Please provide a host name as argument."}"
+readonly SYSTEM_NAME="${1?"Please provide a host name as argument."}"
 
 
 #
