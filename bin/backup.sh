@@ -10,18 +10,27 @@ PREVIOUS_BACKUP="${BACKUP_PATH}/current-${HOSTNAME}-${SOURCE}-backup"
 TARGET="${BACKUP_PATH}/${DTS}-${HOSTNAME}-${SOURCE}-backup"
 TARGET_HOST="localhost"
 TARGET_USER="${USER}"
+RSYNC_PATH="/usr/local/bin/rsync"
 
-rsync -ahvxPE \
+${RSYNC_PATH} \
+  --archive \
+  --verbose \
+  --xattrs \
+  --hard-links \
+  --acls \
   --progress \
+  --human-readable \
+  --one-file-system \
   --delete \
   --delete-excluded \
   --exclude-from=${EXCLUDE} \
   --link-dest=${PREVIOUS_BACKUP} \
-  ${SOURCE} "${TARGET}-partial" \
-  && ssh "${TARGET_USER}@${TARGET_HOST}" \
-  "mv ${TARGET}-partial ${TARGET} \
-  && rm -f ${PREVIOUS_BACKUP} \
-  && ln -s ${TARGET} ${PREVIOUS_BACKUP}"
+  ${SOURCE} ${TARGET}
+
+# Remove the previous backup directory as the new backup has hard links to it
+rm -f ${PREVIOUS_BACKUP}
+# Restablish the "current backup" symbolic link pointing to the latest backup
+ln -s ${TARGET} ${PREVIOUS_BACKUP}
 
 
 echo_error () {
@@ -64,11 +73,13 @@ backup_log () {
   cat "${DATE_TIME} ${HOSTNAME} ${1}" >> "${LOG_PATH}"
 }
 
+require_path "-x ${RSYNC_PATH}" "updated rsync found"
+
 # make certain target drive is mounted
-require_path "! -e ${TARGET}" "backup drive mounted"
+require_path "-e ${TARGET}" "backup drive mounted"
 
 # verify that source is readable
-require_path "! -r ${SOURCE}" "source directory readable"
+require_path "-r ${SOURCE}" "source directory readable"
 
 # verify that target is writable
-require_path_ "! -w ${TARGET}" "target directory writable"
+require_path_ "-w ${TARGET}" "target directory writable"
