@@ -5,7 +5,8 @@ are meant to prescribe manual configuration steps to be taken in
 addition to the automated actions included in the `osx.sh` script.
 
 ---
-Go straight to the [setup instructions](#setup-instructions).
+Go straight to the [setup instructions](#setup).
+Go straight to the [maintenance instructions](#maintenance).
 ---
 
 ## Philosophy
@@ -27,15 +28,15 @@ useful to remember:
 - Simplicity first, capacity second (maintenance is the highest cost).
 - The greater the historical stability of a component, the greater the
   investment in automated configuration (cf. vim, zsh vs. OS X, Firefox).
-- Abide defaults whenever possible, but configure when necessary.
+- Countenance defaults whenever possible, but configure when necessary.
 - Security and privacy to the extent they are possible, usability to the
   extent it is necessary.
 
-Some immediate corollaries:
+Some corollary tenets:
 
 - Use Mac hardware and software for direct interface use, BSD/Linux
   otherwise.
-- Use as little software as possible.
+- Use as little hardware and software as possible.
 - Prefer programs that do one thing well.
 - When possible use software that still functions without a network
   connection.
@@ -73,7 +74,7 @@ The steps below were tested on **OS X Mountain Lion**.
 - [Projects folder](#projects-folder)
 - [Apps](#apps)
 
-## Setup Instructions
+## Setup
 
 On first boot, hold the `Command` `Option` `P` `R` keys to clean the
 NVRAM. Wait for the system to reboot once.
@@ -395,12 +396,16 @@ backed up data
 ### Backup
 
 The script `backup` is based around the `rsync` utility and should be
-run daily. The **Time Machine** application may be used in addition. On
+run daily. The **Time Machine** application should be used in addition. On
 a weekly basis `backup` should be used to place backups in one
 additional physical location (like the workplace).
 
+#### backup.sh
+
 ```
 ```
+
+#### Time Machine
 
 ### System Updates
 
