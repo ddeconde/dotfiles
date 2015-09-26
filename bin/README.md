@@ -242,6 +242,17 @@ Scroll down the page and download the latest version. Unzip the archive. In it y
 - In **iTerm2 Preferences**, under **Profiles** and **Colors**, go to **Load Presets... > Import...**, find and open the two **.itermcolors** files we downloaded.
 - Go back to **Load Presets...** and select **Solarized Dark** to activate it. Voila!
 
+### VMware Fusion
+
+[VMware Fusion](http://www.vmware.com/products/fusion) is installed by
+Homebrew, and used to run instances of Linux or BSD to use as
+development environments and test installations.
+
+1. Download install images for a desired virtual machine OS 
+2. Use **Easy Install** to install VMware Tools in the new virtual machine.
+3. Save a snapshot.
+4. Load and run the appropriate bootstrap script on the virtual machine.
+
 ### Vagrant
 
 [Vagrant](https://www.vagrantup.com/) and its dependencies
@@ -333,16 +344,15 @@ should be obtained from your VPN provider.
    File...** select the **openvpn** folder and **Open** it.
 2. Click **OK** after the connection import confirmation.
 
-### Things
-
-#### Add License
-
-1. Choose **Things > License...** from the menu bar.
-2. ...
-
-#### ...
-
 ### Mail.app
+
+First set up any accounts.
+
+In **Preferences...**:
+- Junk Mail > When junk mail arrives > Move it to the Junk mailbox
+- Viewing > Do not load remote content in messages
+- Viewing > Do not use Smart Addresses
+- Composing > Message Format > Plain Text
 
 ### Calendar.app
 
@@ -365,6 +375,10 @@ In **Preferences...** from the status icon menu in the menu bar:
 Sensitive material includes encryption keys, personal data, and other
 files that cannot be hosted publicly for obvious reasons. These must be
 backed up locally and restored separately.
+
+Copy a backup of the `~/private` directory into your home directory and
+then run the `private.sh` script to link these files to the appropriate
+places.
 
 #### Identifiers
 
