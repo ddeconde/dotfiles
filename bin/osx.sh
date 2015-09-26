@@ -100,12 +100,13 @@ if_path_do () {
   fi
 }
 
-if_dir_empty_do () {
-  if [[ -d $1 ]] && [[ ! "$(ls -A $1)" ]]; then
-    do_or_exit "$2"
-  fi
+link_files () {
+  # symbolically link all files in first argument to second argument in $HOME
+  for src_file in "${1}/*"; do
+      if_path_do "-f ${2}/.${src_file}" "mv ${2}/.${src_file} ${2}/.${src_file}.old"
+    do_or_exit "ln -s ${1}/${src_file} ${2}/${src_file}"
+  done
 }
-
 
 #
 # SCRIPT
@@ -130,17 +131,10 @@ if_cmd_do "! which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.co
 # Install Git via Homebrew
 require_cmd "which brew" "Homebrew installed"
 do_or_exit "brew install git"
+require_cmd "which git" "Git installed"
 
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
-require_cmd "which git" "Git installed"
-# if_path_do "! -d ${DOTFILE_DIR}" "mkdir -p ${DOTFILE_DIR}"
-# require_path "-d ${DOTFILE_DIR}"
-# if_dir_empty_do "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
-if_path_do "! -d ${DOTFILE_DIR}" "git clone ${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
-for dotfile in "$DOTFILE_DIR/*"; do
-  if_path_do "-f ${HOME_DIR}/.${dotfile}" "mv ${HOME_DIR}/.${dotfile} ${HOME_DIR}/.${dotfile}.old"
-  do_or_exit "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME_DIR}/.${dotfile}"
-done
+link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 
 # Install applications via Homebrew
 require_cmd "which brew" "Homebrew installed"
@@ -157,9 +151,6 @@ do_or_exit "chsh -s ${ZSH_PATH} ${USER}"
 
 # Download Solarized colorscheme
 require_cmd "which git" "Git installed"
-# if_path_do "! -d ${COLORSCHEMES_PATH}" "mkdir -p ${COLORSCHEMES_PATH}"
-# require_path "-d ${COLORSCHEMES_PATH}"
-# if_dir_empty_do "${COLORSCHEMES_PATH}" "git clone git://github.com/altercation/solarized.git ${COLORSCHEMES_PATH}"
 if_path_do "! -d ${COLORSCHEMES_PATH}" "git clone https://github.com/altercation/solarized.git ${COLORSCHEMES_PATH}"
 printf "Solarized color scheme files are in ${COLORSCHEMES_PATH}\n"
 
