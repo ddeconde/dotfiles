@@ -27,7 +27,7 @@ readonly DOTFILE_DIR="${HOME_DIR}/.dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_GIT_REPO="https://github.com/ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
-readonly BREWFILE="${DOTFILE_BIN_DIR}/brew.sh"
+readonly BREWFILE="${DOTFILE_BIN_DIR}/Brewfile"
 
 readonly ZSH_PATH="/usr/local/bin/zsh"
 readonly COLORSCHEMES_PATH="${HOME_DIR}/.colorschemes"

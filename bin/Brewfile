@@ -1,74 +1,78 @@
-#
-# Install command-line tools using Homebrew
-# Usage: `brew bundle Brewfile`
-#
+#!/usr/bin/env bash
 
+### Begin Homebrew commands ###
 
-# First be sure to execute the next line in the terminal to install Homebrew:
-# ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# Installations via BREW
 
-# Just in case this is not a new clean install:
-update # make certain that Homebrew is up to date
-upgrade # upgrade any already installed formulae
+# brew install zsh-completions
+# brew install mutt ??
+# brew install profanity
+# brew install coreutils
 
-# In case particular versions (rather than most up-to-date) are required
-# uncomment the following line and then just 'brew install <formula>' or
-# in the case of a conflict 'brew install homebrew/versions/<formula>':
-# brew tap homebrew/versions
+# Enable easy brewing of duplicate utilities
+# (necessary for rsync)
+brew tap homebrew/dupes
 
-# In case a more recent/bug-fixed version of an included OS X utility is
-# require uncomment the following line and then 'brew install <formula>'
-# or in the case of a conflict 'brew install homebrew/dupes/<formula>':
-# brew tap homebrew/dupes
+# git is excluded as it will always be installed outside of brew.sh
+packages=(
+  zsh
+  bash
+  vim
+  zsh-history-substring-search
+  tmux
+  the_silver_searcher
+  ctags-exuberant
+  rsync
+  curl
+  lynx
+)
 
-# Install brew formulae
-install vim
-install zsh
-install zsh-history-substring-search
-# install zsh-completions
-install bash
-# install bash-completions
-install git
-# install git-flow
-install tmux
-install the_silver_searcher
-install ctags-exuberant
-install pyenv
-install pyenv-virtualenv
-install rbenv
-install ruby-build
-# install tree
+# Install packages via brew
+for package in "${packages[@]}"; do
+  brew install ${package}
+done
 
-# brew install scala sbt
+# Install Cask so that Homebrew can also install OS X Applications
+brew install caskroom/cask/brew-cask
 
-# Install Cask
-install caskroom/cask/brew-cask
+# Installations via BREW CASK
 
-# Install Casks
-cask install iterm2
-cask install spectacle
-cask install mactex
-cask install macvim
-cask install the-unarchiver
-cask install firefox
-# cask install chromium
-# cask install adium
-# cask install vlc
-# cask install alfred
-cask install little-snitch
-cask install things
-cask install onepassword
-cask install dash
+# brew cask install fantastical
+# brew cask install gas-mask
+# brew cask install ghc
+# brew cask install arq
+# brew cask install torbrowser
+# brew cask install dash
 
-# cask install viscosity
-# cask install shortcat
-# cask install cheatsheet
+# brew cask install launchcontrol
+# brew cask install things
+# brew cask install launchbar
+# brew cask install hosts
+# brew cask install vmware-fusion
+# brew cask install flux
 
-cask install ghc
-# cask install java
+applications=(
+  iterm2
+  spectacle
+  the-unarchiver
+  macvim
+  mactex
+  firefox
+  vlc
+  gpgtools
+  adium
+  transmission
+  little-snitch
+  launchbar
+  onepassword
+  viscosity
+  vmware-fusion
+  dash
+)
 
-cask install virtualbox
-cask install vagrant
+# Install applications via brew cask
+for application in "${applications[@]}"; do
+  brew cask install ${application}
+done
 
-# Remove out-dated versions from the cellar
- cleanup
+exit 0

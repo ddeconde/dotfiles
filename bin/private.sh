@@ -11,6 +11,10 @@
 # the locations where applications expect them to be found.
 
 
+#
+# Constants
+#
+
 readonly HOME_DIR="$(cd ~ && pwd)"
 readonly PRIVATE_DIR="${HOME_DIR}/private"
 readonly SSH_DIR=".ssh"
@@ -19,6 +23,9 @@ readonly AWS_DIR=".aws"
 readonly LOCAL_DIR=".local"
 readonly PRIVATE_ETC="${PRIVATE_DIR}/etc"
 
+#
+# Functions
+#
 
 do_or_exit () {
   # execute argument command with success or exit

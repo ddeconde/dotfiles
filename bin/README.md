@@ -245,13 +245,14 @@ Scroll down the page and download the latest version. Unzip the archive. In it y
 ### VMware Fusion
 
 [VMware Fusion](http://www.vmware.com/products/fusion) is installed by
-Homebrew, and used to run instances of Linux or BSD to use as
+Homebrew-cask, and used to run instances of Linux or BSD to use as
 development environments and test installations.
 
-1. Download install images for a desired virtual machine OS 
-2. Use **Easy Install** to install VMware Tools in the new virtual machine.
-3. Save a snapshot.
-4. Load and run the appropriate bootstrap script on the virtual machine.
+1. Download install images for a desired virtual machine OS.
+2. Open VMware Fusion.
+3. Use **Easy Install** to install VMware Tools in the new virtual machine.
+4. Save a snapshot.
+5. Load and run the appropriate bootstrap script on the virtual machine.
 
 ### Vagrant
 

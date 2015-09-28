@@ -6,14 +6,15 @@
 #
 
 readonly EXCLUDE=${HOME}/.backup/exclude
-readonly BACKUP_PATH="/Backups"
+readonly BACKUP_DRIVE=""
+readonly BACKUP_PATH="/Volumes/${BACKUP_DRIVE}/Backups/${HOSTNAME}"
 readonly DTS=$(date -u "+%Y%m%d-%H%M%S")
 readonly DATE_TIME=$(date "+%FT%T%z")
 readonly HOSTNAME=$(hostname -s)
 readonly SOURCE="${HOME}"
 readonly SOURCE_NAME="$(basename ${HOME})"
-readonly PREVIOUS="${BACKUP_PATH}/current-${HOSTNAME}-${SOURCE_NAME}-backup"
-readonly TARGET="${BACKUP_PATH}/${DTS}-${HOSTNAME}-${SOURCE_NAME}-backup"
+readonly PREVIOUS="${BACKUP_PATH}/${SOURCE_NAME}-current"
+readonly TARGET="${BACKUP_PATH}/${DTS}-${SOURCE_NAME}"
 readonly TARGET_HOST="localhost"
 readonly TARGET_USER="${USER}"
 readonly RSYNC_PATH="/usr/local/bin/rsync"

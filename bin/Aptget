@@ -5,7 +5,6 @@
 #
 
 packages=(
-  # base
   zsh
   bash
   vim
@@ -14,9 +13,9 @@ packages=(
   curl
   the_silver_searcher
   ctags-exuberant
-  # development
   build-essentials
   python-pip
+  haskell-platform
 )
 
 
