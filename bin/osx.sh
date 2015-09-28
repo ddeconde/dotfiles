@@ -25,12 +25,12 @@
 readonly HOME_DIR="$(cd ~ && pwd)"
 readonly DOTFILE_DIR="${HOME_DIR}/.dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
-readonly DOTFILE_GIT_REPO="https://github.com/ddeconde/dotfiles.git"
+readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
 readonly BREWFILE="${DOTFILE_BIN_DIR}/Brewfile"
-
 readonly ZSH_PATH="/usr/local/bin/zsh"
 readonly COLORSCHEMES_PATH="${HOME_DIR}/.colorschemes"
+
 readonly VUNDLE_PATH="${HOME_DIR}/.vim/bundle/Vundle.vim"
 readonly README="${DOTFILE_BIN_DIR}/README.md"
 
@@ -103,8 +103,8 @@ if_path_do () {
 link_files () {
   # symbolically link all files in first argument to second argument in $HOME
   for src_file in "${1}/*"; do
-      if_path_do "-f ${2}/.${src_file}" "mv ${2}/.${src_file} ${2}/.${src_file}.old"
-    do_or_exit "ln -s ${1}/${src_file} ${2}/${src_file}"
+    if_path_do "-e ${2}/.${src_file}" "mv ${2}/.${src_file} ${2}/.${src_file}.old"
+    if_path_do "-f ${1}/${src_file}" "ln -s ${1}/${src_file} ${2}/${src_file}"
   done
 }
 
@@ -134,6 +134,8 @@ do_or_exit "brew install git"
 require_cmd "which git" "Git installed"
 
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
+if_path_do "! -d ${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+require_path "-d ${DOTFILE_DIR}" "${DOTFILE_DIR} present"
 link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 
 # Install applications via Homebrew

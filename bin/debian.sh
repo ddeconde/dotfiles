@@ -25,25 +25,21 @@
 #
 
 # The paths of the dotfiles directories
-HOME_DIR="$(cd ~ && pwd)"
-DOTFILE_DIR="${HOME_DIR}/.dotfiles"
-DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
-DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
+readonly HOME_DIR="$(cd ~ && pwd)"
+readonly DOTFILE_DIR="${HOME_DIR}/.dotfiles"
+readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
+readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The name (path) of the brewfile script
-PKGFILE="${DOTFILE_BIN_DIR}/packages.sh"
+readonly PKGFILE="${DOTFILE_BIN_DIR}/Aptget"
+readonly ZSH_PATH="/usr/bin/zsh"
+readonly ZSH_USERS_REPO="https://raw.githubusercontent.com/zsh-users"
+readonly ZSH_HSS_BRANCH="zsh-history-substring-search/master"
+readonly ZSH_HSS_FILE="zsh-history-substring-search.zsh"
+readonly ZSH_HSS_URL="${ZSH_USERS_REPO}/${ZSH_HSS_BRANCH}/${ZSH_HSS_FILE}"
+readonly ZSH_HSS_PATH="/usr/local/opt/zsh-history-substring-search/${ZSH_HSS_FILE}"
 
-ZSH_PATH="/usr/bin/zsh"
-
-ZSH_USERS_REPO="https://raw.githubusercontent.com/zsh-users/"
-MASTER_BRANCH="zsh-history-substring-search/master/"
-ZSH_FILE="zsh-history-substring-search.zsh"
-ZSH_HISTORY_SUBSTRING_SEARCH_URL="${ZSH_USERS_REPO}${MASTER_BRANCH}${ZSH_FILE}"
-ZSH_HISTORY_SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
-
-VUNDLE_PATH="${HOME_DIR}/.vim/bundle/Vundle.vim"
-README="${DOTFILE_BIN_DIR}/README.md"
-
-USER_HOME=$
+ VUNDLE_PATH="${HOME_DIR}/.vim/bundle/Vundle.vim"
+ README="${DOTFILE_BIN_DIR}/README.md"
 
 
 #
@@ -109,6 +105,14 @@ if_path_do () {
   fi
 }
 
+link_files () {
+  # symbolically link all files in first argument to second argument in $HOME
+  for src_file in "${1}/*"; do
+    if_path_do "-e ${2}/.${src_file}" "mv ${2}/.${src_file} ${2}/.${src_file}.old"
+    if_path_do "-f ${1}/${src_file}" "ln -s ${1}/${src_file} ${2}/${src_file}"
+  done
+}
+
 
 #
 # SCRIPT
@@ -118,7 +122,6 @@ if_path_do () {
 # This is necessary for some of these actions
 run_with_sudo "$@"
 
-
 # Install Git and Curl via apt-get
 do_or_exit "apt-get update"
 do_or_exit "apt-get install git"
@@ -127,10 +130,12 @@ do_or_exit "apt-get install curl"
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
 require_cmd "which git" "Git installed"
 if_path_do "! -d ${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
-for dotfile in "$DOTFILE_DIR/*"; do
-  if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
-  if_path_do "-f ${DOTFILE_DIR}/${dotfile}" "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME}/.${dotfile}"
-done
+require_path "-d ${DOTFILE_DIR}" "${DOTFILE_DIR} present"
+link_files "${DOTFILE_DIR}" "${HOME_DIR}"
+# for dotfile in "$DOTFILE_DIR/*"; do
+#   if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
+#   if_path_do "-f ${DOTFILE_DIR}/${dotfile}" "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME}/.${dotfile}"
+# done
 
 # Install applications via apt-get
 do_or_exit "apt-get update"
@@ -139,7 +144,7 @@ if_path_do "-x ${PKGFILE}" "source ${PKGFILE}"
 do_or_exit "apt-get clean"
 
 # Install zsh-history-substring-search
-do_or_exit "curl - fsSL --create-dirs --output ${ZSH_HISTORY_SUBSTRING_SEARCH_PATH}/${ZSH_FILE} ${ZSH_HISTORY_SUBSTRING_SEARCH_URL}" 
+if_path_do "! -e ${ZSH_HSS_PATH}" "curl - fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
 # Change login shell to (Homebrew installed) Z Shell
 require_path "-h ${ZSH_PATH}" "Z Shell installed"
@@ -147,9 +152,9 @@ if_cmd_do "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | tee -a /etc/sh
 do_or_exit "chsh -s ${ZSH_PATH} ${USER}"
 
 # Install Vundle and use it to install Vim plugins
-require_cmd "which git" "Git installed"
-require_cmd "which vim" "Vim installed"
-if_path_do "! -d ${VUNDLE_PATH}" "git clone git://github.com/gmarik/Vundle.vim.git ${VUNDLE_PATH}"
-do_or_exit "vim +PluginInstall +qall"
+# require_cmd "which git" "Git installed"
+# require_cmd "which vim" "Vim installed"
+# if_path_do "! -d ${VUNDLE_PATH}" "git clone git://github.com/gmarik/Vundle.vim.git ${VUNDLE_PATH}"
+# do_or_exit "vim +PluginInstall +qall"
 
 exit 0
