@@ -108,7 +108,7 @@ if_path_do () {
 link_files () {
   # symbolically link all files in first argument to second argument in $HOME
   for src_file in "${1}/*"; do
-    if_path_do "-e ${2}/.${src_file}" "mv ${2}/.${src_file} ${2}/.${src_file}.old"
+    if_path_do "-e ${2}/${src_file}" "mv ${2}/${src_file} ${2}/${src_file}.old"
     if_path_do "-f ${1}/${src_file}" "ln -s ${1}/${src_file} ${2}/${src_file}"
   done
 }
@@ -121,6 +121,8 @@ link_files () {
 # Run this script with superuser privileges - BE CAREFUL!
 # This is necessary for some of these actions
 run_with_sudo "$@"
+
+echo $HOME_DIR
 
 # Install Git and Curl via apt-get
 do_or_exit "apt-get update"
