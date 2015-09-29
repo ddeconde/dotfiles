@@ -120,14 +120,15 @@ link_files () {
 
 # Run this script with superuser privileges - BE CAREFUL!
 # This is necessary for some of these actions
-run_with_sudo "$@"
+# run_with_sudo "$@"
+sudo -v
 
 echo $HOME_DIR
 
 # Install Git and Curl via apt-get
-do_or_exit "apt-get update"
-do_or_exit "apt-get install git"
-do_or_exit "apt-get install curl"
+# do_or_exit "sudo apt-get update"
+do_or_exit "sudo apt-get -y install git"
+do_or_exit "sudo apt-get -y install curl"
 
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
 require_cmd "which git" "Git installed"
@@ -140,17 +141,17 @@ link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # done
 
 # Install applications via apt-get
-do_or_exit "apt-get update"
-do_or_exit "apt-get upgrade"
-if_path_do "-x ${PKGFILE}" "source ${PKGFILE}"
-do_or_exit "apt-get clean"
+do_or_exit "sudo apt-get update"
+do_or_exit "sudo apt-get upgrade"
+if_path_do "-x ${PKGFILE}" "sudo source ${PKGFILE}"
+do_or_exit "sudo apt-get clean"
 
 # Install zsh-history-substring-search
 if_path_do "! -e ${ZSH_HSS_PATH}" "curl - fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
 # Change login shell to (Homebrew installed) Z Shell
 require_path "-h ${ZSH_PATH}" "Z Shell installed"
-if_cmd_do "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | tee -a /etc/shells"
+if_cmd_do "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
 do_or_exit "chsh -s ${ZSH_PATH} ${USER}"
 
 # Install Vundle and use it to install Vim plugins
