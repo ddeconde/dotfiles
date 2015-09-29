@@ -110,6 +110,7 @@ link_files () {
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
     printf "${base_name}\n"
+    printf "${src_file}"
     # if_path_do "-e ${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
     # if_path_do "-f ${src_file}" "ln -s ${src_file} ${2}/${base_name}"
   done
@@ -147,7 +148,7 @@ link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # do_or_exit "sudo apt-get clean"
 
 # Install zsh-history-substring-search
-if_path_do "! -e ${ZSH_HSS_PATH}" "curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
+if_path_do "! -e ${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
 # Change login shell to (Homebrew installed) Z Shell
 require_path "-h ${ZSH_PATH}" "Z Shell installed"
