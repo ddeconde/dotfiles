@@ -109,7 +109,7 @@ link_files () {
   # symbolically link all files in first argument to second argument in $HOME
   for src_file in ${1}/*; do
     base_name="$(basename ${scr_file})"
-    printf "${2}\n"
+    printf "${base_name}\n"
     # if_path_do "-e ${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
     # if_path_do "-f ${src_file}" "ln -s ${src_file} ${2}/${base_name}"
   done
@@ -143,10 +143,10 @@ link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # done
 
 # Install applications via apt-get
-do_or_exit "sudo apt-get update"
-do_or_exit "sudo apt-get upgrade"
-if_path_do "-x ${PKGFILE}" "sudo source ${PKGFILE}"
-do_or_exit "sudo apt-get clean"
+# do_or_exit "sudo apt-get update"
+# do_or_exit "sudo apt-get upgrade"
+# if_path_do "-x ${PKGFILE}" "sudo source ${PKGFILE}"
+# do_or_exit "sudo apt-get clean"
 
 # Install zsh-history-substring-search
 if_path_do "! -e ${ZSH_HSS_PATH}" "curl - fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
