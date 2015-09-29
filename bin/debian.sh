@@ -106,11 +106,11 @@ if_path_do () {
 }
 
 link_files () {
-  # symbolically link all files in first argument to second argument in $HOME
+  # symbolically link all files in first argument to second argument
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
-    # if_path_do "-e ${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
-    if_path_do "-e ${2}/${base_name}" "echo ${2}/${base_name}"
+    if_path_do "-e ${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
+    # if_path_do "-e ${2}/${base_name}" "echo ${2}/${base_name}"
     if_path_do "-f ${src_file}" "ln -s ${src_file} ${2}/${base_name}"
   done
 }
@@ -152,7 +152,7 @@ if_path_do "! -e ${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_
 # Change login shell to (Homebrew installed) Z Shell
 require_path "-h ${ZSH_PATH}" "Z Shell installed"
 if_cmd_do "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
-do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
+if_path_do "-e ${ZSH_PATH}" "sudo chsh -s ${ZSH_PATH} ${USER}"
 
 # Install Vundle and use it to install Vim plugins
 # require_cmd "which git" "Git installed"
