@@ -108,7 +108,7 @@ if_path_do () {
 link_files () {
   # symbolically link all files in first argument to second argument in $HOME
   for src_file in ${1}/*; do
-    base_name="$(basename ${scr_file})"
+    base_name="$(basename ${src_file})"
     printf "${base_name}\n"
     # if_path_do "-e ${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
     # if_path_do "-f ${src_file}" "ln -s ${src_file} ${2}/${base_name}"
@@ -124,8 +124,6 @@ link_files () {
 # This is necessary for some of these actions
 # run_with_sudo "$@"
 sudo -v
-
-echo $HOME_DIR
 
 # Install Git and Curl via apt-get
 # do_or_exit "sudo apt-get update"
@@ -149,7 +147,7 @@ link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # do_or_exit "sudo apt-get clean"
 
 # Install zsh-history-substring-search
-if_path_do "! -e ${ZSH_HSS_PATH}" "curl - fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
+if_path_do "! -e ${ZSH_HSS_PATH}" "curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
 # Change login shell to (Homebrew installed) Z Shell
 require_path "-h ${ZSH_PATH}" "Z Shell installed"
