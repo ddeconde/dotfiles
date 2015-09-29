@@ -102,9 +102,10 @@ if_path_do () {
 
 link_files () {
   # symbolically link all files in first argument to second argument in $HOME
-  for src_file in "${1}/*"; do
-    if_path_do "-e ${2}/.${src_file}" "mv ${2}/.${src_file} ${2}/.${src_file}.old"
-    if_path_do "-f ${1}/${src_file}" "ln -s ${1}/${src_file} ${2}/${src_file}"
+  for src_file in ${1}/*; do
+    base_name="$(basename ${scr_file})"
+    if_path_do "-e ${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
+    if_path_do "-f ${src_file}" "ln -s ${src_file} ${2}/${base_name}"
   done
 }
 
