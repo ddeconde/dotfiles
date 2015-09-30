@@ -58,15 +58,19 @@ run_with_sudo () {
 
 echo_error () {
   # conveniently print errors to stderr
-  printf "ERROR: $@\n" >&2
+  printf "$0: $@\n" >&2
 }
 
 do_or_exit () {
   # execute first argument command with success or exit
+  # optional second argument gives error message
+  # commands typically provide their own error messages, tests do not
   $@
   retval=$?
   if (( $retval != 0 )); then
-    echo_error "[ $@ ] failed."
+    if (( $# > 1 )); then
+      echo_error "$2"
+    fi
     exit $retval
   fi
 }
@@ -80,72 +84,118 @@ if_success () {
 
 require_success () {
   # exit if first argument command does not succeed
+  # optional second argument gives error message
   if ! $1 > /dev/null 2>&1; then
     if (( $# > 1 )); then
-      echo_error "Requirement [ $2 ] unfullfilled."
+      echo_error "$2"
     fi
     exit 1
   fi
 }
 
-require_file () {
-  # exit if first argument path does not exist as correct type
-  if [[ ! -f "$1" ]]; then
-    if (( $# > 1 )); then
-      echo_error "Requirement [ $2 ] unfullfilled."
-    fi
-    exit 1
-  fi
+require () {
+  # first argument determines type of second argument
+  # exit if second argument path does not exist as correct type
+  # optional third argument gives error message
+  case $1 in
+    "file")
+      if [[ ! -f "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+    ;;
+    "dir")
+      if [[ ! -d "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+    ;;
+    "link")
+      if [[ ! -h "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+    ;;
+    *)
+      if [[ ! -e "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+    ;;
+  esac
 }
 
-require_dir () {
-  # exit if first argument path does not exist as correct type
-  if [[ ! -d "$1" ]]; then
-    if (( $# > 1 )); then
-      echo_error "Requirement [ $2 ] unfullfilled."
-    fi
-    exit 1
-  fi
+if_exists () {
+  # first argument determines type of second argument
+  # type can be "file", "dir", "link", or "any"
+  # if second argument exists then do third
+  case $1 in
+    "file")
+      if [[ -f "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+    "dir")
+      if [[ -d "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+    "link")
+      if [[ -h "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+    *)
+      if [[ -e "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+  esac
 }
 
-require_link () {
-  # exit if first argument path does not exist as correct type
-  if [[ ! -h "$1" ]]; then
-    if (( $# > 1 )); then
-      echo_error "Requirement [ $2 ] unfullfilled."
-    fi
-    exit 1
-  fi
-}
-
-if_file_exists () {
-  # if first argument yields successful test then do second
-  if [[ -f "$1" ]]; then
-    do_or_exit "$2"
-  fi
-}
-
-if_dir_exists () {
-  # if first argument yields successful test then do second
-  if [[ -d "$1" ]]; then
-    do_or_exit "$2"
-  fi
-}
-
-if_link_exists () {
-  # if first argument yields successful test then do second
-  if [[ -h "$1" ]]; then
-    do_or_exit "$2"
-  fi
+if_not_exists () {
+  # first argument determines type of second argument
+  # type can be "file", "dir", "link", or "any"
+  # if second argument does not exist then do third
+  case $1 in
+    "file")
+      if [[ ! -f "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+    "dir")
+      if [[ ! -d "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+    "link")
+      if [[ ! -h "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+    *)
+      if [[ ! -e "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
+  esac
 }
 
 link_files () {
   # symbolically link all files in first argument to second argument
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
-    if_file_exists "${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
-    if_link_exists "${2}/${base_name}" "rm ${2}/${base_name}"
-    if_file_exists "${src_file}" "ln -s ${src_file} ${2}/${base_name}"
+    if_exists "file" "${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
+    if_exists "link" "${2}/${base_name}" "rm ${2}/${base_name}"
+    if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${base_name}"
   done
 }
 
@@ -162,12 +212,12 @@ sudo -v
 # Install Git and Curl via apt-get
 # do_or_exit "sudo apt-get update"
 do_or_exit "sudo apt-get -y install git"
-do_or_exit "sudo apt-get -y install curl"
+# do_or_exit "sudo apt-get -y install curl"
 
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
-required_success "which git" "Git installed"
-if_dir_exists "! -d ${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
-require_path "-d ${DOTFILE_DIR}" "${DOTFILE_DIR} present"
+require_success "which git" "Git not found"
+if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
 link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # for dotfile in "$DOTFILE_DIR/*"; do
 #   if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
@@ -177,16 +227,16 @@ link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # Install applications via apt-get
 # do_or_exit "sudo apt-get update"
 # do_or_exit "sudo apt-get upgrade"
-# if_path_do "-x ${PKGFILE}" "sudo source ${PKGFILE}"
+# if_exists "any" "${PKGFILE}" "sudo source ${PKGFILE}"
 # do_or_exit "sudo apt-get clean"
 
 # Install zsh-history-substring-search
-if_path_do "! -e ${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
+if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
-# Change login shell to (Homebrew installed) Z Shell
-require_path "-h ${ZSH_PATH}" "Z Shell installed"
-if_cmd_do "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
-if_path_do "-e ${ZSH_PATH}" "sudo chsh -s ${ZSH_PATH} ${USER}"
+# Change login shell to Z Shell
+require "link" "${ZSH_PATH}" "Z Shell not found"
+if_success "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
+if_exists "any" "${ZSH_PATH}" "sudo chsh -s ${ZSH_PATH} ${USER}"
 
 # Install Vundle and use it to install Vim plugins
 # require_cmd "which git" "Git installed"
