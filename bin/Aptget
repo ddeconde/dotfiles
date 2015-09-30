@@ -23,7 +23,7 @@ packages=( zsh curl )
 
 # Install packages via apt-get
 for package in "${packages[@]}"; do
-  apt-get install -y "${package}"
+  sudo apt-get install -y "${package}"
   echo "$package"
 done
 

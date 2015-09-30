@@ -227,7 +227,7 @@ link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # Install applications via apt-get
 # do_or_exit "sudo apt-get update"
 # do_or_exit "sudo apt-get upgrade"
-if_exists "any" "${PKGFILE}" "sudo source ${PKGFILE}"
+if_exists "any" "${PKGFILE}" "source ${PKGFILE}"
 # do_or_exit "sudo apt-get clean"
 
 # Install zsh-history-substring-search
