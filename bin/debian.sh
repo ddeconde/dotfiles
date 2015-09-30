@@ -71,7 +71,14 @@ do_or_exit () {
   fi
 }
 
-require_cmd () {
+if_success () {
+  # if first argument command has successful exit then do second
+  if $1 > /dev/null 2>&1; then
+    do_or_exit "$2"
+  fi
+}
+
+require_success () {
   # exit if first argument command does not succeed
   if ! $1 > /dev/null 2>&1; then
     if (( $# > 1 )); then
@@ -81,9 +88,9 @@ require_cmd () {
   fi
 }
 
-require_path () {
+require_file () {
   # exit if first argument path does not exist as correct type
-  if [[ ! "$1" ]]; then
+  if [[ ! -f "$1" ]]; then
     if (( $# > 1 )); then
       echo_error "Requirement [ $2 ] unfullfilled."
     fi
@@ -91,16 +98,43 @@ require_path () {
   fi
 }
 
-if_cmd_do () {
-  # if first argument command has successful exit then do second
-  if $1 > /dev/null 2>&1; then
+require_dir () {
+  # exit if first argument path does not exist as correct type
+  if [[ ! -d "$1" ]]; then
+    if (( $# > 1 )); then
+      echo_error "Requirement [ $2 ] unfullfilled."
+    fi
+    exit 1
+  fi
+}
+
+require_link () {
+  # exit if first argument path does not exist as correct type
+  if [[ ! -h "$1" ]]; then
+    if (( $# > 1 )); then
+      echo_error "Requirement [ $2 ] unfullfilled."
+    fi
+    exit 1
+  fi
+}
+
+if_file_exists () {
+  # if first argument yields successful test then do second
+  if [[ -f "$1" ]]; then
     do_or_exit "$2"
   fi
 }
 
-if_path_do () {
+if_dir_exists () {
   # if first argument yields successful test then do second
-  if [[ "$1" ]]; then
+  if [[ -d "$1" ]]; then
+    do_or_exit "$2"
+  fi
+}
+
+if_link_exists () {
+  # if first argument yields successful test then do second
+  if [[ -h "$1" ]]; then
     do_or_exit "$2"
   fi
 }
@@ -109,10 +143,9 @@ link_files () {
   # symbolically link all files in first argument to second argument
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
-    if_path_do "-f ${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
-    # if_path_do "-e ${2}/${base_name}" "echo ${2}/${base_name}"
-    if_path_do "-h ${2}/${base_name}" "rm ${2}/${base_name}"
-    if_path_do "-f ${src_file}" "ln -s ${src_file} ${2}/${base_name}"
+    if_file_exists "${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
+    if_link_exists "${2}/${base_name}" "rm ${2}/${base_name}"
+    if_file_exists "${src_file}" "ln -s ${src_file} ${2}/${base_name}"
   done
 }
 
@@ -132,8 +165,8 @@ do_or_exit "sudo apt-get -y install git"
 do_or_exit "sudo apt-get -y install curl"
 
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
-require_cmd "which git" "Git installed"
-if_path_do "! -d ${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+required_success "which git" "Git installed"
+if_dir_exists "! -d ${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
 require_path "-d ${DOTFILE_DIR}" "${DOTFILE_DIR} present"
 link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 # for dotfile in "$DOTFILE_DIR/*"; do

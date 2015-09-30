@@ -195,7 +195,6 @@ download and run the setup script:
 
 ```
 cd ~
-sudo apt-get install curl
 curl -fsSL --output "osx.sh" "https://raw.githubusercontent.com/ddeconde/dotfiles/master/bin/osx.sh"
 chmod 755 osx.sh
 bash osx.sh [hostname]
@@ -267,6 +266,7 @@ This plugin is installed by the bootstrap script.
 
 ```
 cd ~
+sudo apt-get update
 sudo apt-get install curl
 curl -fsSL --output "debian.sh" "https://raw.githubusercontent.com/ddeconde/dotfiles/master/bin/debian.sh"
 chmod 755 debian.sh
