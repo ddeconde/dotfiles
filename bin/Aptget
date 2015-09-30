@@ -4,7 +4,7 @@
 # APT_GET
 #
 
-packages=(
+apackages=(
   zsh
   bash
   vim
@@ -18,6 +18,8 @@ packages=(
   haskell-platform
 )
 
+packages=( zsh curl )
+
 
 # Install packages via apt-get
 for package in "${packages[@]}"; do
@@ -29,15 +31,15 @@ done
 # PIP
 #
 
-pip_packages=(
-  pip install virtualenv
-  pip install virtualenvwrapper
-)
+# pip_packages=(
+#   pip install virtualenv
+#   pip install virtualenvwrapper
+# )
 
-# Install packages via pip
-for package in "${pip_packages[@]}"; do
-  pip install "${package}"
-done
+# # Install packages via pip
+# for package in "${pip_packages[@]}"; do
+#   pip install "${package}"
+# done
 
 
 exit 0
