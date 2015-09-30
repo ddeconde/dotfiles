@@ -234,7 +234,7 @@ link_files "${DOTFILE_DIR}" "${HOME_DIR}"
 if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
 # Change login shell to Z Shell
-require "link" "${ZSH_PATH}" "Z Shell not found"
+require "any" "${ZSH_PATH}" "Z Shell not found"
 if_success "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
 if_exists "any" "${ZSH_PATH}" "sudo chsh -s ${ZSH_PATH} ${USER}"
 
