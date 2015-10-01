@@ -4,7 +4,7 @@
 # APT_GET
 #
 
-apackages=(
+packages=(
   zsh
   bash
   vim
@@ -17,9 +17,6 @@ apackages=(
   python-pip
   haskell-platform
 )
-
-packages=( zsh curl )
-
 
 # Install packages via apt-get
 for package in "${packages[@]}"; do

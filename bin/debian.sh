@@ -25,11 +25,10 @@
 #
 
 # The paths of the dotfiles directories
-readonly HOME_DIR="$(cd ~ && pwd)"
-readonly DOTFILE_DIR="${HOME_DIR}/.dotfiles"
+readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
-# The name (path) of the brewfile script
+# The name (path) of the apt-get script
 readonly PKGFILE="${DOTFILE_BIN_DIR}/Aptget"
 readonly ZSH_PATH="/usr/bin/zsh"
 readonly ZSH_USERS_REPO="https://raw.githubusercontent.com/zsh-users"
@@ -38,23 +37,16 @@ readonly ZSH_HSS_FILE="zsh-history-substring-search.zsh"
 readonly ZSH_HSS_URL="${ZSH_USERS_REPO}/${ZSH_HSS_BRANCH}/${ZSH_HSS_FILE}"
 readonly ZSH_HSS_PATH="/usr/local/opt/zsh-history-substring-search/${ZSH_HSS_FILE}"
 
- VUNDLE_PATH="${HOME_DIR}/.vim/bundle/Vundle.vim"
+ VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
  README="${DOTFILE_BIN_DIR}/README.md"
 
 
 #
 # FUNCTIONS
 #
-
-run_with_sudo () {
-  # run this script with superuser privileges via exec sudo
-  # BE VERY CAREFUL about the commands contained in this script
-  if (( $(id -u) != 0 )); then
-    # printf "Superuser privileges required.\n"
-    exec sudo "$0" "$@"
-    exit $?
-  fi
-}
+# Most of these functions are just wrappers for simple control flow but they
+# allow for the script itself to consist nearly entirely of readable
+# single-line statements.
 
 echo_error () {
   # conveniently print errors to stderr
@@ -78,6 +70,13 @@ do_or_exit () {
 if_success () {
   # if first argument command has successful exit then do second
   if $1 > /dev/null 2>&1; then
+    do_or_exit "$2"
+  fi
+}
+
+if_not_success () {
+  # if first argument command has successful exit then do second
+  if ! $1 > /dev/null 2>&1; then
     do_or_exit "$2"
   fi
 }
@@ -122,6 +121,14 @@ require () {
         exit 1
       fi
     ;;
+    "exec")
+      if [[ ! -x "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+    ;;
     *)
       if [[ ! -e "$2" ]]; then
         if (( $# > 2 )); then
@@ -135,7 +142,6 @@ require () {
 
 if_exists () {
   # first argument determines type of second argument
-  # type can be "file", "dir", "link", or "any"
   # if second argument exists then do third
   case $1 in
     "file")
@@ -153,6 +159,11 @@ if_exists () {
         do_or_exit "$3"
       fi
     ;;
+    "exec")
+      if [[ -x "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
     *)
       if [[ -e "$2" ]]; then
         do_or_exit "$3"
@@ -163,7 +174,6 @@ if_exists () {
 
 if_not_exists () {
   # first argument determines type of second argument
-  # type can be "file", "dir", "link", or "any"
   # if second argument does not exist then do third
   case $1 in
     "file")
@@ -181,6 +191,11 @@ if_not_exists () {
         do_or_exit "$3"
       fi
     ;;
+    "exec")
+      if [[ ! -x "$2" ]]; then
+        do_or_exit "$3"
+      fi
+    ;;
     *)
       if [[ ! -e "$2" ]]; then
         do_or_exit "$3"
@@ -191,11 +206,15 @@ if_not_exists () {
 
 link_files () {
   # symbolically link all files in first argument to second argument
+  # optional third argument can be used to prefix links, e.g. with '.'
+  if (( $# > 2 )); then
+    pre="$3"
+  fi
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
-    if_exists "file" "${2}/${base_name}" "mv ${2}/${base_name} ${2}/${base_name}.old"
-    if_exists "link" "${2}/${base_name}" "rm ${2}/${base_name}"
-    if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${base_name}"
+    if_exists "file" "${2}/${pre}${base_name}" "mv ${2}/${pre}${base_name} ${2}/${pre}${base_name}.old"
+    if_exists "link" "${2}/${pre}${base_name}" "rm ${2}/${pre}${base_name}"
+    if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${pre}${base_name}"
   done
 }
 
@@ -206,7 +225,6 @@ link_files () {
 
 # Run this script with superuser privileges - BE CAREFUL!
 # This is necessary for some of these actions
-# run_with_sudo "$@"
 sudo -v
 
 # Install Git and Curl via apt-get
@@ -218,11 +236,7 @@ do_or_exit "sudo apt-get -y install git"
 require_success "which git" "Git not found"
 if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
 require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
-link_files "${DOTFILE_DIR}" "${HOME_DIR}"
-# for dotfile in "$DOTFILE_DIR/*"; do
-#   if_path_do "-f ${HOME}/.${dotfile}" "mv ${HOME}/.${dotfile} ${HOME}/.${dotfile}.old"
-#   if_path_do "-f ${DOTFILE_DIR}/${dotfile}" "ln -s ${DOTFILE_DIR}/${dotfile} ${HOME}/.${dotfile}"
-# done
+link_files "${DOTFILE_DIR}" "${HOME_DIR}" "."
 
 # Install applications via apt-get
 # do_or_exit "sudo apt-get update"
@@ -234,9 +248,9 @@ if_exists "any" "${PKGFILE}" "source ${PKGFILE}"
 if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
 # Change login shell to Z Shell
-require "any" "${ZSH_PATH}" "Z Shell not found"
-if_success "! grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
-if_exists "any" "${ZSH_PATH}" "sudo chsh -s ${ZSH_PATH} ${USER}"
+require "exec" "${ZSH_PATH}" "Z Shell not found"
+if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
+do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
 
 # Install Vundle and use it to install Vim plugins
 # require_cmd "which git" "Git installed"

@@ -1,0 +1,35 @@
+# This file lists files and directories to be excluded from rsync backups.
+# Lines that begin with '#' or ';' or are blank are ignored, all other lines
+# are considered verbatim file names or glob patterns to exclude.
+#
+# Usage:
+# $ rsync --exclude-from .exclude SOURCE TARGET
+
+# General OS X housekeeping files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon files
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume (thus perhaps unecessary)
+.DocumentRevisions-V100*
+.fseventsd
+.Spotlight-V100*
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Special location used by fsck for unlinked inodes found during disk repair
+lost+found

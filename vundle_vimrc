@@ -11,48 +11,43 @@ set nocompatible " this is actually assumed when this .vimrc file exists
 "
 
 " Load Plugins first to ensure that they are available to settings
-" Plugins are managed with 'vim-plug'
+" Plugins are managed with Vundle.vim
 
-" First, if the vim-plug plugin itself is not found, then automatically
-" install it so that it can manage other plugins.
+filetype off  " required for Vundle
+set rtp+=~/.vim/bundle/Vundle.vim  " required for Vundle
+call vundle#begin()  " required for Vundle
 
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall | source $MYVIMRC
-endif
+Plugin 'VundleVim/Vundle.vim'  " let Vundle manage Vundle; required for Vundle
 
-" Use vim-plug to install and manage all other plugins
-call plug#begin()  " begin vim-plug calls
-
-" GitHub-served plugins managed by vim-plug are specified in the format:
-" Plug 'github_account/repository_name'
+" GitHub-served plugins managed by Vundle are specified in the format:
+" Plugin 'github_account/repository_name'
 
 " Completion & Search Plugins
-Plug 'kien/ctrlp.vim'  " full path fuzzy file, buffer, MRU, tag finder
-Plug 'ervandew/supertab'  " use '<Tab>' for smart omnicompletions
-Plug 'tpope/vim-vinegar'  " enhanced netrw file browser
+Plugin 'kien/ctrlp.vim'  " full path fuzzy file, buffer, MRU, tag finder
+Plugin 'ervandew/supertab'  " use '<Tab>' for smart omnicompletions
+Plugin 'tpope/vim-vinegar'  " enhanced netrw file browser
 
 " Editing Enhancement Plugins
-Plug 'mbbill/undotree'  " visual navigation of VIM undotree
-Plug 'tpope/vim-surround'  " easy handling of surrounding brackets etc.
-Plug 'Raimondi/delimitMate'  " automatic closing of parentheses etc.
-Plug 'junegunn/vim-easy-align'  " easy alignment of text blocks
-Plug 'tpope/vim-commentary'  " easy toggling of comment markers
-Plug 'tpope/vim-repeat'  " make vim-surround and vim-commentary repeatable
+Plugin 'mbbill/undotree'  " visual navigation of VIM undotree
+Plugin 'tpope/vim-surround'  " easy handling of surrounding brackets etc.
+Plugin 'Raimondi/delimitMate'  " automatic closing of parentheses etc.
+Plugin 'junegunn/vim-easy-align'  " easy alignment of text blocks
+Plugin 'tpope/vim-commentary'  " easy toggling of comment markers
+Plugin 'tpope/vim-repeat'  " make vim-surround and vim-commentary repeatable
 
 " Source Code Management Tool Plugins
-Plug 'tpope/vim-fugitive'  " git integration for VIM
-Plug 'scrooloose/syntastic'  " syntax checking for many languages
+Plugin 'tpope/vim-fugitive'  " git integration for VIM
+Plugin 'scrooloose/syntastic'  " syntax checking for many languages
 
 " Appearance Plugins
-Plug 'altercation/vim-colors-solarized'  " high-contrast colorscheme
+Plugin 'altercation/vim-colors-solarized'  " high-contrast colorscheme
 
 " Filetype Specific Plugins
-Plug 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support
+Plugin 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support
 
 " All plugins must be added before the following lines
-call plug#end()  " end vim-plug calls
+call vundle#end()  " required for Vundle
+filetype plugin indent on  " enable filetype detection after Vundle is done
 
 
 "
@@ -176,8 +171,8 @@ set textwidth=79  " default format of no more than 79 characters in a line
 set hidden  " don't close windowless buffers
 set confirm  " get confirmation to discard unwritten buffers
 " Open new windows below and to the right (default is opposite)
-" set splitbelow
-" set splitright
+set splitbelow
+set splitright
 
 " Search & Substitution
 set hlsearch  " highlight search results
