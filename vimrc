@@ -87,7 +87,7 @@ nmap <Leader>a <Plug>(EasyAlign)
 
 " vim-colors-solarized
 " Toggle solarized colorscheme background between dark and light
-call togglebg#map("<F5>")
+silent! call togglebg#map("<F5>")
 
 " syntastic
 let g:syntastic_mode_map = { "mode":"passive",
@@ -114,6 +114,13 @@ nnoremap <F3> :SyntasticReset<CR>
 " SETTINGS
 "
 
+" File Handling
+set nomodeline  " don't use modelines, they are a security risk
+set autoread  " reread files that have been changed while open
+set autowrite  " write modified files when moving to other buffers/windows
+set encoding=utf-8  " the encoding displayed
+scriptencoding utf-8 " always use utf-8 encoding within the vimrc
+
 " Display
 syntax enable  " enable syntax highlighting
 set showmode  " show current mode at bottom of screen
@@ -134,11 +141,14 @@ set visualbell  " flash screen instead of audio bell for alert
 " set title  " update terminal window title
 set shortmess+=A  " don't show 'ATTENTION' warning for existing swapfiles
 set background=dark
-colorscheme solarized
+try
+    colorscheme solarized
+catch
+    colorscheme pablo
+endtry
+" silent! colorscheme solarized
 " When using solarized without custom terminal colors use the following
 " let g:solarized_termcolors=256
-" When running without plugins use the desert colorscheme
-" colorscheme desert " a nice dark built-in colorscheme
 
 " Editing
 set backspace=indent,eol,start  " backspace over line breaks, insertion start
@@ -148,12 +158,6 @@ set undofile  " save undo tree to file for persistent undos
 set clipboard+=unnamed  " make yanked text avilable in system clipboard
 set scrolloff=3  " always show 3 lines above or below cursor when scrolling
 set scrolljump=3  " scroll 3 lines when the cursor would leave the screen
-
-" File Handling
-set nomodeline  " don't use modelines, they are a security risk
-set autoread  " reread files that have been changed while open
-set autowrite  " write modified files when moving to other buffers/windows
-set encoding=utf-8  " the encoding displayed
 
 " VIM Files
 set directory=/var/tmp//,/tmp//  " set swap file directory
