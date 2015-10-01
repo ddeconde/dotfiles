@@ -28,7 +28,7 @@ useful to remember:
 - Simplicity first, capacity second (maintenance is the highest cost).
 - The greater the historical stability of a component, the greater the
   investment in automated configuration (cf. vim, zsh vs. OS X, Firefox).
-- Countenance defaults whenever possible, but configure when necessary.
+- Countenance defaults wherever possible, but configure where necessary.
 - Security and privacy to the extent they are possible, usability to the
   extent it is necessary.
 
@@ -44,7 +44,7 @@ Some corollary tenets:
 - Prefer plain text over all other formats.
 - Use only open formats.
 - Avoid DRM encumbered media.
-- Prefer open source software whenever possible.
+- Prefer open source software wherever possible.
 - Pay for software of quality (paying for open source software is best).
 - Only use maintained software.
 
@@ -152,6 +152,17 @@ In **Apple Icon > System Preferences**:
 - Network > Advanced > DNS > DNS Servers > 84.200.70.40
   [dns.watch](https://dns.watch/index)
 
+### Setup Script
+
+Open `Terminal.app` and run the following commands at the prompt to
+download and run the setup script:
+
+```
+cd ~
+curl -fsSL --output "osx.sh" "https://raw.githubusercontent.com/ddeconde/dotfiles/master/bin/osx.sh" && chmod 755 osx.sh
+bash osx.sh [hostname]
+```
+
 ### Safari
 
 Even if it is not going to be used as default browser it is wise to
@@ -188,17 +199,6 @@ In **Preferences...**:
 
 [1Password Browser Extension](https://agilebits.com/onepassword/extensions)
 
-### Setup Script
-
-Open `Terminal.app` and run the following commands at the prompt to
-download and run the setup script:
-
-```
-cd ~
-curl -fsSL --output "osx.sh" "https://raw.githubusercontent.com/ddeconde/dotfiles/master/bin/osx.sh" && chmod 755 osx.sh
-bash osx.sh [hostname]
-```
-
 ### Firefox
 
 [Firefox](https://www.mozilla.org/en-US/firefox/desktop/) will be our default
@@ -225,22 +225,9 @@ Go to each of the following websites and select **Add to Firefox**:
 [iTerm2](http://www.iterm2.com/) is installed via Homebrew but needs
 configuring.
 
-In **iTerm > Preferences...**, under the tab **General**, uncheck **Confirm closing multiple sessions** and **Confirm "Quit iTerm2 (Cmd+Q)" command** under the section **Closing**.
-
-In the tab **Profiles**, create a new one with the "+" icon, and rename it to your first name for example. Then, select **Other Actions... > Set as Default**. Finally, under the section **Window**, change the size to something better, like **Columns: 125** and **Rows: 35**.
-
-#### Beautiful terminal
-
-Since we spend so much time in the terminal, we should try to make it a more pleasant and colorful place. What follows might seem like a lot of work, but trust me, it'll make the development experience so much better.
-
-Let's go ahead and start by changing the font. In **iTerm > Preferences...**, under the tab **Profiles**, section **Text**, change both fonts to **Consolas 13pt**.
-
-Now let's add some color. I'm a big fan of the [Solarized](http://ethanschoonover.com/solarized) color scheme. It is supposed to be scientifically optimal for the eyes. I just find it pretty.
-
-Scroll down the page and download the latest version. Unzip the archive. In it you will find the `iterm2-colors-solarized` folder with a `README.md` file, but I will just walk you through it here:
-
-- In **iTerm2 Preferences**, under **Profiles** and **Colors**, go to **Load Presets... > Import...**, find and open the two **.itermcolors** files we downloaded.
-- Go back to **Load Presets...** and select **Solarized Dark** to activate it. Voila!
+In **iTerm > Preferences...**:
+- General > Preferences > Load preferences from a custom folder or URL >
+  $HOME/dotfiles/etc
 
 ### VMware Fusion
 
@@ -254,14 +241,13 @@ development environments and test installations.
 4. Save a snapshot.
 5. Load and run the appropriate bootstrap script on the virtual machine.
 
-### Vagrant
+#### Virtual Machine Setup
 
-[Vagrant](https://www.vagrantup.com/) and its dependencies
-[VirtualBox](https://www.virtualbox.org/) and **Virtualbox Extension Pack**
-are installed by Homebrew, but to keep the **VirtualBox Guest Additions**
-up to date on guest systems automatically the Vagrant plugin
-[vagrant-vbguest](https://github.com/dotless-de/vagrant-vbguest) is needed.
-This plugin is installed by the bootstrap script.
+Whether locally in VMWare Fusion or on [Amazon EC2](https://aws.amazon.com/ec2/)
+new virtual machines will require setup. These systems should have their
+own setup scripts to speed this process. After accessing a virtual
+machine via SSH the appropriate setup script should be run. Here are the
+commands to do so for a [Debian Linux](https://www.debian.org) system:
 
 ```
 cd ~
@@ -412,6 +398,18 @@ contacts
 1Password data
 backed up data
 
+### Full Disk Encryption
+
+**FileVault 2** provides full volume encryption with negligible
+performance cost. To enable it select:
+
+**System Preferences > Security & Privacy > FileVault > Turn on
+FileVault**
+
+As FileVault security relies on the pseudo-random number generator (PRNG)
+it may be better to activate it after the PRNG has been seeded with a
+bit of entropy from manual system use.
+
 ## Maintenance
 
 ### Backup
@@ -462,180 +460,17 @@ updated by the `brew update` command, however currently homebrew-cask
 does not always detect if an application has been updated. Cask updates
 can be forced via the `brew cask install --force` command if necessary.
 
+#### Vim Plugins
+
+The following commands are useful for keeping Vim plugins up-to-date:
+- `PlugUpgrade` upgrades **vim-plug** the plugin manager itself
+- `PlugUpdate` updates plugins
+- `PlugSnapshot` can be used to generate a restore script
+
 ### Dotfiles Repository
 
 This repository must be maintained for it to remain useful. While
 changes to dotfiles themselves are automatically saved via git and the
 regular backups, this file **README.md** and the bootstrap scripts
-**osx.sh** and **debian.sh** are likely to need modification as
-operating system and application versions change.
-
-## Homebrew
-
-The [Homebrew](http://brew.sh/) package manager for OS X is installed by
-the command
-`ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)` 
-which is run by the bootstrap script and then Homebrew is used to install
-most other applications.
-
-Homebrew depends on the **Command Line Tools** for **Xcode**. These can
-be installed directly from the command line with `xcode-select --install`
-and the bootstrap script does this before installing Homebrew.
-
-One thing we need to do is tell the system to use programs installed by Hombrew (in `/usr/local/bin`) rather than the OS default if it exists. We do this by adding `/usr/local/bin` to your `$PATH` environment variable:
-
-    $ echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bash_profile
-
-Open a new terminal tab with **Cmd+T** (you should also close the old one), then run the following command to make sure everything works:
-
-    $ brew doctor
-    
-### Usage
-
-To install a package (or **Formula** in Homebrew vocabulary) simply type:
-
-    $ brew install <formula>
-        
-To update Homebrew's directory of formulae, run:
-
-    $ brew update
-    
-**Note**: I've seen that command fail sometimes because of a bug. If that ever happens, run the following (when you have Git installed):
-
-    $ cd /usr/local
-    $ git fetch origin
-    $ git reset --hard origin/master
-
-To see if any of your packages need to be updated:
-
-    $ brew outdated
-    
-To update a package:
-
-    $ brew upgrade <formula>
-        
-Homebrew keeps older versions of packages installed, in case you want to roll back. That rarely is necessary, so you can do some cleanup to get rid of those old versions:
-
-    $ brew cleanup
-
-To see what you have installed (with their version numbers):
-
-    $ brew list --versions
-
-## Git
-
-[Git](http://git-scm.com/) is installed via Homebrew and `$HOME/.gitconfig`
-and `$HOME/.gitignore` are linked to `$HOME/.dotfiles/gitconfig` by the
-bootstrap script, but `$HOME/.gitconfig_local` must be placed manually as
-it may contain sensitive material.
-    
-## Vim
-
-[Vim](http://www.vim.org/)
-
-## Python
-
-OS X, like Linux, ships with [Python](http://python.org/) already installed. But you don't want to mess with the system Python (some system tools rely on it, etc.), so we'll install our own version with Homebrew. It will also allow us to get the very latest version of Python 2.7.
-
-The following command will install Python 2.7 and any dependencies required (it can take a few minutes to build everything):
-
-    $ brew install python
-    
-When finished, you should get a summary in the terminal. Running `$ which python` should output `/usr/local/bin/python`.
-
-It also installed [Pip]() (and its dependency [Distribute]()), which is the package manager for Python. Let's upgrade them both:
-
-    $ pip install --upgrade distribute
-    $ pip install --upgrade pip
-    
-Executable scripts from Python packages you install will be put in `/usr/local/share/python`, so let's add it to the `$PATH`. To do so, we'll create a `.path` text file in the home directory (I've already set up `.bash_profile` to call this file):
-
-    $ cd ~
-    $ subl .path
-    
-And add these lines to `.path`:
-
-```bash
-PATH=/usr/local/share/python:$PATH
-export PATH
-```
-    
-Save the file and open a new terminal to take the new `$PATH` into account (everytime you open a terminal, `.bash_profile` gets loaded).
-
-### Pip Usage
-
-Here are a couple Pip commands to get you started. To install a Python package:
-
-    $ pip install <package>
-
-To upgrade a package:
-
-    $ pip install --upgrade <package>
-        
-To see what's installed:
-
-    $ pip freeze
-    
-To uninstall a package:
-
-    $ pip uninstall <package>
-
-## Virtualenv
-
-[Virtualenv](http://www.virtualenv.org/) is a tool that creates an isolated Python environment for each of your projects. For a particular project, instead of installing required packages globally, it is best to install them in an isolated folder in the project (say a folder named `venv`), that will be managed by virtualenv.
-
-The advantage is that different projects might require different versions of packages, and it would be hard to manage that if you install packages globally. It also allows you to keep your global `/usr/local/lib/python2.7/site-packages` folder clean, containing only critical or big packages that you always need (like IPython, Numpy).
-
-### Install
-
-To install virtualenv, simply run:
-
-    $ pip install virtualenv
-
-### Usage
-
-Let's say you have a project in a directory called `myproject`. To set up virtualenv for that project:
-
-    $ cd myproject/
-    $ virtualenv venv --distribute
-    
-If you want your virtualenv to also inherit globally installed packages (like IPython or Numpy mentioned above), use:
-
-    $ virtualenv venv --distribute --system-site-packages
-
-These commands create a `venv` subdirectory in your project where everything is installed. You need to **activate** it first though (in every terminal where you are working on your project):
-
-    $ source venv/bin/activate
-    
-You should see a `(venv)` appear at the beginning of your terminal prompt indicating that you are working inside the virtualenv. Now when you install something:
-
-    $ pip install <package>
-
-It will get installed in the `venv` folder, and not conflict with other projects.
-
-**Important**: Remember to add `venv` to your project's `.gitignore` file so you don't include all of that in your source code!
-
-As mentioned earlier, I like to install big packages (like Numpy), or packages I always use (like IPython) globally. All the rest I install in a virtualenv.
-
-## Projects folder
-
-This really depends on how you want to organize your files, but I like to put all my version-controlled projects in `~/Projects`. Other documents I may have, or things not yet under version control, I like to put in `~/Dropbox` (if you have Dropbox installed), or `~/Documents`.
-
-## Apps
-
-Here is a quick list of some apps I use, and that you might find useful as well:
-
-- [1Password](https://agilebits.com/onepassword): Allows you to securely store your login and passwords. Even if you only use a few different passwords (they say you shouldn't!), this is really handy to keep track of all the accounts you sign up for! Also, they have a mobile app so you always have all your passwords with you (syncs with Dropbox). A little pricey though. There are free alternatives. **($50 for Mac app, $18 for iOS app)**
-- [Marked](http://markedapp.com/): As a developer, most of the stuff you write ends up being in [Markdown](http://daringfireball.net/projects/markdown/). In fact, this `README.md` file (possibly the most important file of a GitHub repo) is indeed in Markdown, written in Sublime Text, and I use Marked to preview the results everytime I save. **($4)**
-
-### Full Disk Encryption
-
-**FileVault 2** provides full volume encryption with negligible
-performance cost. To enable it select:
-
-**System Preferences > Security & Privacy > FileVault > Turn on
-FileVault**
-
-As FileVault security relies on the pseudo-random number generator (PRNG)
-it may be better to activate it after the PRNG has been seeded with a
-bit of entropy from manual system use.
+**osx.sh**, **debian.sh**, and **private.sh** are likely to need modification
+as operating system and application versions change.

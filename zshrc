@@ -280,6 +280,6 @@ alias -g X='| xargs'
 #
 
 # If a zshrc_local file is available then source that too
-if [[ -f ~/.zshrc_local ]]; then
+if [[ -e ~/.zshrc_local ]]; then
     source ~/.zshrc_local
 fi
