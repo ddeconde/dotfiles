@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 #
 # install
-# Last Changed: Sun, 12 Jul 2015 22:06:02 -0700
+# Last Changed: Tue, 06 Oct 2015 17:47:34 -0700
 #
 # Usage:
-# Set "shell" as provisioner in the appropriate Vagrantfile and the path to
-# point to this script, i.e. the Vagrantfile should include a line like:
-#
-# config.vm.provision "shell", path: "/path/to/debian.sh"
+# $ chmod 755 debian.sh && ./debian.sh
 #
 # A simple provisioning script to make a minimal comfortable development
-# environment out of a Debian Vagrant box. The structure of this script has
+# environment out of a Debian virtual machine. The structure of this script has
 # been kept exceedingly simple as it is meant more as a list of commands
 # required to put a new system in order than a configuration management tool
 # and the expectation is that it will need frequent and significant alteration.
@@ -223,8 +220,7 @@ link_files () {
 # SCRIPT
 #
 
-# Run this script with superuser privileges - BE CAREFUL!
-# This is necessary for some of these actions
+# Superuser privileges are needed for some of these actions
 sudo -v
 
 # Install Git and Curl via apt-get
@@ -251,11 +247,5 @@ if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${
 require "exec" "${ZSH_PATH}" "Z Shell not found"
 if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
 do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
-
-# Install Vundle and use it to install Vim plugins
-# require_cmd "which git" "Git installed"
-# require_cmd "which vim" "Vim installed"
-# if_path_do "! -d ${VUNDLE_PATH}" "git clone git://github.com/gmarik/Vundle.vim.git ${VUNDLE_PATH}"
-# do_or_exit "vim +PluginInstall +qall"
 
 exit 0
