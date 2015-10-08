@@ -14,7 +14,6 @@ packages=(
   silversearcher-ag
   exuberant-ctags
   build-essential
-  python-pip
   awscli
 )
 
@@ -167,6 +166,5 @@ pip_packages=(
 for package in "${pip_packages[@]}"; do
   pip install "${package}"
 done
-
 
 exit 0

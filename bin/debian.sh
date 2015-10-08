@@ -34,8 +34,7 @@ readonly ZSH_HSS_FILE="zsh-history-substring-search.zsh"
 readonly ZSH_HSS_URL="${ZSH_USERS_REPO}/${ZSH_HSS_BRANCH}/${ZSH_HSS_FILE}"
 readonly ZSH_HSS_PATH="/usr/local/opt/zsh-history-substring-search/${ZSH_HSS_FILE}"
 
- VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
- README="${DOTFILE_BIN_DIR}/README.md"
+readonly README="${DOTFILE_BIN_DIR}/README.md"
 
 
 #
