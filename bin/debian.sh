@@ -232,7 +232,7 @@ do_or_exit "sudo apt-get -y install git"
 require_success "which git" "Git not found"
 if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
 require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
-link_files "${DOTFILE_DIR}" "${HOME_DIR}" "."
+link_files "${DOTFILE_DIR}" "${HOME}" "."
 
 # Install applications via apt-get
 # do_or_exit "sudo apt-get update"
