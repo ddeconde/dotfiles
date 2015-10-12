@@ -23,10 +23,15 @@ for package in "${packages[@]}"; do
   echo "$package"
 done
 
+#
+# ANACONDA
+#
+
 # Download the Miniconda installer
 MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
 # MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 MINICONDA_INSTALLER="Miniconda-latest-Linux-x86_64.sh"
+
 curl -fsSL --ouput ${MINICONDA_INSTALLER} ${MINICONDA_URL}
 chmod +x ${MINICONDA_INSTALLER}
 # Run the Miniconda installer in batch (non-interactive) mode
@@ -39,6 +44,10 @@ bash ${MINICONDA_INSTALLER} -b
 # Update conda itself
 conda update --yes conda
 
+# This conda package array contains most of the packages included in a full
+# Anaconda installation with just a few quite seldom used ones excluded. If
+# possible more should be trimmed out of the list to produce a leaner
+# installation.
 conda_pkgs=(
   bokeh
   boto
@@ -149,6 +158,17 @@ for package in "${conda_pkgs[@]}"; do
   conda install --yes "${package}"
   echo "$package"
 done
+
+#
+# RESTLESS BANDIT PYPI CREDENTIALS
+#
+# Before pip can install RB packages we must install our certificate
+
+# require_success "which aws"
+PIP_CRT_URI=""
+PIP_DIR=""
+
+aws s3 cp ${PIP_CRT_URI} ${PIP_DIR}
 
 #
 # PIP
