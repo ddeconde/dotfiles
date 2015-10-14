@@ -304,10 +304,10 @@ nnoremap <Silent> <Leader>$ :let _s=@/<Bar>:%s/\s\+$//e<Bar>
 nnoremap <Silent> <Leader>= :let l=line(".")<Bar>:let c=virtcol(".")<Bar>
     \ :normal gg=G<Bar>:call cursor(l, c)<Bar>:unlet l<Bar>:unlet c<CR> 
 " Reformat the entire file while fixing cursor (indentation and linebreaks)
-nnoremap <Silent> <Leader>gq :let l=line(".")<Bar>:let c=virtcol(".")<Bar>
+nnoremap <Silent> <Leader>q :let l=line(".")<Bar>:let c=virtcol(".")<Bar>
     \ :normal gggqG<Bar>:call cursor(l, c)<Bar>:unlet l<Bar>:unlet c<CR> 
 " As for gq above, but gw fixes cursor by default and ignores 'formatprg'
-nnoremap <Silent> <Leader>gw :let l=line(".")<Bar>:let c=virtcol(".")<Bar>
+nnoremap <Silent> <Leader>w :let l=line(".")<Bar>:let c=virtcol(".")<Bar>
     \ :normal gggwG<Bar>:call cursor(l, c)<Bar>:unlet l<Bar>:unlet c<CR> 
 " Reindent the current paragraph
 nnoremap <Leader>q gqip
