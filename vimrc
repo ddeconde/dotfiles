@@ -1,6 +1,6 @@
 "
 " .vimrc
-" Last changed: Sat, 08 Nov 2014 10:50:18 -0800
+" Last changed: Wed, 14 Oct 2015 11:02:53 -0700
 "
 
 set nocompatible " this is actually assumed when this .vimrc file exists
@@ -17,7 +17,7 @@ set nocompatible " this is actually assumed when this .vimrc file exists
 " install it so that it can manage other plugins.
 
 if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    silent! curl -fLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
