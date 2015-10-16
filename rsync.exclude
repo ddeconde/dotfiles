@@ -3,7 +3,7 @@
 # are considered verbatim file names or glob patterns to exclude.
 #
 # Usage:
-# $ rsync --exclude-from .exclude SOURCE TARGET
+# $ rsync --exclude-from .rsync.exclude SOURCE TARGET
 
 # General OS X housekeeping files
 .DS_Store

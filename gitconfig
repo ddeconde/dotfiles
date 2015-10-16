@@ -13,8 +13,8 @@
 ;         user = [github username]
 ;         token = [API token from https://github.com/account/admin]
 [credential]
-        helper = osxkeychain
-        ; helper = cache --timeout=3600
+        ; helper = osxkeychain
+        helper = cache --timeout=3600
 [color]
         ui = auto
 [core]

@@ -28,9 +28,9 @@ done
 #
 
 # Download the Miniconda installer
-MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
+readonly MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
 # MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-MINICONDA_INSTALLER="Miniconda-latest-Linux-x86_64.sh"
+readonly MINICONDA_INSTALLER="Miniconda-latest-Linux-x86_64.sh"
 
 curl -fsSL --ouput ${MINICONDA_INSTALLER} ${MINICONDA_URL}
 chmod +x ${MINICONDA_INSTALLER}
@@ -165,8 +165,8 @@ done
 # Before pip can install RB packages we must install our certificate
 
 # require_success "which aws"
-PIP_CRT_URI=""
-PIP_DIR=""
+readonly PIP_CRT_URI=""
+readonly PIP_DIR=""
 
 aws s3 cp ${PIP_CRT_URI} ${PIP_DIR}
 
