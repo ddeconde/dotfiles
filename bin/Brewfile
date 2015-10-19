@@ -11,36 +11,33 @@
 
 # Enable easy brewing of duplicate utilities
 # (necessary for rsync)
-brew tap homebrew/dupes
+# brew tap homebrew/dupes
 
 # git is excluded as it will always be installed outside of brew.sh
 packages=(
   zsh
-  bash
   vim
-  zsh-history-substring-search
   tmux
+  zsh-history-substring-search
   the_silver_searcher
   ctags-exuberant
-  rsync
+  homebrew/dupes/rsync
+  bash
   curl
   lynx
 )
 
 # Installations via BREW CASK
 
-# brew cask install fantastical
 # brew cask install gas-mask
 # brew cask install ghc
 # brew cask install arq
 # brew cask install torbrowser
-# brew cask install dash
 
 # brew cask install launchcontrol
 # brew cask install things
 # brew cask install launchbar
 # brew cask install hosts
-# brew cask install vmware-fusion
 # brew cask install flux
 # brew cask install gpgtools
 
@@ -57,6 +54,7 @@ applications=(
   little-snitch
   launchbar
   onepassword
+  carbon-copy-cloner
   viscosity
   vmware-fusion
   dash
