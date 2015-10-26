@@ -36,7 +36,6 @@ packages=(
 
 # brew cask install launchcontrol
 # brew cask install things
-# brew cask install launchbar
 # brew cask install hosts
 # brew cask install flux
 # brew cask install gpgtools
