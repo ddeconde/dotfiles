@@ -234,13 +234,13 @@ do_or_exit "sudo scutil --set HostnameName ${SYSTEM_NAME}"
 
 # Install Xcode Command Line Tools
 if_not_success "xcode-select --print-path" "xcode-select --install"
+require_success "xcode-select --print-path" "Xcode Command Line Tools not found"
 
 # Install Homebrew
-require_success "xcode-select --print-path" "Xcode Command Line Tools not found"
 if_not_success "which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+require_success "which brew" "Homebrew not found"
 
 # Install Git via Homebrew
-require_success "which brew" "Homebrew not found"
 do_or_exit "brew install git"
 require_success "which git" "Git not found"
 
@@ -250,7 +250,6 @@ require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
 link_files "${DOTFILE_DIR}" "${HOME_DIR}" "."
 
 # Install applications via Homebrew
-require_success "which brew" "Homebrew not found"
 do_or_exit "brew update"
 do_or_exit "brew doctor"
 if_exists "any" "${BREWFILE}" "source ${BREWFILE}"
@@ -265,7 +264,6 @@ do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
 if_not_exists "dir" "${BACKUP_DIR}" "mkdir -p ${BACKUP_DIR}"
 
 # Download Solarized colorscheme
-require_success "which git" "Git not found"
 if_not_exists "dir" "${COLORS_PATH}" "git clone https://github.com/altercation/solarized.git ${COLORS_PATH}"
 printf "Solarized color scheme files are in ${COLORS_PATH}\n"
 
