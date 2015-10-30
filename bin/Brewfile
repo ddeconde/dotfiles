@@ -4,14 +4,12 @@
 
 # Installations via BREW
 
-# brew install zsh-completions
-# brew install mutt ??
-# brew install profanity
-# brew install coreutils
 
-# Enable easy brewing of duplicate utilities
-# (necessary for rsync)
-# brew tap homebrew/dupes
+# Formulae for particular versions of packages can be installed via 'brew
+# install homebrew/versions/<formula>'
+
+# Formulae for more recent/bug-fixed versions of already included OS X
+# utilities can be installed via 'brew install homebrew/dupes/<formula>'
 
 # git is excluded as it will always be installed outside of brew.sh
 packages=(

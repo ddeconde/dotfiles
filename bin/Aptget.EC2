@@ -30,7 +30,7 @@ done
 # Download the Miniconda installer
 readonly MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
 # MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-readonly MINICONDA_INSTALLER="Miniconda-latest-Linux-x86_64.sh"
+readonly MINICONDA_INSTALLER="${HOME}/Miniconda-latest-Linux-x86_64.sh"
 
 curl -fsSL --ouput ${MINICONDA_INSTALLER} ${MINICONDA_URL}
 chmod +x ${MINICONDA_INSTALLER}

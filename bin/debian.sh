@@ -205,6 +205,8 @@ link_files () {
   # optional third argument can be used to prefix links, e.g. with '.'
   if (( $# > 2 )); then
     pre="$3"
+  else
+    pre=""
   fi
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
@@ -223,21 +225,21 @@ link_files () {
 sudo -v
 
 # Install Git and Curl via apt-get
-# do_or_exit "sudo apt-get update"
+do_or_exit "sudo apt-get update"
+do_or_exit "sudo apt-get upgrade"
+do_or_exit "sudo apt-get -y install curl"
+require_success "which curl" "Curl not found"
 do_or_exit "sudo apt-get -y install git"
-# do_or_exit "sudo apt-get -y install curl"
+require_success "which git" "Git not found"
 
 # Clone dotfiles repository if necessary and link dotfiles to $HOME
-require_success "which git" "Git not found"
 if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
 require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
 link_files "${DOTFILE_DIR}" "${HOME}" "."
 
 # Install applications via apt-get
-# do_or_exit "sudo apt-get update"
-# do_or_exit "sudo apt-get upgrade"
 if_exists "any" "${PKGFILE}" "source ${PKGFILE}"
-# do_or_exit "sudo apt-get clean"
+do_or_exit "sudo apt-get clean"
 
 # Install zsh-history-substring-search
 if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
