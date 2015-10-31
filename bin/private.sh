@@ -190,6 +190,8 @@ link_files () {
   # optional third argument can be used to prefix links, e.g. with '.'
   if (( $# > 2 )); then
     pre="$3"
+  else
+    pre=""
   fi
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
