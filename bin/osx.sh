@@ -286,7 +286,7 @@ printf "Reminder: set iTerm2 Preferences to load from a custom folder or URL:\n 
 if_not_exists "dir" "${HOME}/bin" "mkdir -p ${HOME}/bin"
 # Symlink Homebrew-installed executables to $HOME/bin
 for bin in "${HOME_BIN_LINKS[@]}"; do
-  ln -s /usr/local/bin "${HOME}/bin/${bin}"
+  if_exists "any" "/usr/local/bin/${bin}" "ln -s /usr/local/bin ${HOME}/bin/${bin}"
 done
 
 # Direct user to $README
