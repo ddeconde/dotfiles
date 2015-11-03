@@ -34,6 +34,16 @@ readonly BACKUP_DIR="${HOME}/.backup"
 readonly README="${DOTFILE_ETC_DIR}/README.md"
 readonly SYSTEM_NAME="${1}"
 
+# Homebrewed packages to be linked to HOME/bin to take PATH priority over
+# defaults
+readonly HOME_BIN_LINKS=(
+  git
+  vim
+  zsh
+  bash
+  curl
+)
+
 
 #
 # FUNCTIONS
@@ -274,7 +284,10 @@ printf "Reminder: set iTerm2 Preferences to load from a custom folder or URL:\n 
 
 # Make $HOME/bin directory for symbolic links to Homebrew-installed executables
 if_not_exists "dir" "${HOME}/bin" "mkdir -p ${HOME}/bin"
-printf "To use Homebrew-installed executables over defaults link them to ${HOME}/bin."
+# Symlink Homebrew-installed executables to $HOME/bin
+for bin in "${HOME_BIN_LINKS[@]}"; do
+  ln -s /usr/local/bin "${HOME}/bin/${bin}"
+done
 
 # Direct user to $README
 printf "See ${README} for installation and configuration instructions.\n"

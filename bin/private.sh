@@ -16,11 +16,11 @@
 #
 
 readonly PRIVATE_DIR="${HOME}/private"
+readonly PRIVATE_ETC="${PRIVATE_DIR}/etc"
 readonly SSH_DIR="ssh"
 readonly GPG_DIR="gpg"
 readonly AWS_DIR="aws"
 readonly LOCAL_DIR="local"
-readonly PRIVATE_ETC="${PRIVATE_DIR}/etc"
 
 #
 # FUNCTIONS

@@ -30,8 +30,6 @@ packages=(
 # brew cask install gas-mask
 # brew cask install ghc
 # brew cask install arq
-# brew cask install torbrowser
-
 # brew cask install launchcontrol
 # brew cask install things
 # brew cask install hosts
@@ -45,6 +43,7 @@ applications=(
   macvim
   mactex
   firefox
+  torbrowser
   vlc
   adium
   transmission
