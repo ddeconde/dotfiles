@@ -18,7 +18,6 @@
 readonly PRIVATE_DIR="${HOME}/private"
 readonly PRIVATE_ETC="${PRIVATE_DIR}/etc"
 readonly SSH_DIR="ssh"
-readonly GPG_DIR="gpg"
 readonly AWS_DIR="aws"
 readonly LOCAL_DIR="local"
 
@@ -212,11 +211,6 @@ require "dir" "${PRIVATE_DIR}" "${PRIVATE_DIR} not found"
 require "dir" "${PRIVATE_DIR}/${SSH_DIR}" "${PRIVATE_DIR}/${SSH_DIR} not found"
 if_not_exists "dir" "${HOME_DIR}/.${SSH_DIR}" "mkdir -p ${HOME_DIR}/.${SSH_DIR}"
 link_files "${PRIVATE_DIR}/${SSH_DIR}" "${HOME_DIR}/.${SSH_DIR}"
-
-# Link gpg files
-require "dir" "${PRIVATE_DIR}/${GPG_DIR}" "${PRIVATE_DIR}/${GPG_DIR} not found"
-if_not_exists "dir" "${HOME_DIR}/.${GPG_DIR}" "mkdir -p ${HOME_DIR}/.${GPG_DIR}"
-link_files "${PRIVATE_DIR}/${GPG_DIR}" "${HOME_DIR}/.${GPG_DIR}"
 
 # Link aws files
 require "dir" "${PRIVATE_DIR}/${AWS_DIR}" "${PRIVATE_DIR}/${AWS_DIR} not found"
