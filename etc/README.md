@@ -84,7 +84,18 @@ not connect to networking yet; skip that part of setup for now.
 
 Create a user account with:
 - a **strong password** without a hint, and
+- standard account privileges,
 - a not too identifiable account name.
+
+Create an administrator account with:
+- a **strong password** without a hint,
+- admin account privileges,
+- a not too identifiable account name,
+- the full name "Administrator."
+
+The administrator account is for installing software and updating the
+operating system. The preferences for this account should be left at
+defaults and it should not be used for ordinary computing.
 
 ### Firmware Password
 
@@ -109,7 +120,7 @@ so be careful not to lose or forget it.
 ### System update
 
 Immediately upon finishing a new system installation update the system:
-**Apple Icon > Software Update...**
+**Apple Icon > App Store... > Updates**
 
 ### System Preferences
 
