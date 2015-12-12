@@ -226,7 +226,7 @@ sudo -v
 
 # Install Git and Curl via apt-get
 do_or_exit "sudo apt-get update"
-do_or_exit "sudo apt-get upgrade"
+do_or_exit "sudo apt-get -y upgrade"
 do_or_exit "sudo apt-get -y install curl"
 require_success "which curl" "Curl not found"
 do_or_exit "sudo apt-get -y install git"
