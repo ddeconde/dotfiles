@@ -36,6 +36,9 @@ readonly ZSH_HSS_PATH="/usr/local/opt/zsh-history-substring-search/${ZSH_HSS_FIL
 
 readonly README="${DOTFILE_BIN_DIR}/README.md"
 
+# Get list of packages from PKGFILE
+source "${PKGFILE}"
+
 
 #
 # FUNCTIONS
@@ -46,7 +49,7 @@ readonly README="${DOTFILE_BIN_DIR}/README.md"
 
 echo_error () {
   # conveniently print errors to stderr
-  printf "$0: $@\n" >&2
+  printf "$(basename $0): $@\n" >&2
 }
 
 do_or_exit () {
@@ -204,9 +207,9 @@ link_files () {
   # symbolically link all files in first argument to second argument
   # optional third argument can be used to prefix links, e.g. with '.'
   if (( $# > 2 )); then
-    pre="$3"
+    local pre="$3"
   else
-    pre=""
+    local pre=""
   fi
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
@@ -221,32 +224,35 @@ link_files () {
 # SCRIPT
 #
 
-# Superuser privileges are needed for some of these actions
-sudo -v
+main () {
+  # Superuser privileges are needed for some of these actions
+  sudo -v
 
-# Install Git and Curl via apt-get
-do_or_exit "sudo apt-get update"
-do_or_exit "sudo apt-get -y upgrade"
-do_or_exit "sudo apt-get -y install curl"
-require_success "which curl" "Curl not found"
-do_or_exit "sudo apt-get -y install git"
-require_success "which git" "Git not found"
+  # Install Git and Curl via apt-get
+  do_or_exit "sudo apt-get update"
+  do_or_exit "sudo apt-get -y upgrade"
+  do_or_exit "sudo apt-get -y install curl"
+  require_success "which curl" "curl not found"
+  do_or_exit "sudo apt-get -y install git"
+  require_success "which git" "git not found"
 
-# Clone dotfiles repository if necessary and link dotfiles to $HOME
-if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
-require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
-link_files "${DOTFILE_DIR}" "${HOME}" "."
+  # Clone dotfiles repository if necessary and link dotfiles to $HOME
+  if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+  require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
+  link_files "${DOTFILE_DIR}" "${HOME}" "."
 
-# Install applications via apt-get
-if_exists "any" "${PKGFILE}" "source ${PKGFILE}"
-do_or_exit "sudo apt-get clean"
+  # Install applications in APPFILE
+  if_exists "any" "${PKGFILE}" "source ${PKGFILE}"
+  do_or_exit "sudo apt-get clean"
 
-# Install zsh-history-substring-search
-if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
+  # Install zsh-history-substring-search
+  if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
 
-# Change login shell to Z Shell
-require "exec" "${ZSH_PATH}" "Z Shell not found"
-if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
-do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
+  # Change login shell to Z Shell
+  require "exec" "${ZSH_PATH}" "zsh not found"
+  if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
+  do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
+}
 
+main
 exit 0

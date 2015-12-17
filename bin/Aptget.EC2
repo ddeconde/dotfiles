@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
 #
+# RESTLESS BANDIT PYPI CREDENTIALS
+#
+
+readonly VIRTUAL_ENV="restless"
+readonly PIP_CRT_URI="s3://restless-vault/pip/local-pypi"
+
+#
 # APT_GET
 #
 
@@ -15,34 +22,29 @@ packages=(
   exuberant-ctags
   build-essential
   awscli
+  python-pip
+  virtualenv
+  # for restless-ephemerides module support
+  zlib1g-dev
+  libxml2-dev
+  libxslt1-dev
 )
 
-# Install packages via apt-get
-for package in "${packages[@]}"; do
-  sudo apt-get install -y "${package}"
-  echo "$package"
-done
+#
+# PIP
+#
+
+pip_packages=(
+  virtualenv
+  avro
+  fastavro
+  mrjob
+  msgpack-python
+)
 
 #
 # ANACONDA
 #
-
-# Download the Miniconda installer
-readonly MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
-# MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-readonly MINICONDA_INSTALLER="${HOME}/Miniconda-latest-Linux-x86_64.sh"
-
-curl -fsSL --ouput ${MINICONDA_INSTALLER} ${MINICONDA_URL}
-chmod +x ${MINICONDA_INSTALLER}
-# Run the Miniconda installer in batch (non-interactive) mode
-bash ${MINICONDA_INSTALLER} -b
-# rm ${MINICONDA_INSTALLER}
-
-# Update PATH to accomodate CONDA
-# export PATH=$HOME/miniconda/bin:$PATH
-
-# Update conda itself
-conda update --yes conda
 
 # This conda package array contains most of the packages included in a full
 # Anaconda installation with just a few quite seldom used ones excluded. If
@@ -102,7 +104,7 @@ conda_pkgs=(
   openssl
   pandas
   pep8
-  pip
+  # pip
   ply
   progressbar
   psutil
@@ -153,38 +155,48 @@ conda_pkgs=(
   zlib
 )
 
+
+# Install packages via apt-get
+for package in "${packages[@]}"; do
+  sudo apt-get install -y "${package}"
+  echo "$package"
+done
+
+require_success "which virtualenv" "virtualenv not found"
+do_or_exit "virtualenv ${VIRTUAL_ENV}"
+
+# Restless Bandit pip credentials should be installed into virtualenv
+require_succes "which aws" "awscli not found"
+# Before pip can install RB packages we must install our certificate
+aws s3 cp "${PIP_CRT_URI}/pip-ca.crt" "${VIRTUAL_ENV}/pip-ca.crt"
+aws s3 cp "${PIP_CRT_URI}/pip.conf" "${VIRTUAL_ENV}/pip.conf"
+
+# Install packages via pip
+for package in "${pip_packages[@]}"; do
+  ${VIRTUAL_ENV}/bin/pip install "${package}"
+done
+
+# Download the Miniconda installer
+readonly MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
+# MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+readonly MINICONDA_INSTALLER="${HOME}/Miniconda-latest-Linux-x86_64.sh"
+
+curl -fsSL --ouput ${MINICONDA_INSTALLER} ${MINICONDA_URL}
+chmod +x ${MINICONDA_INSTALLER}
+# Run the Miniconda installer in batch (non-interactive) mode
+bash ${MINICONDA_INSTALLER} -b
+# rm ${MINICONDA_INSTALLER}
+
+# Update PATH to accomodate CONDA
+# export PATH=$HOME/miniconda/bin:$PATH
+
+# Update conda itself
+conda update --yes conda
+
 # Install packages via conda
 for package in "${conda_pkgs[@]}"; do
   conda install --yes "${package}"
   echo "$package"
-done
-
-#
-# RESTLESS BANDIT PYPI CREDENTIALS
-#
-# Before pip can install RB packages we must install our certificate
-
-# require_success "which aws"
-readonly PIP_CRT_URI=""
-readonly PIP_DIR=""
-
-aws s3 cp ${PIP_CRT_URI} ${PIP_DIR}
-
-#
-# PIP
-#
-
-pip_packages=(
-  virtualenv
-  avro
-  fastavro
-  mrjob
-  msgpack-python
-)
-
-# Install packages via pip
-for package in "${pip_packages[@]}"; do
-  pip install "${package}"
 done
 
 exit 0
