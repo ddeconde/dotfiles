@@ -7,6 +7,11 @@
 readonly VIRTUAL_ENV="restless"
 readonly PIP_CRT_URI="s3://restless-vault/pip/local-pypi"
 
+# Miniconda python distribution
+readonly MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
+# MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+readonly MINICONDA_INSTALLER="${HOME}/Miniconda-latest-Linux-x86_64.sh"
+
 #
 # APT_GET
 #
@@ -44,8 +49,8 @@ pip_packages=(
   msgpack-python
   # for restless-ephemerides module support
   enum34
-  llvmlite==0.5.0
-  numba==0.19.2
+  'llvmlite==0.5.0'
+  'numba==0.19.2'
   restless-ephemerides
 )
 
@@ -162,48 +167,51 @@ conda_pkgs=(
   zlib
 )
 
+main () {
+  # Install packages via apt-get
+  for package in "${packages[@]}"; do
+    sudo apt-get install -y "${package}"
+    echo "$package"
+  done
 
-# Install packages via apt-get
-for package in "${packages[@]}"; do
-  sudo apt-get install -y "${package}"
-  echo "$package"
-done
+  require_success "which virtualenv" "virtualenv not found"
+  do_or_exit "virtualenv ${VIRTUAL_ENV}"
 
-require_success "which virtualenv" "virtualenv not found"
-do_or_exit "virtualenv ${VIRTUAL_ENV}"
+  # Restless Bandit pip credentials should be installed into virtualenv
+  require_succes "which aws" "awscli not found"
+  # Before pip can install RB packages we must install our certificate
+  do_or_exit "aws s3 cp ${PIP_CRT_URI}/pip-ca.crt ${VIRTUAL_ENV}/pip-ca.crt"
+  do_or_exit "aws s3 cp ${PIP_CRT_URI}/pip.conf ${VIRTUAL_ENV}/pip.conf"
 
-# Restless Bandit pip credentials should be installed into virtualenv
-require_succes "which aws" "awscli not found"
-# Before pip can install RB packages we must install our certificate
-aws s3 cp "${PIP_CRT_URI}/pip-ca.crt" "${VIRTUAL_ENV}/pip-ca.crt"
-aws s3 cp "${PIP_CRT_URI}/pip.conf" "${VIRTUAL_ENV}/pip.conf"
+  # Install packages via pip
+  for package in "${pip_packages[@]}"; do
+    ${VIRTUAL_ENV}/bin/pip install "${package}"
+  done
 
-# Install packages via pip
-for package in "${pip_packages[@]}"; do
-  ${VIRTUAL_ENV}/bin/pip install "${package}"
-done
 
-# Download the Miniconda installer
-readonly MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh"
-# MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-readonly MINICONDA_INSTALLER="${HOME}/Miniconda-latest-Linux-x86_64.sh"
+  #
+  # MINICONDA PYTHON
+  #
 
-curl -fsSL --ouput ${MINICONDA_INSTALLER} ${MINICONDA_URL}
-chmod +x ${MINICONDA_INSTALLER}
-# Run the Miniconda installer in batch (non-interactive) mode
-bash ${MINICONDA_INSTALLER} -b
-# rm ${MINICONDA_INSTALLER}
+  # Download the Miniconda installer
+  do_or_exit "curl -fsSL --ouput ${MINICONDA_INSTALLER} ${MINICONDA_URL}"
+  do_or_exit "chmod +x ${MINICONDA_INSTALLER}"
+  # Run the Miniconda installer in batch (non-interactive) mode
+  do_or_exit "bash ${MINICONDA_INSTALLER} -b"
+  do_or_exit "rm ${MINICONDA_INSTALLER}"
 
-# Update PATH to accomodate CONDA
-# export PATH=$HOME/miniconda/bin:$PATH
+  # Update PATH to accomodate CONDA
+  do_or_exit "export PATH=$HOME/miniconda/bin:$PATH"
 
-# Update conda itself
-conda update --yes conda
+  # Update conda itself
+  do_or_exit "conda update --yes conda"
 
-# Install packages via conda
-for package in "${conda_pkgs[@]}"; do
-  conda install --yes "${package}"
-  echo "$package"
-done
+  # Install packages via conda
+  for package in "${conda_pkgs[@]}"; do
+    conda install --yes "${package}"
+    echo "$package"
+  done
+}
 
+main
 exit 0
