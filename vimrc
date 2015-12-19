@@ -17,13 +17,13 @@ set nocompatible " this is actually assumed when this .vimrc file exists
 " install it so that it can manage other plugins.
 
 if empty(glob('~/.vim/autoload/plug.vim'))
-    silent! curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
 
 " Use vim-plug to install and manage all other plugins
-call plug#begin()  " begin vim-plug calls
+call plug#begin('~/.vim/plugged')  " begin vim-plug calls
 
 " GitHub-served plugins managed by vim-plug are specified in the format:
 " Plug 'github_account/repository_name'
