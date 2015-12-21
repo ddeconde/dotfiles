@@ -109,16 +109,7 @@ main () {
 
   # Link private files like credentials and local conf files
   require "dir" "${PRIVATE_DIR}" "${PRIVATE_DIR} not found"
-  # Link ssh files
-  require "dir" "${PRIVATE_DIR}/${SSH_DIR}" "${PRIVATE_DIR}/${SSH_DIR} not found"
-  if_not_exists "dir" "${HOME_DIR}/.${SSH_DIR}" "mkdir -p ${HOME_DIR}/.${SSH_DIR}"
-  link_files "${PRIVATE_DIR}/${SSH_DIR}" "${HOME_DIR}/.${SSH_DIR}"
-  # Link aws files
-  require "dir" "${PRIVATE_DIR}/${AWS_DIR}" "${PRIVATE_DIR}/${AWS_DIR} not found"
-  if_not_exists "dir" "${HOME_DIR}/.${AWS_DIR}" "mkdir -p ${HOME_DIR}/.${AWS_DIR}"
-  link_files "${PRIVATE_DIR}/${AWS_DIR}" "${HOME_DIR}/.${AWS_DIR}"
-  # Link local configuration files
-  link_files "${PRIVATE_DIR}/${LOCAL_DIR}" "${HOME_DIR}" "."
+  if_exists "dir" "${PRIVATE_DIR}" "link_private_files"
 
   # Make certain to install python packages within a virtual envrinment
   require_success "which virtualenv" "virtualenv not found"
@@ -324,6 +315,19 @@ link_files () {
   done
 }
 
+link_private_files () {
+  # a wrapper function to...
+  # Link ssh files
+  require "dir" "${PRIVATE_DIR}/${SSH_DIR}" "${PRIVATE_DIR}/${SSH_DIR} not found"
+  if_not_exists "dir" "${HOME}/.${SSH_DIR}" "mkdir -p ${HOME}/.${SSH_DIR}"
+  link_files "${PRIVATE_DIR}/${SSH_DIR}" "${HOME}/.${SSH_DIR}"
+  # Link aws files
+  require "dir" "${PRIVATE_DIR}/${AWS_DIR}" "${PRIVATE_DIR}/${AWS_DIR} not found"
+  if_not_exists "dir" "${HOME}/.${AWS_DIR}" "mkdir -p ${HOME}/.${AWS_DIR}"
+  link_files "${PRIVATE_DIR}/${AWS_DIR}" "${HOME}/.${AWS_DIR}"
+  # Link local configuration files
+  link_files "${PRIVATE_DIR}/${LOCAL_DIR}" "${HOME}" "."
+}
 
 #
 # Invoke main() to run script
