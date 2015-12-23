@@ -45,11 +45,7 @@ packages=(
 
 # Python packages to be installed by pip
 pip_packages=(
-  virtualenv
-  avro
-  fastavro
-  mrjob
-  msgpack-python
+  # virtualenv
   # for restless-ephemerides module support
   enum34
   'llvmlite==0.5.0'
@@ -108,8 +104,8 @@ main () {
   # do_or_exit "sudo apt-get clean"
 
   # Link private files like credentials and local conf files
-  require "dir" "${PRIVATE_DIR}" "${PRIVATE_DIR} not found"
-  if_exists "dir" "${PRIVATE_DIR}" "link_private_files"
+  # require "dir" "${PRIVATE_DIR}" "${PRIVATE_DIR} not found"
+  if_exists "dir" "${PRIVATE_DIR}" "link_dir_files ${PRIVATE_DIR} ${HOME} '.'"
 
   # Make certain to install python packages within a virtual envrinment
   require_success "which virtualenv" "virtualenv not found"
@@ -315,18 +311,34 @@ link_files () {
   done
 }
 
-link_private_files () {
-  # a wrapper function to...
-  # Link ssh files
-  require "dir" "${PRIVATE_DIR}/${SSH_DIR}" "${PRIVATE_DIR}/${SSH_DIR} not found"
-  if_not_exists "dir" "${HOME}/.${SSH_DIR}" "mkdir -p ${HOME}/.${SSH_DIR}"
-  link_files "${PRIVATE_DIR}/${SSH_DIR}" "${HOME}/.${SSH_DIR}"
-  # Link aws files
-  require "dir" "${PRIVATE_DIR}/${AWS_DIR}" "${PRIVATE_DIR}/${AWS_DIR} not found"
-  if_not_exists "dir" "${HOME}/.${AWS_DIR}" "mkdir -p ${HOME}/.${AWS_DIR}"
-  link_files "${PRIVATE_DIR}/${AWS_DIR}" "${HOME}/.${AWS_DIR}"
-  # Link local configuration files
-  link_files "${PRIVATE_DIR}/${LOCAL_DIR}" "${HOME}" "."
+link_subdir_files () {
+  # for each subdirectory of the first argument, create a corresponding
+  # subdirectory in the second argument and symbolically link all files
+  # in those subdirectories of the first argument to the corresponding
+  # subdirectories of the second argument
+  # optional third argument can be used to prefix directories, e.g. with '.'
+  if (( $# > 2 )); then
+    local pre="$3"
+  else
+    local pre=""
+  fi
+  for subdir in ${1}/*; do
+    base_name="$(basename ${subdir})"
+    if [[ -d "${subdir}" ]]; then
+      mkdir -p ${2}/${pre}${base_name}
+      link_files "${subdir}" "${2}/${pre}${base_name}"
+    fi
+  done
+}
+
+link_dir_files () {
+  # symbolically link all files in first argument to second argument
+  # optional third argument can be used to prefix links, e.g. with '.'
+  # also link files in subdirectories of first argument to
+  # created (if necessary) subdirectories in the second argument
+  # optional third argument is used to prefix created subdirectories
+  link_files "${1}" "${2}" "."
+  link_subdir_files "${1}" "${2}" "."
 }
 
 #
