@@ -1,5 +1,12 @@
 
 
+main () {
+  # is_newer_version $1 $2
+  # echo $?
+  if is_outdated $1 $2; then
+    echo "outdated"
+  fi
+}
 
 getApp () {
   curl -s -L -o ${APP_PATH} ${APP_URL}
@@ -7,50 +14,68 @@ getApp () {
 
 installApp () {
   curl -s -L -o ${APP_PATH} ${APP_URL}
-  if [[  ]]; then
+  if [[ $2 == "dmg" ]]; then
     hdiutil attach ${APP_PATH} -nobrowse -mountpoint ${MOUNT_PT}
     cp -R "${APP_PATH}/${APP_NAME}" "${APPLICATIONS_DIR}"
     hdiutil detach ${MOUNT_PT}
     rm -rf ${APP_PATH}
-  elif [[  ]]; then
+  elif [[ $2 == "zip" ]]; then
     unzip -qq ${APP_PATH}
     mv "${APP_NAME}.app" "${APPLICATIONS_DIR}"
-  elif [[  ]]; then
+  elif [[ $2 == "tar" ]]; then
     tar -zxf ${APP_PATH}
     mv "" "${APPLICATIONS_DIR}"
   fi
 }
 
-APPLICATIONS_DIR="/Applications"
+APP_DIR="/Applications"
 
-if_outdated () {
-  local VERSION_ATTR="CFBundleShortVersionString"
-  local INFO_PATH="${APPLICATIONS_DIR}/${APP_NAME}.app/Contents/Info"
-  local version=$( defaults read "${INFO_PATH}" "${VERSION_ATTR}" )
-  
-}
 
-# Compare with one element of version components
-_ver_cmp_1() {
+_compare_version_component() {
+  # Compare a single component of two version numbers
   (( $1 == $2 )) && return 0
   (( $1 > $2 )) && return 1
   (( $1 < $2 )) && return 2
-  # This should not be happening
+  # If somehow the above exhaustive cases are passed, exit with error
   exit 1
 }
 
-ver_cmp() {
+is_newer_version() {
+  # Determine whether first or second argument is a newer version number
+  # and return 1 if the first is newer, 2 if the second, and 0 if equal.
   local A B i result
   A=(${1//./ })
   B=(${2//./ })
   i=0
   while (( i < ${#A[@]} )) && (( i < ${#B[@]})); do
-    _ver_cmp_1 "${A[i]}" "${B[i]}"
+      _compare_version_component "${A[i]}" "${B[i]}"
     result=$?
     [[ $result =~ [12] ]] && return $result
     let i++
   done
-  # Which has more, then it is the newer version
-  _ver_cmp_1 "${#A[i]}" "${#B[i]}"
+  # More version components means newer version when otherwise equal
+  _compare_version_component "${#A[i]}" "${#B[i]}"
   return $?
 }
+
+is_outdated () {
+  local VERSION_ATTR="CFBundleShortVersionString"
+  local INFO_PATH="${APP_NAME}.app/Contents/Info"
+  local current_version=$( defaults read "${APP_DIR}/${INFO_PATH}" "${VERSION_ATTR}" )
+  local new_version=$( defaults read "${APP_PATH}/${INFO_PATH}" "${VERSION_ATTR}" )
+  is_newer_version ${current_version} ${new_version}
+  if (( $? > 1 )); then
+    return 0
+  fi
+    return 1
+}
+
+is_not_installed () {
+  if [[ ! -d "${APP_DIR}/$1" ]]; then
+    return 0
+  fi
+  return 1
+}
+
+main $@
+exit 0
