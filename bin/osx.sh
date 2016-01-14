@@ -391,6 +391,9 @@ link_dir_files () {
   link_subdir_files "${1}" "${2}" "."
 }
 
+get_app () {
+  curl -s -L -o "${APP_TEMP_DIR}/${APP_NAME}" "${APP_URL}"
+}
 
 #
 # RUN MAIN()

@@ -8,23 +8,29 @@ main () {
   fi
 }
 
-getApp () {
+get_app () {
   curl -s -L -o ${APP_PATH} ${APP_URL}
+  if is_not_installed ${APP_NAME}; then
+    install_app "${APP_PATH}" "${TYPE}"
+  elif is_outdated "${APP_NAME}"; then
+    install_app "${APP_PATH}" "${TYPE}"
+  fi
 }
 
-installApp () {
-  curl -s -L -o ${APP_PATH} ${APP_URL}
+install_app () {
   if [[ $2 == "dmg" ]]; then
     hdiutil attach ${APP_PATH} -nobrowse -mountpoint ${MOUNT_PT}
-    cp -R "${APP_PATH}/${APP_NAME}" "${APPLICATIONS_DIR}"
+    cp -R "${APP_PATH}/${APP_NAME}" "${APP_DIR}"
     hdiutil detach ${MOUNT_PT}
     rm -rf ${APP_PATH}
   elif [[ $2 == "zip" ]]; then
     unzip -qq ${APP_PATH}
-    mv "${APP_NAME}.app" "${APPLICATIONS_DIR}"
+    mv "${APP_NAME}.app" "${APP_DIR}"
+    rm -rf ${APP_PATH}
   elif [[ $2 == "tar" ]]; then
     tar -zxf ${APP_PATH}
-    mv "" "${APPLICATIONS_DIR}"
+    mv "" "${APP_DIR}"
+    rm -rf ${APP_PATH}
   fi
 }
 
