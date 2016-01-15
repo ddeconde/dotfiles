@@ -1,11 +1,11 @@
 
 
 main () {
-  # is_newer_version $1 $2
-  # echo $?
-  if is_outdated $1 $2; then
-    echo "outdated"
-  fi
+  is_newer_version $1 $2
+  echo $?
+  # if is_outdated $1 $2; then
+  #   echo "outdated"
+  # fi
 }
 
 get_app () {
@@ -13,25 +13,33 @@ get_app () {
   if is_not_installed ${APP_NAME}; then
     install_app "${APP_PATH}" "${TYPE}"
   elif is_outdated "${APP_NAME}"; then
+    # perhaps remove current app first?
     install_app "${APP_PATH}" "${TYPE}"
   fi
 }
 
 install_app () {
-  if [[ $2 == "dmg" ]]; then
-    hdiutil attach ${APP_PATH} -nobrowse -mountpoint ${MOUNT_PT}
-    cp -R "${APP_PATH}/${APP_NAME}" "${APP_DIR}"
-    hdiutil detach ${MOUNT_PT}
-    rm -rf ${APP_PATH}
-  elif [[ $2 == "zip" ]]; then
-    unzip -qq ${APP_PATH}
-    mv "${APP_NAME}.app" "${APP_DIR}"
-    rm -rf ${APP_PATH}
-  elif [[ $2 == "tar" ]]; then
-    tar -zxf ${APP_PATH}
-    mv "" "${APP_DIR}"
-    rm -rf ${APP_PATH}
-  fi
+  case $2 in
+    "dmg")
+      # yes handles required interactive agreements
+      yes | hdiutil attach ${APP_PATH} -nobrowse -mountpoint ${MOUNT_PT} > /dev/null 2>&1
+      cp -R "${APP_PATH}/${APP_NAME}" "${APP_DIR}"
+      hdiutil detach ${MOUNT_PT}
+      rm -rf ${APP_PATH}
+    ;;
+    "zip")
+      unzip -qq ${APP_PATH}
+      mv "${APP_NAME}.app" "${APP_DIR}"
+      rm -rf ${APP_PATH}
+    ;;
+    "tar")
+      tar -zxf ${APP_PATH}
+      mv "" "${APP_DIR}"
+      rm -rf ${APP_PATH}
+    ;;
+    # "pkg")
+    # ;;
+  esac
 }
 
 APP_DIR="/Applications"
