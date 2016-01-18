@@ -19,15 +19,11 @@ get_app () {
 }
 
 install_app () {
-  local APP_NAME=$1
-  local APP_PATH=$2
-  local FILE_TYPE=$3
-  local MOUNT_PT="/Volumes/${APP_NAME}"
-  case ${FILE_TYPE} in
+  case $2 in
     "dmg")
       # yes handles required interactive agreements
       yes | hdiutil attach ${APP_PATH} -nobrowse -mountpoint ${MOUNT_PT} > /dev/null 2>&1
-      cp -R "${MOUNT_PT}/${APP_NAME}.app" "${APP_DIR}"
+      cp -R "${APP_PATH}/${APP_NAME}" "${APP_DIR}"
       hdiutil detach ${MOUNT_PT}
       rm -rf ${APP_PATH}
     ;;
@@ -38,12 +34,11 @@ install_app () {
     ;;
     "tar")
       tar -zxf ${APP_PATH}
-      mv "${APP_NAME}.app" "${APP_DIR}"
+      mv "" "${APP_DIR}"
       rm -rf ${APP_PATH}
     ;;
-    "pkg")
-      sudo installer -pkg $1 -target /
-    ;;
+    # "pkg")
+    # ;;
   esac
 }
 
