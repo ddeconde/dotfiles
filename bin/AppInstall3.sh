@@ -23,6 +23,11 @@ install_app () {
   local APP_PATH=$2
   local FILE_TYPE=$3
   local MOUNT_PT="/Volumes/${APP_NAME}"
+
+  # Download application
+  curl -s -L -o ${APP_PATH} ${APP_URL}
+
+  # Install according to type
   case ${FILE_TYPE} in
     "dmg")
       # yes handles required interactive agreements
@@ -42,7 +47,7 @@ install_app () {
       rm -rf ${APP_PATH}
     ;;
     "pkg")
-      sudo installer -pkg $1 -target /
+      sudo installer -pkg ${APP_PATH} -target /
     ;;
   esac
 }

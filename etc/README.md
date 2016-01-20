@@ -62,14 +62,12 @@ The steps below were tested on **OS X Mountain Lion**.
 - [Firefox](#firefox)
 - [iTerm2](#iterm2)
 - [Beautiful terminal](#beautiful-terminal)
-- [iTerm2](#iterm2)
 - [Git](#git)
 - [Vim](#vim)
 - [Python](#python)
 - [Virtualenv](#virtualenv)
 - [IPython](#ipython)
 - [Numpy and Scipy](#numpy-and-scipy)
-- [Node.js](#nodejs)
 - [Ruby and RVM](#ruby-and-rvm)
 - [Projects folder](#projects-folder)
 - [Apps](#apps)
@@ -282,10 +280,6 @@ In **Adium > Preferences...**:
 
 - General > Messages > Do not Log Messages
 - Events > Remove any Display a notification entries
-
-### GPGTools
-
-...
 
 ### Little Snitch
 
