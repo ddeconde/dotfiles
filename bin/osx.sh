@@ -26,62 +26,18 @@ readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_ETC_DIR="${DOTFILE_DIR}/etc"
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
-# The name (path) of the brewfile script
-readonly BREWFILE="${DOTFILE_BIN_DIR}/Brewfile"
 readonly ZSH_PATH="/usr/local/bin/zsh"
 readonly COLORS_PATH="${HOME_DIR}/.colorschemes"
-readonly BACKUP_DIR="${HOME}/.backup"
 readonly README="${DOTFILE_ETC_DIR}/README.md"
 readonly SYSTEM_NAME="${1}"
 readonly PRIVATE_DIR="${HOME}/private"
-
+# Directories for GUI application installation
 readonly APP_DIR="/Applications"
 readonly TMP_DIR="~/applications"
 
-
-install_apps () {
-  # This function is a wrapper for multiple calls to the 'get_app' function,
-  # one for each GUI application to be installed. Each call to 'get_app'
-  # requires the following arguments:
-  # 1) download URL
-  # 2) application name (the filename of the .app directory, excluding ".app")
-  # 3) filetype of the downloaded application (i.e. "zip", "dmg", "pkg", "tar")
-
-  get_app "https://iterm2.com/downloads/stable/iTerm2-2_1_4.zip" "iTerm" "zip"
-  get_app "https://s3.amazonaws.com/spectacle/downloads/Spectacle+1.0.1.zip" "Spectacle" "zip"
-  get_app "https://github.com/macvim-dev/macvim/releases/download/snapshot-94/MacVim.dmg" "MacVim" "dmg"
-  get_app "http://unarchiver.c3.cx/downloads/TheUnarchiver3.10.1.dmg" "The Unarchiver" "dmg"
-  get_app "https://d13itkw33a7sus.cloudfront.net/dist/1P/mac4/1Password-6.0.1.zip" "1Password 6" "zip"
-  get_app "https://www.obdev.at/downloads/littlesnitch/LittleSnitch-3.6.1.dmg" "Little Snitch Installer" "dmg"
-  get_app "https://www.obdev.at/downloads/MicroSnitch/MicroSnitch-1.2.zip" "Micro Snitch" "zip"
-  get_app "https://www.obdev.at/downloads/launchbar/LaunchBar-6.5.dmg" "LaunchBar" "dmg"
-  get_app "http://download.transmissionbt.com/files/Transmission-2.84.dmg" "Transmission" "dmg"
-  get_app "http://downloads.sourceforge.net/project/adium/Adium_1.5.10.dmg" "Adium" "dmg"
-  get_app "https://www.torproject.org/dist/torbrowser/5.0.7/TorBrowser-5.0.7-osx64_en-US.dmg" "TorBrowser" "dmg"
-  get_app "http://get.videolan.org/vlc/2.2.1/macosx/vlc-2.2.1.dmg" "VLC" "dmg"
-  get_app "https://update.cyberduck.io/Cyberduck-4.7.3.zip" "Cyberduck" "zip"
-  get_app "http://london.kapeli.com/Dash.zip" "Dash" "zip"
-  get_app "https://www.vmware.com/go/try-fusion-en" "VMware Fusion" "dmg"
-  get_app "http://tug.org/cgi-bin/mactex-download/MacTeX.pkg" "MacTeX" "pkg"
-  get_app "http://bombich.com/software/download_ccc.php?v=latest" "Carbon Copy Cloner" "zip"
-  get_app "http://www.sparklabs.com/downloads/Viscosity.dmg" "Viscosity" "dmg"
-  get_app "http://download.mozilla.org/?product=firefox-latest&os=osx&lang=en-US" "Firefox" "dmg"
-
-  # Uncomment the line below to automatically remove the downloaded
-  # applications after installation.
-  # clean_up_apps
-}
-
 # Installations via BREW
-
-# Formulae for particular versions of packages can be installed via 'brew
-# install homebrew/versions/<formula>'
-
-# Formulae for more recent/bug-fixed versions of already included OS X
-# utilities can be installed via 'brew install homebrew/dupes/<formula>'
-
-# git is excluded as it will always be installed outside of brew.sh
 readonly packages=(
+  git
   zsh
   vim
   tmux
@@ -102,6 +58,41 @@ readonly HOME_BIN_LINKS=(
   bash
   curl
 )
+
+# Definition of the GUI application installation function
+install_apps () {
+  # This function is a wrapper for multiple calls to the 'get_app' function,
+  # one for each GUI application to be installed. Each call to 'get_app'
+  # requires the following arguments:
+  # 1) download URL
+  # 2) application name (the filename of the .app directory, excluding ".app")
+  # 3) filetype of the downloaded application (i.e. "zip", "dmg", "pkg", "tar")
+
+  # Arguments to "get_app", particuarly URLs, must be kept up-to-date
+  get_app "iTerm" "zip" "https://iterm2.com/downloads/stable/iTerm2-2_1_4.zip"
+  get_app "Spectacle" "zip" "https://s3.amazonaws.com/spectacle/downloads/Spectacle+1.0.1.zip"
+  get_app "MacVim" "dmg" "https://github.com/macvim-dev/macvim/releases/download/snapshot-94/MacVim.dmg"
+  get_app "The Unarchiver" "dmg" "http://unarchiver.c3.cx/downloads/TheUnarchiver3.10.1.dmg"
+  get_app "1Password 6" "zip" "https://d13itkw33a7sus.cloudfront.net/dist/1P/mac4/1Password-6.0.1.zip"
+  get_app "Little Snitch Installer" "dmg" "https://www.obdev.at/downloads/littlesnitch/LittleSnitch-3.6.1.dmg"
+  get_app "Micro Snitch" "zip" "https://www.obdev.at/downloads/MicroSnitch/MicroSnitch-1.2.zip"
+  get_app "LaunchBar" "dmg" "https://www.obdev.at/downloads/launchbar/LaunchBar-6.5.dmg"
+  get_app "Transmission" "dmg" "http://download.transmissionbt.com/files/Transmission-2.84.dmg"
+  get_app "Adium" "dmg" "http://downloads.sourceforge.net/project/adium/Adium_1.5.10.dmg"
+  get_app "TorBrowser" "dmg" "https://www.torproject.org/dist/torbrowser/5.0.7/TorBrowser-5.0.7-osx64_en-US.dmg"
+  get_app "VLC" "dmg" "http://get.videolan.org/vlc/2.2.1/macosx/vlc-2.2.1.dmg"
+  get_app "Cyberduck" "zip" "https://update.cyberduck.io/Cyberduck-4.7.3.zip"
+  get_app "Dash" "zip" "http://london.kapeli.com/Dash.zip"
+  get_app "VMware Fusion" "dmg" "https://www.vmware.com/go/try-fusion-en"
+  get_app "MacTeX" "pkg" "http://tug.org/cgi-bin/mactex-download/MacTeX.pkg"
+  get_app "Carbon Copy Cloner" "zip" "http://bombich.com/software/download_ccc.php?v=latest"
+  get_app "Viscosity" "dmg" "http://www.sparklabs.com/downloads/Viscosity.dmg"
+  get_app "Firefox" "dmg" "http://download.mozilla.org/?product=firefox-latest&os=osx&lang=en-US"
+
+  # Uncomment the line below to automatically remove the downloaded
+  # applications after installation.
+  # clean_up_apps
+}
 
 
 #
@@ -132,15 +123,6 @@ main () {
   if_not_success "which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
   require_success "which brew" "Homebrew not found"
 
-  # Install Git via Homebrew
-  do_or_exit "brew install git"
-  require_success "which git" "Git not found"
-
-  # Clone dotfiles repository if necessary and link dotfiles to $HOME
-  if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
-  require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
-  link_files "${DOTFILE_DIR}" "${HOME_DIR}" "."
-
   # Install CLI applications via Homebrew
   do_or_exit "brew update"
   do_or_exit "brew doctor"
@@ -148,6 +130,15 @@ main () {
     brew install ${package}
   done
   do_or_exit "brew cleanup"
+
+  # Install GUI applications
+  install_apps
+
+  # Clone dotfiles repository if necessary and link dotfiles to $HOME
+  require_success "which git" "Git not found"
+  if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+  require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
+  link_files "${DOTFILE_DIR}" "${HOME_DIR}" "."
 
   # Link private files like credentials and local conf files
   # require "dir" "${PRIVATE_DIR}" "${PRIVATE_DIR} not found"
@@ -458,13 +449,13 @@ get_app () {
   # download and install application with name according to the second
   # argument, download URL according to the first argument, and download
   # filetype according to the third argument
-  local APP_URL=$1
-  local APP_NAME=$2
-  local FILE_TYPE=$3
+  local APP_URL=$3
+  local APP_NAME=$1
+  local FILE_TYPE=$2
   local APP_PATH="${TMP_DIR}/${APP_NAME}.${FILE_TYPE}"
 
-  get_application ${APP_URL} ${APP_NAME} ${FILE_TYPE}
-  install_application ${APP_NAME} ${FILE_TYPE}
+  download_app ${APP_URL} ${APP_NAME} ${FILE_TYPE}
+  install_app ${APP_NAME} ${FILE_TYPE}
 }
 
 clean_up_apps () {
