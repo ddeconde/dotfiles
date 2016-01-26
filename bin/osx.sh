@@ -389,7 +389,7 @@ is_installed () {
 is_not_installed () {
   # return success if first argument is not the name of an application already
   # installed in the "/Applications" directory
-  if [[ ! -d "${APP_DIR}/$1" ]]; then
+  if [[ ! -d "${APP_DIR}/${1}" ]]; then
     return 0
   fi
   return 1
@@ -453,6 +453,11 @@ get_app () {
   local APP_NAME=$1
   local FILE_TYPE=$2
   local APP_PATH="${TMP_DIR}/${APP_NAME}.${FILE_TYPE}"
+
+  # Skip over already installed applications; no updating
+  if is_installed ${APP_NAME}; then
+    return 0
+  fi
 
   download_app ${APP_URL} ${APP_NAME} ${FILE_TYPE}
   install_app ${APP_NAME} ${FILE_TYPE}
