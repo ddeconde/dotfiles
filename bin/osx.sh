@@ -21,21 +21,26 @@
 # CONSTANTS
 #
 
+# Set VERBOSE variable to activate stdout messages; value does not matter
+readonly VERBOSE="Yes"
 # The paths of the dotfiles directories
 readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_ETC_DIR="${DOTFILE_DIR}/etc"
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
-readonly ZSH_PATH="/usr/local/bin/zsh"
-readonly COLORS_PATH="${HOME_DIR}/.colorschemes"
+# The paths to installation and configuration related assets
 readonly README="${DOTFILE_ETC_DIR}/README.md"
-readonly SYSTEM_NAME="${1}"
 readonly PRIVATE_DIR="${HOME}/private"
+readonly COLORS_PATH="${HOME_DIR}/.colorschemes"
 # Directories for GUI application installation
 readonly APP_DIR="/Applications"
-readonly TMP_DIR="~/applications"
+readonly TMP_DIR="${HOME}/applications"
+# The path of the Homebrewed version of zsh
+readonly ZSH_PATH="/usr/local/bin/zsh"
+# The hostname is given by the required first argument to this script
+readonly SYSTEM_NAME="${1}"
 
-# Installations via BREW
+# Packages to be installed via Homebrew
 readonly packages=(
   git
   zsh
@@ -81,7 +86,6 @@ install_apps () {
   get_app "Adium" "dmg" "http://downloads.sourceforge.net/project/adium/Adium_1.5.10.dmg"
   get_app "TorBrowser" "dmg" "https://www.torproject.org/dist/torbrowser/5.0.7/TorBrowser-5.0.7-osx64_en-US.dmg"
   get_app "VLC" "dmg" "http://get.videolan.org/vlc/2.2.1/macosx/vlc-2.2.1.dmg"
-  get_app "Cyberduck" "zip" "https://update.cyberduck.io/Cyberduck-4.7.3.zip"
   get_app "Dash" "zip" "http://london.kapeli.com/Dash.zip"
   get_app "VMware Fusion" "dmg" "https://www.vmware.com/go/try-fusion-en"
   get_app "MacTeX" "pkg" "http://tug.org/cgi-bin/mactex-download/MacTeX.pkg"
@@ -111,22 +115,26 @@ main () {
   sudo -v
 
   # Set the system name
+  echo_if_verbose "setting hostname to $0"
   do_or_exit "sudo scutil --set ComputerName ${SYSTEM_NAME}"
   do_or_exit "sudo scutil --set LocalHostName ${SYSTEM_NAME}"
-  do_or_exit "sudo scutil --set HostnameName ${SYSTEM_NAME}"
+  do_or_exit "sudo scutil --set HostName ${SYSTEM_NAME}"
 
   # Install Xcode Command Line Tools
+  echo_if_verbose "installing Xcode Command Line Tools"
   if_not_success "xcode-select --print-path" "xcode-select --install"
   require_success "xcode-select --print-path" "Xcode Command Line Tools not found"
 
   # Install Homebrew
+  echo_if_verbose "installing Homebrew"
   if_not_success "which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
   require_success "which brew" "Homebrew not found"
 
-  # Install CLI applications via Homebrew
+  # Install command line packages via Homebrew
   do_or_exit "brew update"
   do_or_exit "brew doctor"
   for package in "${packages[@]}"; do
+    echo_if_verbose "installing ${package} via Homebrew"
     brew install ${package}
   done
   do_or_exit "brew cleanup"
@@ -151,10 +159,10 @@ main () {
 
   # Download Solarized colorscheme
   if_not_exists "dir" "${COLORS_PATH}" "git clone https://github.com/altercation/solarized.git ${COLORS_PATH}"
-  printf "Solarized color scheme files are in ${COLORS_PATH}\n"
+  echo_if_verbose "Solarized color scheme files are in ${COLORS_PATH}\n"
 
   # Reminder of where the iTerm2 preferences file is
-  printf "Reminder: set iTerm2 Preferences to load from a custom folder or URL:\n ${DOTFILE_ETC_DIR}\n"
+  echo_if_verbose "iTerm2 preferences are at: ${DOTFILE_ETC_DIR}\n"
 
   # Make $HOME/bin directory for symbolic links to Homebrew-installed executables
   if_not_exists "dir" "${HOME}/bin" "mkdir -p ${HOME}/bin"
@@ -163,8 +171,8 @@ main () {
     if_exists "any" "/usr/local/bin/${bin}" "ln -s /usr/local/bin ${HOME}/bin/${bin}"
   done
 
-  # Direct user to $README
-  printf "See ${README} for installation and configuration instructions.\n"
+  # Direct user to README
+  echo_if_verbose "see ${README} for installation and configuration instructions.\n"
 }
 
 
@@ -178,6 +186,13 @@ main () {
 echo_error () {
   # conveniently print errors to stderr
   printf "$0: $@\n" >&2
+}
+
+echo_if_verbose () {
+  # if the VERBOSE variable is set then print argument to stdout
+  if [[ -z ${VERBOSE+x} ]]; then
+    printf "$0: $@\n"
+  fi
 }
 
 do_or_exit () {
@@ -459,6 +474,10 @@ get_app () {
     return 0
   fi
 
+
+  if [[ -z ${VERBOSE+x} ]]; then
+    printf "$0: downloading and installing ${4}.\n"
+  fi
   download_app ${APP_URL} ${APP_NAME} ${FILE_TYPE}
   install_app ${APP_NAME} ${FILE_TYPE}
 }
@@ -466,6 +485,7 @@ get_app () {
 clean_up_apps () {
   # delete downloaded application files and remove temporary directory
   rm -rf ${TMP_DIR}
+  rmdir ${TMP_DIR}
 }
 
 
