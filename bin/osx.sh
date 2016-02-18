@@ -92,6 +92,7 @@ install_apps () {
   get_app "Carbon Copy Cloner" "zip" "http://bombich.com/software/download_ccc.php?v=latest"
   get_app "Viscosity" "dmg" "http://www.sparklabs.com/downloads/Viscosity.dmg"
   get_app "Firefox" "dmg" "http://download.mozilla.org/?product=firefox-latest&os=osx&lang=en-US"
+  get_app "Chromium" "dmg" "https://sourceforge.net/projects/osxportableapps/files/latest/download?source=files"
 
   # Uncomment the line below to automatically remove the downloaded
   # applications after installation.
