@@ -143,6 +143,11 @@ main () {
   # Install GUI applications
   install_apps
 
+  # Copy backup data into place if available
+  for dir in "${backup_dirs[@]}"; do
+    if_exists "dir" "${BACKUP_VOL}/${dir}" "cp -R ${BACKUP_VOL}/${dir} ${HOME}/${dir}"
+  done
+
   # Clone dotfiles repository if necessary and link dotfiles to $HOME
   require_success "which git" "Git not found"
   if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
