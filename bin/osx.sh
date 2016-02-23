@@ -31,7 +31,7 @@ readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The paths to installation and configuration related assets
 readonly README="${DOTFILE_ETC_DIR}/README.md"
 readonly PRIVATE_DIR="${HOME}/private"
-readonly COLORS_PATH="${HOME_DIR}/.colorschemes"
+readonly COLORS_PATH="${HOME_DIR}/etc"
 # Directories for GUI application installation
 readonly APP_DIR="/Applications"
 readonly TMP_DIR="${HOME}/applications"
@@ -53,6 +53,14 @@ readonly packages=(
   bash
   curl
   lynx
+)
+
+readonly backup_dirs=(
+  dotfiles
+  private
+  etc
+  Documents
+  Projects
 )
 
 # Homebrew packages to link to HOME/bin for PATH priority over defaults
@@ -148,27 +156,24 @@ main () {
     if_exists "dir" "${BACKUP_VOL}/${dir}" "cp -R ${BACKUP_VOL}/${dir} ${HOME}/${dir}"
   done
 
-  # Clone dotfiles repository if necessary and link dotfiles to $HOME
+  # Clone dotfiles repository if necessary
   require_success "which git" "Git not found"
   if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+
+  # Download Solarized colorscheme if necessary
+  if_not_exists "dir" "${COLORS_PATH}" "git clone https://github.com/altercation/solarized.git ${COLORS_PATH}"
+
+  # Link dotfiles to home directory
   require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
   link_files "${DOTFILE_DIR}" "${HOME_DIR}" "."
 
   # Link private files like credentials and local conf files
-  # require "dir" "${PRIVATE_DIR}" "${PRIVATE_DIR} not found"
   if_exists "dir" "${PRIVATE_DIR}" "link_dir_files ${PRIVATE_DIR} ${HOME} '.'"
 
   # Change login shell to (Homebrew installed) Z Shell
   require "exec" "${ZSH_PATH}" "Homebrewed Z Shell not found"
   if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
   do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
-
-  # Download Solarized colorscheme
-  if_not_exists "dir" "${COLORS_PATH}" "git clone https://github.com/altercation/solarized.git ${COLORS_PATH}"
-  echo_if_verbose "Solarized color scheme files are in ${COLORS_PATH}\n"
-
-  # Reminder of where the iTerm2 preferences file is
-  echo_if_verbose "iTerm2 preferences are at: ${DOTFILE_ETC_DIR}\n"
 
   # Make $HOME/bin directory for symbolic links to Homebrew-installed executables
   if_not_exists "dir" "${HOME}/bin" "mkdir -p ${HOME}/bin"
@@ -177,8 +182,14 @@ main () {
     if_exists "any" "/usr/local/bin/${bin}" "ln -s /usr/local/bin ${HOME}/bin/${bin}"
   done
 
+  # Reminder of where the iTerm2 preferences file is
+  echo_if_verbose "iTerm2 preferences are at: ${DOTFILE_ETC_DIR}\n"
+
   # Direct user to README
   echo_if_verbose "see ${README} for installation and configuration instructions.\n"
+
+  # Direct user to create administrative user
+  echo_if_verbose "create a separate admin account and"
 }
 
 
