@@ -31,7 +31,7 @@ readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The paths to installation and configuration related assets
 readonly README="${DOTFILE_ETC_DIR}/README.md"
 readonly PRIVATE_DIR="${HOME}/private"
-readonly COLORS_PATH="${HOME_DIR}/etc"
+readonly COLORS_PATH="${HOME_DIR}/etc/solarized"
 # Directories for GUI application installation
 readonly APP_DIR="/Applications"
 readonly TMP_DIR="${HOME}/applications"
@@ -39,6 +39,9 @@ readonly TMP_DIR="${HOME}/applications"
 readonly ZSH_PATH="/usr/local/bin/zsh"
 # The hostname is given by the required first argument to this script
 readonly SYSTEM_NAME="${1}"
+# The default name for the required administrative user account
+readonly ADMIN_USER="admin"
+readonly HOMEBREW_INSTALL_RUBY_CMD="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 # Packages to be installed via Homebrew
 readonly packages=(
@@ -123,6 +126,9 @@ main () {
   # This is necessary for some of these actions
   sudo -v
 
+  # Require that an administrative user account has already been created
+  require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "Administrative user account: ${ADMIN_USER} not found"
+
   # Set the system name
   echo_if_verbose "setting hostname to $0"
   do_or_exit "sudo scutil --set ComputerName ${SYSTEM_NAME}"
@@ -136,7 +142,7 @@ main () {
 
   # Install Homebrew
   echo_if_verbose "installing Homebrew"
-  if_not_success "which brew" 'ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+  if_not_success "which brew" "sudo -u ${ADMIN_USER} /usr/bin/ruby -e ${HOMEBREW_INSTALL_RUBY_CMD}"
   require_success "which brew" "Homebrew not found"
 
   # Install command line packages via Homebrew
