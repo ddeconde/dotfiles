@@ -28,6 +28,9 @@ readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_ETC_DIR="${DOTFILE_DIR}/etc"
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
+# The paths to backup files
+readonly BACKUP_VOL="/Volumes/Rucksack/"
+readonly BACKUP_PATH="${BACKUP_VOL}/"
 # The paths to installation and configuration related assets
 readonly README="${DOTFILE_ETC_DIR}/README.md"
 readonly PRIVATE_DIR="${HOME}/private"
@@ -52,7 +55,6 @@ readonly packages=(
   zsh-history-substring-search
   the_silver_searcher
   ctags-exuberant
-  homebrew/dupes/rsync
   bash
   curl
   lynx
@@ -93,7 +95,6 @@ install_apps () {
   get_app "Little Snitch Installer" "dmg" "https://www.obdev.at/downloads/littlesnitch/LittleSnitch-3.6.1.dmg"
   get_app "Micro Snitch" "zip" "https://www.obdev.at/downloads/MicroSnitch/MicroSnitch-1.2.zip"
   get_app "LaunchBar" "dmg" "https://www.obdev.at/downloads/launchbar/LaunchBar-6.5.dmg"
-  get_app "Transmission" "dmg" "http://download.transmissionbt.com/files/Transmission-2.84.dmg"
   get_app "Adium" "dmg" "http://downloads.sourceforge.net/project/adium/Adium_1.5.10.dmg"
   get_app "TorBrowser" "dmg" "https://www.torproject.org/dist/torbrowser/5.0.7/TorBrowser-5.0.7-osx64_en-US.dmg"
   get_app "VLC" "dmg" "http://get.videolan.org/vlc/2.2.1/macosx/vlc-2.2.1.dmg"
@@ -137,8 +138,8 @@ main () {
 
   # Install Xcode Command Line Tools
   echo_if_verbose "installing Xcode Command Line Tools"
-  if_not_success "xcode-select --print-path" "xcode-select --install"
-  require_success "xcode-select --print-path" "Xcode Command Line Tools not found"
+  if_not_success "sudo -u ${ADMIN_USER} xcode-select --print-path" "xcode-select --install"
+  require_success "sudo -u ${ADMIN_USER} xcode-select --print-path" "Xcode Command Line Tools not found"
 
   # Install Homebrew
   echo_if_verbose "installing homebrew"
@@ -146,20 +147,20 @@ main () {
   require_success "which brew" "homebrew not found"
 
   # Install command line packages via Homebrew
-  do_or_exit "brew update"
-  do_or_exit "brew doctor"
+  do_or_exit "sudo -u ${ADMIN_USER} brew update"
+  do_or_exit "sudo -u ${ADMIN_USER} brew doctor"
   for package in "${packages[@]}"; do
     echo_if_verbose "installing ${package} via homebrew"
     sudo -u ${ADMIN_USER} brew install ${package}
   done
-  do_or_exit "brew cleanup"
+  do_or_exit "sudo -u ${ADMIN_USER} brew cleanup"
 
   # Install GUI applications
   install_apps
 
   # Copy backup data into place if available
   for dir in "${backup_dirs[@]}"; do
-    if_exists "dir" "${BACKUP_VOL}/${dir}" "cp -R ${BACKUP_VOL}/${dir} ${HOME}/${dir}"
+    if_exists "dir" "${BACKUP_PATH}/${dir}" "cp -R ${BACKUP_PATH}/${dir} ${HOME}/${dir}"
   done
 
   # Clone dotfiles repository if necessary
@@ -193,9 +194,6 @@ main () {
 
   # Direct user to README
   echo_if_verbose "see ${README} for installation and configuration instructions.\n"
-
-  # Direct user to create administrative user
-  echo_if_verbose "create a separate admin account and"
 }
 
 
