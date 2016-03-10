@@ -29,8 +29,8 @@ readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_ETC_DIR="${DOTFILE_DIR}/etc"
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 # The paths to backup files
-readonly BACKUP_VOL="/Volumes/Rucksack/"
-readonly BACKUP_PATH="${BACKUP_VOL}/"
+readonly BACKUP_VOL="/Volumes/Haversack/"
+readonly BACKUP_PATH="${BACKUP_VOL}/Users/${USER}"
 # The paths to installation and configuration related assets
 readonly README="${DOTFILE_ETC_DIR}/README.md"
 readonly PRIVATE_DIR="${HOME}/private"
