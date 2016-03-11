@@ -111,6 +111,11 @@ install_apps () {
   # clean_up_apps
 }
 
+get_homebrew () {
+    # a wrapper for the homebrew installation line from `http://brew.sh`
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+}
+
 
 #
 # SCRIPT
@@ -131,24 +136,16 @@ main () {
   require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
 
   # Set the system name
-  echo_if_verbose "setting hostname to $0"
-  do_or_exit "sudo scutil --set ComputerName ${SYSTEM_NAME}"
-  do_or_exit "sudo scutil --set LocalHostName ${SYSTEM_NAME}"
-  do_or_exit "sudo scutil --set HostName ${SYSTEM_NAME}"
+  set_system_name "${SYSTEM_NAME}"
 
   # Install Xcode Command Line Tools
-  echo_if_verbose "installing Xcode Command Line Tools"
-  if_not_success "sudo -u ${ADMIN_USER} xcode-select --print-path" "xcode-select --install"
-  require_success "sudo -u ${ADMIN_USER} xcode-select --print-path" "Xcode Command Line Tools not found"
+  install_xcode_clt
 
   # Install Homebrew
-  echo_if_verbose "installing homebrew"
-  if_not_success "which brew" "sudo -u ${ADMIN_USER} /usr/bin/ruby -e ${HOMEBREW_INSTALL_RUBY_CMD}"
-  require_success "which brew" "homebrew not found"
+  install_homebrew
 
   # Install command line packages via Homebrew
-  do_or_exit "sudo -u ${ADMIN_USER} brew update"
-  do_or_exit "sudo -u ${ADMIN_USER} brew doctor"
+  require_success "which brew" "homebrew not found"
   for package in "${packages[@]}"; do
     echo_if_verbose "installing ${package} via homebrew"
     sudo -u ${ADMIN_USER} brew install ${package}
@@ -178,8 +175,7 @@ main () {
   if_exists "dir" "${PRIVATE_DIR}" "link_dir_files ${PRIVATE_DIR} ${HOME} '.'"
 
   # Change login shell to (Homebrew installed) Z Shell
-  require "exec" "${ZSH_PATH}" "homebrewed Z Shell not found"
-  if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
+  add_login_shell "${ZSH_PATH}"
   do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
 
   # Make $HOME/bin directory for symbolic links to Homebrew-installed executables
@@ -507,6 +503,45 @@ clean_up_apps () {
   # delete downloaded application files and remove temporary directory
   sudo -u ${ADMIN_USER} rm -rf ${TMP_DIR}
   sudo -u ${ADMIN_USER} rmdir ${TMP_DIR}
+}
+
+set_system_name () {
+  # set the system name
+  echo_if_verbose "setting hostname to ${1}"
+  do_or_exit "sudo scutil --set ComputerName ${1}"
+  do_or_exit "sudo scutil --set LocalHostName ${1}"
+  do_or_exit "sudo scutil --set HostName ${1}"
+}
+
+install_xcode_clt () {
+  # install Xcode Command Line Tools
+  require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
+  echo_if_verbose "installing Xcode Command Line Tools"
+  if_not_success "sudo -u ${ADMIN_USER} xcode-select --print-path" "xcode-select --install"
+}
+
+install_homebrew () {
+  # install Homebrew as administrative user
+  require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
+  require_success "xcode-select --print-path" "Xcode Command Line Tools not found"
+  echo_if_verbose "installing homebrew"
+  if ! which brew > /dev/null 2>&1; then
+    # the following line is from `http://brew.sh` but with sudo -u prepended
+    sudo -u ${ADMIN_USER} get_homebrew
+    retval=$?
+    if (( retval != 0 )); then
+      exit $retval
+    fi
+  fi
+  # make certain Homebrew is ready to brew
+  do_or_exit "sudo -u ${ADMIN_USER} brew update"
+  do_or_exit "sudo -u ${ADMIN_USER} brew doctor"
+}
+
+add_login_shell () {
+  # add login shell to /etc/shells if it isn't already there
+  require "exec" "${1}" "shell ${1} not found"
+  if_not_success "grep -q ${1} /etc/shells" "echo ${1} | sudo tee -a /etc/shells"
 }
 
 
