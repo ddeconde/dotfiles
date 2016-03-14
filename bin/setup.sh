@@ -22,7 +22,7 @@
 #
 
 # Set VERBOSE variable to activate stdout messages; value does not matter
-readonly VERBOSE="Yes"
+VERBOSE="True"
 # The paths of the dotfiles directories
 readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
@@ -40,11 +40,8 @@ readonly APP_DIR="/Applications"
 readonly TMP_DIR="~${ADMIN_USER}/applications"
 # The path of the Homebrewed version of zsh
 readonly ZSH_PATH="/usr/local/bin/zsh"
-# The hostname is given by the required first argument to this script
-readonly SYSTEM_NAME="${1}"
 # The default name for the required administrative user account
-readonly ADMIN_USER="admin"
-readonly HOMEBREW_INSTALL_RUBY_CMD="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+ADMIN_USER="admin"
 
 # Packages to be installed via Homebrew
 readonly packages=(
@@ -122,11 +119,32 @@ get_homebrew () {
 #
 
 main () {
-  # An argument specifying hostname is required
+  # Process options using getops builtin
+  while getops ":a:q" opt; do
+    case ${opt} in
+      q)
+        unset VERBOSE
+        ;;
+      a)
+        ADMIN_USER="${OPTARG}"
+        ;;
+      \?)
+        printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
+        usage
+        ;;
+      :)
+        printf "$(basename $0): missing argument for -%s\n" ${OPTARG} >&2
+        usage
+        ;;
+    esac
+  done
+  # Shift to process positional arguments
+  shift $(( OPTIND - 1 ))
+  # An argument specifying the hostname is required
   if (( $# != 1 )); then
-    printf "usage: $0 hostname\n"
-    exit 64
+    usage
   fi
+  system_name="$1"
 
   # Run this script with superuser privileges - BE CAREFUL!
   # This is necessary for some of these actions
@@ -136,7 +154,7 @@ main () {
   require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
 
   # Set the system name
-  set_system_name "${SYSTEM_NAME}"
+  set_system_name "${system_name}"
 
   # Install Xcode Command Line Tools
   install_xcode_clt
@@ -145,7 +163,6 @@ main () {
   install_homebrew
 
   # Install command line packages via Homebrew
-  require_success "which brew" "homebrew not found"
   for package in "${packages[@]}"; do
     echo_if_verbose "installing ${package} via homebrew"
     sudo -u ${ADMIN_USER} brew install ${package}
@@ -199,6 +216,13 @@ main () {
 # Most of these functions are just wrappers for simple control flow but they
 # allow for the script itself to consist nearly entirely of readable
 # single-line statements.
+
+usage () {
+    cat <<EOF
+    usage: $(basename $0) hostname
+EOF
+    exit 64
+}
 
 echo_error () {
   # conveniently print errors to stderr
@@ -256,38 +280,38 @@ require () {
   # exit if second argument path does not exist as correct type
   # optional third argument gives error message
   case $1 in
-    "file")
+    'file')
       if [[ ! -f "$2" ]]; then
         if (( $# > 2 )); then
           echo_error "$3"
         fi
         exit 1
       fi
-    ;;
-    "dir")
+      ;;
+    'dir')
       if [[ ! -d "$2" ]]; then
         if (( $# > 2 )); then
           echo_error "$3"
         fi
         exit 1
       fi
-    ;;
-    "link")
+      ;;
+    'link')
       if [[ ! -h "$2" ]]; then
         if (( $# > 2 )); then
           echo_error "$3"
         fi
         exit 1
       fi
-    ;;
-    "exec")
+      ;;
+    'exec')
       if [[ ! -x "$2" ]]; then
         if (( $# > 2 )); then
           echo_error "$3"
         fi
         exit 1
       fi
-    ;;
+      ;;
     *)
       if [[ ! -e "$2" ]]; then
         if (( $# > 2 )); then
@@ -295,7 +319,7 @@ require () {
         fi
         exit 1
       fi
-    ;;
+      ;;
   esac
 }
 
@@ -303,31 +327,31 @@ if_exists () {
   # first argument determines type of second argument
   # if second argument exists then do third
   case $1 in
-    "file")
+    'file')
       if [[ -f "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
-    "dir")
+      ;;
+    'dir')
       if [[ -d "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
-    "link")
+      ;;
+    'link')
       if [[ -h "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
-    "exec")
+      ;;
+    'exec')
       if [[ -x "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
+      ;;
     *)
       if [[ -e "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
+      ;;
   esac
 }
 
@@ -335,31 +359,31 @@ if_not_exists () {
   # first argument determines type of second argument
   # if second argument does not exist then do third
   case $1 in
-    "file")
+    'file')
       if [[ ! -f "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
-    "dir")
+      ;;
+    'dir')
       if [[ ! -d "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
-    "link")
+      ;;
+    'link')
       if [[ ! -h "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
-    "exec")
+      ;;
+    'exec')
       if [[ ! -x "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
+      ;;
     *)
       if [[ ! -e "$2" ]]; then
         do_or_exit "$3"
       fi
-    ;;
+      ;;
   esac
 }
 
@@ -432,12 +456,12 @@ download_app () {
   # filetype of third argument (i.e. "dmg", "zip", "pkg", "tar") and filename
   # according to the second argument--this name must be the correct name of the
   # ".app" file contained within the download
-  local APP_URL=$1
-  local APP_NAME=$2
-  local FILE_TYPE=$3
-  local APP_PATH="${TMP_DIR}/${APP_NAME}.${FILE_TYPE}"
+  local app_url=$1
+  local app_name=$2
+  local file_type=$3
+  local app_path="${TMP_DIR}/${app_name}.${file_type}"
   if_not_exists "dir" "${TMP_DIR}" "sudo -u ${ADMIN_USER} mkdir -p ${TMP_DIR}"
-  sudo -u ${ADMIN_USER} curl -sLo ${APP_PATH} ${APP_URL}
+  sudo -u ${ADMIN_USER} curl -sLo ${app_path} ${app_url}
 }
 
 install_app () {
@@ -445,35 +469,35 @@ install_app () {
   # downloaded install filetype of the second argument (i.e. "dmg", "zip",
   # "pkg", "tar")--if this application is already installed to the
   # "/Applications" directory then this function does nothing
-  local APP_NAME=$1
-  local FILE_TYPE=$2
-  local APP_PATH="${TMP_DIR}/${APP_NAME}.${FILE_TYPE}"
-  local MOUNT_PT="/Volumes/${APP_NAME}"
+  local app_name=$1
+  local file_type=$2
+  local app_path="${TMP_DIR}/${app_name}.${file_type}"
+  local mount_point="/Volumes/${app_name}"
 
   # Skip over already installed applications; no updating
-  if is_installed ${APP_NAME}; then
+  if is_installed ${app_name}; then
     return 0
   fi
 
   # Install according to type
-  case ${FILE_TYPE} in
-    "dmg")
+  case ${file_type} in
+    'dmg')
       # yes handles required interactive agreements
-      sudo -u ${ADMIN_USER} yes | hdiutil attach ${APP_PATH} -nobrowse -mountpoint ${MOUNT_PT} > /dev/null 2>&1
-      sudo -u ${ADMIN_USER} cp -R "${MOUNT_PT}/${APP_NAME}.app" "${APP_DIR}"
-      sudo -u ${ADMIN_USER} hdiutil detach ${MOUNT_PT} > /dev/null 2>&1
-    ;;
-    "zip")
-      sudo -u ${ADMIN_USER} unzip -qq ${APP_PATH}
-      mv "${APP_NAME}.app" "${APP_DIR}"
-    ;;
-    "pkg")
-      sudo -u ${ADMIN_USER} installer -pkg ${APP_PATH} -target /
-    ;;
-    "tar")
-      sudo -u ${ADMIN_USER} tar -zxf ${APP_PATH} > /dev/null 2>&1
-      mv "${APP_NAME}.app" "${APP_DIR}"
-    ;;
+      sudo -u ${ADMIN_USER} yes | hdiutil attach ${app_path} -nobrowse -mountpoint ${mount_point} > /dev/null 2>&1
+      sudo -u ${ADMIN_USER} cp -R "${mount_point}/${app_name}.app" "${APP_DIR}"
+      sudo -u ${ADMIN_USER} hdiutil detach ${mount_point} > /dev/null 2>&1
+      ;;
+    'zip')
+      sudo -u ${ADMIN_USER} unzip -qq ${app_path}
+      mv "${app_name}.app" "${APP_DIR}"
+      ;;
+    'pkg')
+      sudo -u ${ADMIN_USER} installer -pkg ${app_path} -target /
+      ;;
+    'tar')
+      sudo -u ${ADMIN_USER} tar -zxf ${app_path} > /dev/null 2>&1
+      mv "${app_name}.app" "${APP_DIR}"
+      ;;
   esac
 }
 
@@ -481,22 +505,22 @@ get_app () {
   # download and install application with name according to the second
   # argument, download URL according to the first argument, and download
   # filetype according to the third argument
-  local APP_URL=$3
-  local APP_NAME=$1
-  local FILE_TYPE=$2
-  local APP_PATH="${TMP_DIR}/${APP_NAME}.${FILE_TYPE}"
+  local app_url=$3
+  local app_name=$1
+  local file_type=$2
+  local app_path="${tmp_dir}/${app_name}.${file_type}"
 
   # Skip over already installed applications; no updating
-  if is_installed ${APP_NAME}; then
+  if is_installed ${app_name}; then
     return 0
   fi
 
 
   if [[ -z ${VERBOSE+x} ]]; then
-    printf "$0: downloading and installing ${4}.\n"
+    printf "$0: downloading and installing ${app_name}.\n"
   fi
-  download_app ${APP_URL} ${APP_NAME} ${FILE_TYPE}
-  install_app ${APP_NAME} ${FILE_TYPE}
+  download_app ${app_url} ${app_name} ${file_type}
+  install_app ${app_name} ${file_type}
 }
 
 clean_up_apps () {
