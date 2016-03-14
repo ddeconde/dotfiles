@@ -92,7 +92,7 @@ install_apps () {
   get_app "Little Snitch Installer" "dmg" "https://www.obdev.at/downloads/littlesnitch/LittleSnitch-3.6.1.dmg"
   get_app "Micro Snitch" "zip" "https://www.obdev.at/downloads/MicroSnitch/MicroSnitch-1.2.zip"
   get_app "LaunchBar" "dmg" "https://www.obdev.at/downloads/launchbar/LaunchBar-6.5.dmg"
-  get_app "Adium" "dmg" "http://downloads.sourceforge.net/project/adium/Adium_1.5.10.dmg"
+  # get_app "Adium" "dmg" "http://downloads.sourceforge.net/project/adium/Adium_1.5.10.dmg"
   get_app "TorBrowser" "dmg" "https://www.torproject.org/dist/torbrowser/5.0.7/TorBrowser-5.0.7-osx64_en-US.dmg"
   get_app "VLC" "dmg" "http://get.videolan.org/vlc/2.2.1/macosx/vlc-2.2.1.dmg"
   get_app "Dash" "zip" "http://london.kapeli.com/Dash.zip"
@@ -122,11 +122,11 @@ main () {
   # Process options using getops builtin
   while getops ":a:q" opt; do
     case ${opt} in
-      q)
-        unset VERBOSE
-        ;;
       a)
         ADMIN_USER="${OPTARG}"
+        ;;
+      q)
+        unset VERBOSE
         ;;
       \?)
         printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
@@ -219,7 +219,7 @@ main () {
 
 usage () {
     cat <<EOF
-    usage: $(basename $0) hostname
+    usage: $(basename $0) [-a administrator] [-q] hostname
 EOF
     exit 64
 }
