@@ -42,6 +42,7 @@ readonly TMP_DIR="~${ADMIN_USER}/applications"
 readonly ZSH_PATH="/usr/local/bin/zsh"
 # The default name for the required administrative user account
 ADMIN_USER="admin"
+system_name="0"
 
 # Packages to be installed via Homebrew
 readonly packages=(
@@ -113,12 +114,9 @@ get_homebrew () {
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 }
 
-
-#
-# SCRIPT
-#
-
-main () {
+parse_opts () {
+  local OPTIND
+  local opt
   # Process options using getops builtin
   while getops ":a:q" opt; do
     case ${opt} in
@@ -145,6 +143,41 @@ main () {
     usage
   fi
   system_name="$1"
+}
+
+#
+# SCRIPT
+#
+
+main () {
+  # # Process options using getops builtin
+  # while getops ":a:q" opt; do
+  #   case ${opt} in
+  #     a)
+  #       ADMIN_USER="${OPTARG}"
+  #       ;;
+  #     q)
+  #       unset VERBOSE
+  #       ;;
+  #     \?)
+  #       printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
+  #       usage
+  #       ;;
+  #     :)
+  #       printf "$(basename $0): missing argument for -%s\n" ${OPTARG} >&2
+  #       usage
+  #       ;;
+  #   esac
+  # done
+  # # Shift to process positional arguments
+  # shift $(( OPTIND - 1 ))
+  # # An argument specifying the hostname is required
+  # if (( $# != 1 )); then
+  #   usage
+  # fi
+  # system_name="$1"
+
+  parse_opts "$@"
 
   # Run this script with superuser privileges - BE CAREFUL!
   # This is necessary for some of these actions
