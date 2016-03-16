@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # install
-# Last Changed: Sun, 12 Jul 2015 22:06:02 -0700
+# Last Changed: Tue, 15 Mar 2016 21:31:24 -0700
 #
 # Usage:
 # $ install
@@ -26,9 +26,9 @@ readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_ETC_DIR="${DOTFILE_DIR}/etc"
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
-# The paths to backup files
+# The default paths to backup files
 readonly BACKUP_VOL="/Volumes/Haversack/"
-readonly BACKUP_PATH="${BACKUP_VOL}/Users/${USER}"
+readonly BACKUP_DIR="${BACKUP_VOL}/Users/${USER}"
 # The paths to installation and configuration related assets
 readonly README="${DOTFILE_ETC_DIR}/README.md"
 readonly PRIVATE_DIR="${HOME}/private"
@@ -118,6 +118,7 @@ VERBOSE="True"
 # The default name for the required administrative user account
 ADMIN_USER="admin"
 SYSTEM_NAME="0"
+BACKUP="${BACKUP_PATH:-$BACKUP_DIR}"
 
 
 #
@@ -211,10 +212,13 @@ parse_opts () {
   # process options using getops builtin
   local OPTIND
   local opt
-  while getopts ":a:q" opt; do
+  while getopts ":a:b:q" opt; do
     case ${opt} in
       a)
         ADMIN_USER="${OPTARG}"
+        ;;
+      b)
+        BACKUP_PATH="${OPTARG}"
         ;;
       q)
         unset VERBOSE
