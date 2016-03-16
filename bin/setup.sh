@@ -21,8 +21,6 @@
 # CONSTANTS
 #
 
-# Set VERBOSE variable to activate stdout messages; value does not matter
-VERBOSE="True"
 # The paths of the dotfiles directories
 readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
@@ -40,9 +38,6 @@ readonly APP_DIR="/Applications"
 readonly TMP_DIR="~${ADMIN_USER}/applications"
 # The path of the Homebrewed version of zsh
 readonly ZSH_PATH="/usr/local/bin/zsh"
-# The default name for the required administrative user account
-ADMIN_USER="admin"
-system_name="0"
 
 # Packages to be installed via Homebrew
 readonly packages=(
@@ -110,73 +105,27 @@ install_apps () {
 }
 
 get_homebrew () {
-    # a wrapper for the homebrew installation line from `http://brew.sh`
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  # a wrapper for the homebrew installation line from `http://brew.sh`
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 }
 
-parse_opts () {
-  local OPTIND
-  local opt
-  # Process options using getops builtin
-  while getops ":a:q" opt; do
-    case ${opt} in
-      a)
-        ADMIN_USER="${OPTARG}"
-        ;;
-      q)
-        unset VERBOSE
-        ;;
-      \?)
-        printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
-        usage
-        ;;
-      :)
-        printf "$(basename $0): missing argument for -%s\n" ${OPTARG} >&2
-        usage
-        ;;
-    esac
-  done
-  # Shift to process positional arguments
-  shift $(( OPTIND - 1 ))
-  # An argument specifying the hostname is required
-  if (( $# != 1 )); then
-    usage
-  fi
-  system_name="$1"
-}
+#
+# GLOBALS
+#
+
+# Set VERBOSE variable to activate stdout messages; value does not matter
+VERBOSE="True"
+# The default name for the required administrative user account
+ADMIN_USER="admin"
+SYSTEM_NAME="0"
+
 
 #
 # SCRIPT
 #
 
 main () {
-  # # Process options using getops builtin
-  # while getops ":a:q" opt; do
-  #   case ${opt} in
-  #     a)
-  #       ADMIN_USER="${OPTARG}"
-  #       ;;
-  #     q)
-  #       unset VERBOSE
-  #       ;;
-  #     \?)
-  #       printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
-  #       usage
-  #       ;;
-  #     :)
-  #       printf "$(basename $0): missing argument for -%s\n" ${OPTARG} >&2
-  #       usage
-  #       ;;
-  #   esac
-  # done
-  # # Shift to process positional arguments
-  # shift $(( OPTIND - 1 ))
-  # # An argument specifying the hostname is required
-  # if (( $# != 1 )); then
-  #   usage
-  # fi
-  # system_name="$1"
-
+  # Process options using getops builtin
   parse_opts "$@"
 
   # Run this script with superuser privileges - BE CAREFUL!
@@ -187,7 +136,7 @@ main () {
   require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
 
   # Set the system name
-  set_system_name "${system_name}"
+  set_system_name "${SYSTEM_NAME}"
 
   # Install Xcode Command Line Tools
   install_xcode_clt
@@ -251,10 +200,42 @@ main () {
 # single-line statements.
 
 usage () {
+  # print usage message from here doc
     cat <<EOF
     usage: $(basename $0) [-a administrator] [-q] hostname
 EOF
     exit 64
+}
+
+parse_opts () {
+  # process options using getops builtin
+  local OPTIND
+  local opt
+  while getopts ":a:q" opt; do
+    case ${opt} in
+      a)
+        ADMIN_USER="${OPTARG}"
+        ;;
+      q)
+        unset VERBOSE
+        ;;
+      \?)
+        printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
+        usage
+        ;;
+      :)
+        printf "$(basename $0): missing argument for -%s\n" ${OPTARG} >&2
+        usage
+        ;;
+    esac
+  done
+  # Shift to process positional arguments
+  shift $(( OPTIND - 1 ))
+  # An argument specifying the hostname is required
+  if (( $# != 1 )); then
+    usage
+  fi
+  SYSTEM_NAME="$1"
 }
 
 echo_error () {
