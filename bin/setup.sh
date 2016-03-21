@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # install
-# Last Changed: Tue, 15 Mar 2016 21:31:24 -0700
+# Last Changed: Sun, 20 Mar 2016 20:45:34 -0700
 #
 # Usage:
 # $ install
@@ -21,23 +21,19 @@
 # CONSTANTS
 #
 
-# The paths of the dotfiles directories
-readonly DOTFILE_DIR="${HOME}/dotfiles"
-readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
-readonly DOTFILE_ETC_DIR="${DOTFILE_DIR}/etc"
+# The default name for the required administrative user account
+readonly ADMIN_USER="admin"
+# The default paths to installation and configuration related assets
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
-# The default paths to backup files
-readonly BACKUP_VOL="/Volumes/Haversack/"
-readonly BACKUP_DIR="${BACKUP_VOL}/Users/${USER}"
-# The paths to installation and configuration related assets
-readonly README="${DOTFILE_ETC_DIR}/README.md"
+readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly PRIVATE_DIR="${HOME}/private"
-readonly COLORS_PATH="${HOME_DIR}/etc/solarized"
-# Directories for GUI application installation
-readonly APP_DIR="/Applications"
-readonly TMP_DIR="~${ADMIN_USER}/applications"
-# The path of the Homebrewed version of zsh
+readonly BACKUP_VOL="/Volumes/Haversack"
+readonly COLORS_PATH="${HOME}/etc/solarized"
+readonly TMP_DIR="~${USER}/apps"
 readonly ZSH_PATH="/usr/local/bin/zsh"
+readonly APP_DIR="/Applications"
+# Verbose by default
+readonly VERBOSE_DEFAULT=1
 
 # Packages to be installed via Homebrew
 readonly packages=(
@@ -53,6 +49,7 @@ readonly packages=(
   lynx
 )
 
+# Directories to be copied from backup volume
 readonly backup_dirs=(
   dotfiles
   private
@@ -70,7 +67,8 @@ readonly HOME_BIN_LINKS=(
   curl
 )
 
-# Definition of the GUI application installation function
+# Wrapper functions for URL constants
+
 install_apps () {
   # This function is a wrapper for multiple calls to the 'get_app' function,
   # one for each GUI application to be installed. Each call to 'get_app'
@@ -109,17 +107,6 @@ get_homebrew () {
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 }
 
-#
-# GLOBALS
-#
-
-# Set VERBOSE variable to activate stdout messages; value does not matter
-VERBOSE="True"
-# The default name for the required administrative user account
-ADMIN_USER="admin"
-SYSTEM_NAME="0"
-BACKUP="${BACKUP_PATH:-$BACKUP_DIR}"
-
 
 #
 # SCRIPT
@@ -134,7 +121,10 @@ main () {
   sudo -v
 
   # Require that an administrative user account has already been created
-  require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
+  require_success "id -Gn ${ADMIN} | grep -q -w admin" "administrative user account: ${ADMIN} not found"
+
+  # Require network connectivity
+  require_success "check_ip_and_dns"
 
   # Set the system name
   set_system_name "${SYSTEM_NAME}"
@@ -148,31 +138,31 @@ main () {
   # Install command line packages via Homebrew
   for package in "${packages[@]}"; do
     echo_if_verbose "installing ${package} via homebrew"
-    sudo -u ${ADMIN_USER} brew install ${package}
+    sudo -u ${ADMIN} brew install ${package}
   done
-  do_or_exit "sudo -u ${ADMIN_USER} brew cleanup"
+  do_or_exit "sudo -u ${ADMIN} brew cleanup"
 
   # Install GUI applications
   install_apps
 
   # Copy backup data into place if available
   for dir in "${backup_dirs[@]}"; do
-    if_exists "dir" "${BACKUP_PATH}/${dir}" "cp -R ${BACKUP_PATH}/${dir} ${HOME}/${dir}"
+    if_exists "dir" "${BACKUP}/${dir}" "cp -R ${BACKUP}/${dir} ${HOME}/${dir}"
   done
 
   # Clone dotfiles repository if necessary
   require_success "which git" "git not found"
-  if_not_exists "dir" "${DOTFILE_DIR}" "git clone git://github.com/${DOTFILE_GIT_REPO} ${DOTFILE_DIR}"
+  if_not_exists "dir" "${DOTFILES}" "git clone git://github.com/${GIT_REPO} ${DOTFILES}"
 
   # Download Solarized colorscheme if necessary
   if_not_exists "dir" "${COLORS_PATH}" "git clone https://github.com/altercation/solarized.git ${COLORS_PATH}"
 
   # Link dotfiles to home directory
-  require "dir" "${DOTFILE_DIR}" "${DOTFILE_DIR} not found"
-  link_files "${DOTFILE_DIR}" "${HOME_DIR}" "."
+  require "dir" "${DOTFILES}" "${DOTFILES} not found"
+  link_files "${DOTFILES}" "${HOME}" "."
 
   # Link private files like credentials and local conf files
-  if_exists "dir" "${PRIVATE_DIR}" "link_dir_files ${PRIVATE_DIR} ${HOME} '.'"
+  if_exists "dir" "${PRIVATE}" "link_dir_files ${PRIVATE} ${HOME} '.'"
 
   # Change login shell to (Homebrew installed) Z Shell
   add_login_shell "${ZSH_PATH}"
@@ -186,10 +176,10 @@ main () {
   done
 
   # Reminder of where the iTerm2 preferences file is
-  echo_if_verbose "iTerm2 preferences are at: ${DOTFILE_ETC_DIR}\n"
+  echo_if_verbose "iTerm2 preferences are at: ${DOTFILE}/etc\n"
 
   # Direct user to README
-  echo_if_verbose "see ${README} for installation and configuration instructions.\n"
+  echo_if_verbose "see ${DOTFILES}/etc/README.md for more installation information\n"
 }
 
 
@@ -202,26 +192,37 @@ main () {
 
 usage () {
   # print usage message from here doc
-    cat <<EOF
-    usage: $(basename $0) [-a administrator] [-q] hostname
+  # here doc requires no indentation
+cat <<EOF
+usage: $(basename $0) [-a admin] [-b backup] [-d dotfiles] [-p private]
+[-q] [-r repo] hostname
 EOF
-    exit 64
+  exit 64
 }
 
 parse_opts () {
   # process options using getops builtin
   local OPTIND
   local opt
-  while getopts ":a:b:q" opt; do
+  while getopts ":a:b:d:pqr:" opt; do
     case ${opt} in
       a)
-        ADMIN_USER="${OPTARG}"
+        ADMIN_ARG="${OPTARG}"
         ;;
       b)
-        BACKUP_PATH="${OPTARG}"
+        BACKUP_ARG="${OPTARG}"
+        ;;
+      d)
+        DOTFILES_ARG="${OPTARG}"
+        ;;
+      p)
+        PRIVATE_ARG="${OPTARG}"
         ;;
       q)
-        unset VERBOSE
+        VERBOSE_ARG=0
+        ;;
+      r)
+        REPO_ARG="${OPTARG}"
         ;;
       \?)
         printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
@@ -239,7 +240,14 @@ parse_opts () {
   if (( $# != 1 )); then
     usage
   fi
-  SYSTEM_NAME="$1"
+  readonly SYSTEM_NAME="$1"
+  readonly ADMIN="${ADMIN_ARG:-$ADMIN_USER}"
+  readonly BACKUP_PATH="${BACKUP_VOL}/Users/${USER}"
+  readonly BACKUP="${BACKUP_ARG:-$BACKUP_PATH}"
+  readonly DOTFILES="${DOTFILES_ARG:-$DOTFILE_DIR}"
+  readonly PRIVATE="${PRIVATE_ARG:-$PRIVATE_DIR}"
+  readonly GIT_REPO="${REPO_ARG:-$DOTFILES_GIT_REPO}"
+  readonly VERBOSE="${VERBOSE_ARG:-$VERBOSE_DEFAULT}"
 }
 
 echo_error () {
@@ -249,9 +257,12 @@ echo_error () {
 
 echo_if_verbose () {
   # if the VERBOSE variable is set then print argument to stdout
-  if [[ -z ${VERBOSE+x} ]]; then
+  if (( $VERBOSE > 0 )); then
     printf "$0: $@\n"
   fi
+  # if [[ -z ${VERBOSE+x} ]]; then
+  #   printf "$0: $@\n"
+  # fi
 }
 
 do_or_exit () {
@@ -478,8 +489,8 @@ download_app () {
   local app_name=$2
   local file_type=$3
   local app_path="${TMP_DIR}/${app_name}.${file_type}"
-  if_not_exists "dir" "${TMP_DIR}" "sudo -u ${ADMIN_USER} mkdir -p ${TMP_DIR}"
-  sudo -u ${ADMIN_USER} curl -sLo ${app_path} ${app_url}
+  if_not_exists "dir" "${TMP_DIR}" "sudo -u ${ADMIN} mkdir -p ${TMP_DIR}"
+  sudo -u ${ADMIN} curl -sLo ${app_path} ${app_url}
 }
 
 install_app () {
@@ -501,19 +512,19 @@ install_app () {
   case ${file_type} in
     'dmg')
       # yes handles required interactive agreements
-      sudo -u ${ADMIN_USER} yes | hdiutil attach ${app_path} -nobrowse -mountpoint ${mount_point} > /dev/null 2>&1
-      sudo -u ${ADMIN_USER} cp -R "${mount_point}/${app_name}.app" "${APP_DIR}"
-      sudo -u ${ADMIN_USER} hdiutil detach ${mount_point} > /dev/null 2>&1
+      sudo -u ${ADMIN} yes | hdiutil attach ${app_path} -nobrowse -mountpoint ${mount_point} > /dev/null 2>&1
+      sudo -u ${ADMIN} cp -R "${mount_point}/${app_name}.app" "${APP_DIR}"
+      sudo -u ${ADMIN} hdiutil detach ${mount_point} > /dev/null 2>&1
       ;;
     'zip')
-      sudo -u ${ADMIN_USER} unzip -qq ${app_path}
+      sudo -u ${ADMIN} unzip -qq ${app_path}
       mv "${app_name}.app" "${APP_DIR}"
       ;;
     'pkg')
-      sudo -u ${ADMIN_USER} installer -pkg ${app_path} -target /
+      sudo -u ${ADMIN} installer -pkg ${app_path} -target /
       ;;
     'tar')
-      sudo -u ${ADMIN_USER} tar -zxf ${app_path} > /dev/null 2>&1
+      sudo -u ${ADMIN} tar -zxf ${app_path} > /dev/null 2>&1
       mv "${app_name}.app" "${APP_DIR}"
       ;;
   esac
@@ -533,18 +544,15 @@ get_app () {
     return 0
   fi
 
-
-  if [[ -z ${VERBOSE+x} ]]; then
-    printf "$0: downloading and installing ${app_name}.\n"
-  fi
+  echo_if_verbose "downloading and installing ${app_name}.\n"
   download_app ${app_url} ${app_name} ${file_type}
   install_app ${app_name} ${file_type}
 }
 
 clean_up_apps () {
   # delete downloaded application files and remove temporary directory
-  sudo -u ${ADMIN_USER} rm -rf ${TMP_DIR}
-  sudo -u ${ADMIN_USER} rmdir ${TMP_DIR}
+  sudo -u ${ADMIN} rm -rf ${TMP_DIR}
+  sudo -u ${ADMIN} rmdir ${TMP_DIR}
 }
 
 set_system_name () {
@@ -557,33 +565,46 @@ set_system_name () {
 
 install_xcode_clt () {
   # install Xcode Command Line Tools
-  require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
+  require_success "id -Gn ${ADMIN} | grep -q -w admin" "administrative user account: ${ADMIN} not found"
   echo_if_verbose "installing Xcode Command Line Tools"
-  if_not_success "sudo -u ${ADMIN_USER} xcode-select --print-path" "xcode-select --install"
+  if_not_success "sudo -u ${ADMIN} xcode-select --print-path" "xcode-select --install"
 }
 
 install_homebrew () {
   # install Homebrew as administrative user
-  require_success "id -Gn ${ADMIN_USER} | grep -q -w admin" "administrative user account: ${ADMIN_USER} not found"
+  require_success "id -Gn ${ADMIN} | grep -q -w admin" "administrative user account: ${ADMIN} not found"
   require_success "xcode-select --print-path" "Xcode Command Line Tools not found"
   echo_if_verbose "installing homebrew"
-  if ! which brew > /dev/null 2>&1; then
-    # the following line is from `http://brew.sh` but with sudo -u prepended
-    sudo -u ${ADMIN_USER} get_homebrew
-    retval=$?
-    if (( retval != 0 )); then
-      exit $retval
-    fi
-  fi
+  # if ! which brew > /dev/null 2>&1; then
+  #   # the following line is from `http://brew.sh` but with sudo -u prepended
+  #   sudo -u ${ADMIN} get_homebrew
+  #   retval=$?
+  #   if (( retval != 0 )); then
+  #     exit $retval
+  #   fi
+  # fi
+  if_not_exists "exec" "brew" "sudo -u ${ADMIN} get_homebrew"
   # make certain Homebrew is ready to brew
-  do_or_exit "sudo -u ${ADMIN_USER} brew update"
-  do_or_exit "sudo -u ${ADMIN_USER} brew doctor"
+  # do_or_exit "sudo -u ${ADMIN} brew update"
+  do_or_exit "sudo -u ${ADMIN} brew doctor"
 }
 
 add_login_shell () {
   # add login shell to /etc/shells if it isn't already there
   require "exec" "${1}" "shell ${1} not found"
   if_not_success "grep -q ${1} /etc/shells" "echo ${1} | sudo tee -a /etc/shells"
+}
+
+check_ip_and_dns () {
+  # verify IP and DNS connectivity
+  # replace google.com with 8.8.8.8 below to check only IPv4 connectivity
+  if ping -q -c 1 -W 1 google.com > /dev/null 2>&1 ; then
+    echo_if_verbose "network check successful"
+    return 0
+  else
+    echo_error "network connection not found"
+    return 1
+  fi
 }
 
 
