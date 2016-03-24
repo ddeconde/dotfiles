@@ -4,7 +4,7 @@
 # Last Changed: Sun, 20 Mar 2016 20:45:34 -0700
 #
 # Usage:
-# $ install
+# $ bash setup
 #
 # A simple installation script to automate many of the tasks involved in
 # setting up a new system. The structure of this script has been kept
@@ -95,7 +95,7 @@ install_apps () {
   get_app "Carbon Copy Cloner" "zip" "http://bombich.com/software/download_ccc.php?v=latest"
   get_app "Viscosity" "dmg" "http://www.sparklabs.com/downloads/Viscosity.dmg"
   get_app "Firefox" "dmg" "http://download.mozilla.org/?product=firefox-latest&os=osx&lang=en-US"
-  get_app "Chromium" "dmg" "https://sourceforge.net/projects/osxportableapps/files/latest/download?source=files"
+  # get_app "Chromium" "dmg" "https://sourceforge.net/projects/osxportableapps/files/latest/download?source=files"
 
   # Uncomment the line below to automatically remove the downloaded
   # applications after installation.

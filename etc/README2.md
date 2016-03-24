@@ -231,7 +231,8 @@ Go to each of the following websites and select **Add to Firefox**:
 
 ### iTerm2
 
-[iTerm2](http://www.iterm2.com/) custom preferences must be loaded:
+[iTerm2](http://www.iterm2.com/) is installed via Homebrew but needs
+configuring.
 
 In **iTerm > Preferences...**:
 - General > Preferences > Load preferences from a custom folder or URL >
@@ -288,6 +289,11 @@ outgoing network connections on a process by process basis with rules
 that can be configured easily during use to block or allow connections
 for particular process, address, port combinations. These features make
 it a critical privacy tool.
+
+#### Run the Little Snitch Installer
+
+Homebrew-cask installs the Little Snitch installer, but to complete the
+installation this installer must be run manually.
 
 #### Add License
 
@@ -451,6 +457,13 @@ periodically you may want to clean this out with
 ```
 brew cleanup
 ```
+
+#### Homebrew Cask
+
+As the homebrew-cask repository is a Homebrew Tap, casks should be
+updated by the `brew update` command, however currently homebrew-cask
+does not always detect if an application has been updated. Cask updates
+can be forced via the `brew cask install --force` command if necessary.
 
 #### Vim Plugins
 
