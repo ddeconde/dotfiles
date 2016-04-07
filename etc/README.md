@@ -211,8 +211,8 @@ In **Preferences...**:
 ### Firefox
 
 [Firefox](https://www.mozilla.org/en-US/firefox/desktop/) will be our default
-browser and is installed via Homebrew, but it still needs
-[Add-ons](https://addons.mozilla.org/en-US/firefox/) and some configuration.
+browser and needs a few [Add-ons](https://addons.mozilla.org/en-US/firefox/)
+and some configuration.
 
 #### Add-ons
 
@@ -239,9 +239,9 @@ In **iTerm > Preferences...**:
 
 ### VMware Fusion
 
-[VMware Fusion](http://www.vmware.com/products/fusion) is installed by
-Homebrew-cask, and used to run instances of Linux or BSD to use as
-development environments and test installations.
+[VMware Fusion](http://www.vmware.com/products/fusion) is used to run
+instances of Linux or BSD to use as development environments and test
+installations.
 
 1. Download install images for a desired virtual machine OS.
 2. Open VMware Fusion.

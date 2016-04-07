@@ -28,10 +28,10 @@ readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly PRIVATE_DIR="${HOME}/private"
 readonly BACKUP_VOL="/Volumes/Haversack"
-readonly COLORS_PATH="${HOME}/etc/solarized"
 readonly TMP_DIR="~${USER}/apps"
-readonly ZSH_PATH="/usr/local/bin/zsh"
 readonly APP_DIR="/Applications"
+readonly ZSH_PATH="/usr/local/bin/zsh"
+readonly COLORS_PATH="${HOME}/etc/solarized"
 # Verbose by default
 readonly VERBOSE_DEFAULT=1
 
@@ -40,6 +40,7 @@ readonly packages=(
   git
   zsh
   vim
+  # neovim/neovim/neovim
   tmux
   zsh-history-substring-search
   the_silver_searcher
