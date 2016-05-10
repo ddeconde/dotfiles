@@ -47,6 +47,7 @@ Plug 'scrooloose/syntastic'  " syntax checking for many languages
 
 " Appearance Plugins
 Plug 'altercation/vim-colors-solarized'  " high-contrast colorscheme
+Plug 'Yggdroot/indentLine'  " display indentation guides
 
 " Filetype Specific Plugins
 Plug 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support
@@ -108,6 +109,10 @@ nnoremap <Leader>e :Errors<CR>
 " Reset syntastic easily in both normal and insert mode
 imap <F3> <C-O><F3>
 nnoremap <F3> :SyntasticReset<CR>
+
+" indentLine
+imap <F6> <C-O><F6>
+nnoremap <F6> :IndentLinesToggle<CR>
 
 
 "
