@@ -114,6 +114,9 @@ nnoremap <F3> :SyntasticReset<CR>
 imap <F6> <C-O><F6>
 nnoremap <F6> :IndentLinesToggle<CR>
 
+imap <F7> <C-O><F7>
+nnoremap <F7> :call ToggleIndentGuides()<CR>
+
 
 "
 " SETTINGS
@@ -401,3 +404,16 @@ let $LOCALFILE=expand("~/.vimrc_local")
 if filereadable($LOCALFILE)
     source $LOCALFILE
 endif
+
+" Alternative indent highlighting function
+function! ToggleIndentGuides()
+    if exists('b:indent_guides')
+        call matchdelete(b:indent_guides)
+        unlet b:indent_guides
+    else
+        let pos = range(1, &l:textwidth, &l:shiftwidth)
+        call map(pos, '"\\%" . v:val . "v"')
+        let pat = '\%(\_^\s*\)\@<=\%(' . join(pos, '\|') . '\)\s'
+        let b:indent_guides = matchadd('CursorLine', pat)
+    endif
+endfunction
