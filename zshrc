@@ -194,28 +194,28 @@ WORDCHARS=${WORDCHARS/\/}
 # HISTORY SUBSTRING SEARCH
 #
 
-SUBSTRING_SEARCH_PLUGIN="zsh-history-substring-search.zsh"
-SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
-SUBSTRING_SEARCH="${SUBSTRING_SEARCH_PATH}${SUBSTRING_SEARCH_PLUGIN}"
+# SUBSTRING_SEARCH_PLUGIN="zsh-history-substring-search.zsh"
+# SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
+# SUBSTRING_SEARCH="${SUBSTRING_SEARCH_PATH}${SUBSTRING_SEARCH_PLUGIN}"
 
-if [[ -f "${SUBSTRING_SEARCH}" ]]; then
-  source "${SUBSTRING_SEARCH}"
-else
-  print "No zsh-history-substring-search plugin found.\n"
-fi
+# if [[ -f "${SUBSTRING_SEARCH}" ]]; then
+#   source "${SUBSTRING_SEARCH}"
+# else
+#   print "No zsh-history-substring-search plugin found.\n"
+# fi
 
 
 # bind UP and DOWN arrow keys
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
+bindkey '^[[A' history-beginning-search-backward
+bindkey '^[[B' history-beginning-search-forward
 
 # bind P and N for EMACS mode
-bindkey -M emacs '^P' history-substring-search-up
-bindkey -M emacs '^N' history-substring-search-down
+bindkey -M emacs '^P' history-beginning-search-backward
+bindkey -M emacs '^N' history-beginning-search-forward
 
 # bind k and j for VI mode
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
+bindkey -M vicmd 'k' history-beginning-search-backward
+bindkey -M vicmd 'j' history-beginning-search-forward
 
 
 #
