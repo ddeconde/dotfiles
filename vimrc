@@ -48,6 +48,7 @@ Plug 'scrooloose/syntastic'  " syntax checking for many languages
 " Appearance Plugins
 Plug 'altercation/vim-colors-solarized'  " high-contrast colorscheme
 Plug 'Yggdroot/indentLine'  " display indentation guides
+Plug 'chriskempson/base16-vim'
 
 " Filetype Specific Plugins
 Plug 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support

@@ -26,6 +26,42 @@ export VISUAL=vim
 # Enable command line color
 export CLICOLOR=1
 # Define colors for the 'ls' command on BSD/Darwin
+#
+# LSCOLORS are listed in the following order:
+#
+# directory
+# symbolic link
+# socket
+# pipe
+# executable
+# block special
+# character special
+# executable with setuid bit set
+# executable with setgid bit set
+# directory writable to others, with sticky bit
+# directory writable to others, without sticky bit
+#
+# First the foreground, then background color code is listed for each.
+# The color codes are:
+#
+# a black
+# b red
+# c green
+# d brown
+# e blue
+# f magenta
+# g cyan
+# h light grey
+# A bold black, usually shows up as dark grey
+# B bold red
+# C bold green
+# D bold brown, usually shows up as yellow
+# E bold blue
+# F bold magenta
+# G bold cyan
+# H bold light grey; looks like bright white
+# x default foreground or background
+#
 export LSCOLORS='exfxcxdxbxGxDxabagacad'
 # Define colors for the zsh completion system
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'
@@ -161,6 +197,7 @@ precmd() {
 # hostname: cwd [exit status] %
 PROMPT='%{%F{blue}%}%m:%{%f%} ${${PWD/#$HOME/~}:t} %(?..%{%F{yellow}%}%? %{%f%})%{%F{white}%}%#%{%f%} '
 
+
 # Righthand prompt displays vcs_info: [(un)staged changes] branch
 RPROMPT='${vcs_info_msg_0_}'
 
@@ -191,32 +228,26 @@ WORDCHARS=${WORDCHARS/\/}
 
 
 #
-# HISTORY SUBSTRING SEARCH
+# HISTORY SEARCH
 #
 
-# SUBSTRING_SEARCH_PLUGIN="zsh-history-substring-search.zsh"
-# SUBSTRING_SEARCH_PATH="/usr/local/opt/zsh-history-substring-search/"
-# SUBSTRING_SEARCH="${SUBSTRING_SEARCH_PATH}${SUBSTRING_SEARCH_PLUGIN}"
-
-# if [[ -f "${SUBSTRING_SEARCH}" ]]; then
-#   source "${SUBSTRING_SEARCH}"
-# else
-#   print "No zsh-history-substring-search plugin found.\n"
-# fi
-
+# load history search widgets
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
 
 # bind UP and DOWN arrow keys
-bindkey '^[[A' history-beginning-search-backward
-bindkey '^[[B' history-beginning-search-forward
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
 
 # bind P and N for EMACS mode
-bindkey -M emacs '^P' history-beginning-search-backward
-bindkey -M emacs '^N' history-beginning-search-forward
+bindkey -M emacs '^P' up-line-or-beginning-search
+bindkey -M emacs '^N' down-line-or-beginning-search
 
 # bind k and j for VI mode
-bindkey -M vicmd 'k' history-beginning-search-backward
-bindkey -M vicmd 'j' history-beginning-search-forward
-
+bindkey -M vicmd 'k' up-line-or-beginning-search
+bindkey -M vicmd 'j' down-line-or-beginning-search
 
 #
 # ALIASES
