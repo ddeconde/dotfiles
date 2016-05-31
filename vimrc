@@ -47,6 +47,8 @@ Plug 'scrooloose/syntastic'  " syntax checking for many languages
 
 " Appearance Plugins
 Plug 'altercation/vim-colors-solarized'  " selective-contrast colorscheme
+Plug 'Yggdroot/indentLine'  " display indentation guides
+" Plug 'chriskempson/base16-vim'
 
 " Filetype Specific Plugins
 Plug 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support
@@ -107,6 +109,13 @@ nnoremap <Leader>e :Errors<CR>
 " Reset syntastic easily in both normal and insert mode
 imap <F3> <C-O><F3>
 nnoremap <F3> :SyntasticReset<CR>
+
+" indentLine
+imap <F6> <C-O><F6>
+nnoremap <F6> :IndentLinesToggle<CR>
+
+imap <F7> <C-O><F7>
+nnoremap <F7> :call ToggleIndentGuides()<CR>
 
 
 "
@@ -395,3 +404,17 @@ let $LOCALFILE=expand("~/.vimrc_local")
 if filereadable($LOCALFILE)
     source $LOCALFILE
 endif
+
+" Alternative indent highlighting function
+function! ToggleIndentGuides()
+    if exists('b:indent_guides')
+        call matchdelete(b:indent_guides)
+        unlet b:indent_guides
+    else
+        " let pos = range(1, &l:textwidth, &l:shiftwidth)
+        let pos = range(&l:shiftwidth, &l:textwidth, &l:shiftwidth)
+        call map(pos, '"\\%" . v:val . "v"')
+        let pat = '\%(\_^\s*\)\@<=\%(' . join(pos, '\|') . '\)\s'
+        let b:indent_guides = matchadd('CursorLine', pat)
+    endif
+endfunction
