@@ -46,7 +46,7 @@ Plug 'tpope/vim-fugitive'  " git integration for VIM
 Plug 'scrooloose/syntastic'  " syntax checking for many languages
 
 " Appearance Plugins
-Plug 'altercation/vim-colors-solarized'  " high-contrast colorscheme
+Plug 'altercation/vim-colors-solarized'  " selective-contrast colorscheme
 
 " Filetype Specific Plugins
 Plug 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support
@@ -92,14 +92,13 @@ silent! call togglebg#map("<F5>")
 " syntastic
 let g:syntastic_mode_map = { "mode":"passive",
             \"active_filetypes": ["haskell", "tex", "python",
-            \ "sh", "ruby", "scala"],
+            \ "sh", "ruby"],
             \"passive_filetypes": [ ]}
 let g:syntastic_haskell_checkers = ['hdevtools', 'hlint']
 let g:syntastic_tex_checkers = ['chktex', 'lacheck']
 let g:syntastic_python_checkers = ['flake8', 'python']
 let g:syntastic_sh_checkers = ['shellcheck', 'sh']
 let g:syntastic_ruby_checkers = ['mri', 'ruby']
-let g:syntastic_scala_checkers = ['scalac', 'scalastyle']
 let g:syntastic_markdown_checkers = ['mdl']
 let g:syntastic_enable_signs=1
 let g:syntastic_stl_format=" Syntax: line:%F (%t) "
