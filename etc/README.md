@@ -171,6 +171,35 @@ cd ~
 curl -fsSL --output "osx.sh" "https://raw.githubusercontent.com/ddeconde/dotfiles/master/bin/osx.sh" && chmod 755 osx.sh
 bash osx.sh [hostname]
 ```
+#### Packages
+- git
+- zsh
+- vim
+- tmux
+- zsh-history-substring-search
+- the_silver_searcher
+- ctags-exuberant
+- bash
+- curl
+- lynx
+
+#### Applications
+- iTerm
+- Spectacle
+- MacVim
+- The Unarchiver
+- 1Password
+- Little Snitch
+- Micro Snitch
+- LaunchBar
+- TorBrowser
+- VLC
+- Dash
+- VMware Fusion
+- MacTex
+- Carbon Copy Cloner
+- Viscosity
+- Firefox
 
 ### Safari
 
