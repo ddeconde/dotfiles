@@ -39,4 +39,4 @@ term screen-256color
 
 hardstatus off
 hardstatus alwayslastline
-hardstatus string '%{= bk} %H %{= kW} %= %-Lw%{= Wk} %n%f %t %{-}%+Lw %= %{= kB} %Y-%m-%d | %c '
+hardstatus string '%{= bk} %H %{= kW} %= %-Lw%{= Wk} %n*%f %t %{-}%+Lw %= %{= kB} %Y-%m-%d | %c '
