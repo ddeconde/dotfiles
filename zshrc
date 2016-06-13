@@ -114,8 +114,8 @@ compinit
 #
 
 # Directory
-setopt AUTO_CD              # auto changes to a directory without typing cd
-setopt AUTO_PUSHD           # push the old directory onto the stack on cd
+# setopt AUTO_CD              # auto changes to a directory without typing cd
+# setopt AUTO_PUSHD           # push the old directory onto the stack on cd
 setopt PUSHD_IGNORE_DUPS    # do not store duplicates in the stack
 setopt PUSHD_SILENT         # do not print directory stack after pushd/popd
 setopt PUSHD_TO_HOME        # push to home when no argument is given
