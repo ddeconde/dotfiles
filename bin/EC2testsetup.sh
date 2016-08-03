@@ -23,19 +23,20 @@
 
 # Packages to be installed by apt-get
 packages=(
+  # BASE
+  openssh-server
   curl
   git
   vim
   zsh
   bash
-  tmux
-  silversearcher-ag
-  exuberant-ctags
+  screen
+  # tmux
   build-essential
   awscli
   python-pip
   virtualenv
-  # for restless-ephemerides module support
+  # RESTLESS-EPHEMERIDES MODULE SUPPORT
   llvm-dev
   libedit-dev
   zlib1g-dev
@@ -44,13 +45,19 @@ packages=(
 )
 
 # Python packages to be installed by pip
-pip_packages=(
-  # virtualenv
-  # for restless-ephemerides module support
-  enum34
+testing_pip_packages=(
+  # BASE
+  # RESTLESS-EPHEMERIDES MODULE SUPPORT
+  'enum34'
   'llvmlite==0.5.0'
   'numba==0.19.2'
-  restless-ephemerides
+  'restless-ephemerides'
+)
+
+sandbox_pip_packages=(
+  # BASE
+  numpy
+  ipython
 )
 
 # The paths of the dotfiles directories
@@ -58,20 +65,10 @@ readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
 readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 readonly PRIVATE_DIR="${HOME}/private"
-readonly SSH_DIR="ssh"
-readonly AWS_DIR="aws"
-readonly LOCAL_DIR="local"
-
-# zsh-history-substring-search paths
-readonly ZSH_PATH="/usr/bin/zsh"
-readonly ZSH_USERS_REPO="https://raw.githubusercontent.com/zsh-users"
-readonly ZSH_HSS_BRANCH="zsh-history-substring-search/master"
-readonly ZSH_HSS_FILE="zsh-history-substring-search.zsh"
-readonly ZSH_HSS_URL="${ZSH_USERS_REPO}/${ZSH_HSS_BRANCH}/${ZSH_HSS_FILE}"
-readonly ZSH_HSS_PATH="/usr/local/opt/zsh-history-substring-search/${ZSH_HSS_FILE}"
 
 # name of the default python virtual environment
-readonly VIRTUAL_ENV="restless"
+readonly TESTING_VIRTUAL_ENV="restless"
+readonly SANDBOX_VIRTUAL_ENV="sandbox"
 readonly PIP_CRT_PATH="s3://restless-vault/pip/local-pypi"
 
 
@@ -107,9 +104,10 @@ main () {
   # require "dir" "${PRIVATE_DIR}" "${PRIVATE_DIR} not found"
   if_exists "dir" "${PRIVATE_DIR}" "link_dir_files ${PRIVATE_DIR} ${HOME} '.'"
 
-  # Make certain to install python packages within a virtual envrinment
+  # Make certain to install python packages within virtual envrinments
   require_success "which virtualenv" "virtualenv not found"
-  do_or_exit "virtualenv ${VIRTUAL_ENV}"
+  do_or_exit "virtualenv ${TESTING_VIRTUAL_ENV}"
+  do_or_exit "virtualenv ${SANDBOX_VIRTUAL_ENV}"
 
   # Restless Bandit pip credentials should be installed into virtualenv
   require_success "which aws" "awscli not found"
@@ -118,17 +116,17 @@ main () {
   do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip.conf ${VIRTUAL_ENV}/pip.conf"
 
   # Install packages via pip
-  for package in "${pip_packages[@]}"; do
-    ${VIRTUAL_ENV}/bin/pip install "${package}"
+  for package in "${testing_pip_packages[@]}"; do
+    ${TESTING_VIRTUAL_ENV}/bin/pip install "${package}"
+  done
+  for package in "${sandbox_pip_packages[@]}"; do
+    ${SANDBOX_VIRTUAL_ENV}/bin/pip install "${package}"
   done
 
-  # Install zsh-history-substring-search
-  if_not_exists "any" "${ZSH_HSS_PATH}" "sudo curl -fsSL --create-dirs --output ${ZSH_HSS_PATH} ${ZSH_HSS_URL}" 
-
   # Change login shell to Z Shell
-  require "exec" "${ZSH_PATH}" "zsh not found"
-  if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
-  do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
+  # if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"
+  # do_or_exit "sudo chsh -s ${ZSH_PATH} ${USER}"
+  do_or_exit "sudo chsh -s zsh ${USER}"
 }
 
 
