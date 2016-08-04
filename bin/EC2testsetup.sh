@@ -44,6 +44,12 @@ packages=(
   libxslt1-dev
 )
 
+sandbox_pip_packages=(
+  # BASE
+  numpy
+  ipython
+)
+
 # Python packages to be installed by pip
 testing_pip_packages=(
   # BASE
@@ -54,12 +60,6 @@ testing_pip_packages=(
   'restless-ephemerides'
 )
 
-sandbox_pip_packages=(
-  # BASE
-  numpy
-  ipython
-)
-
 # The paths of the dotfiles directories
 readonly DOTFILE_DIR="${HOME}/dotfiles"
 readonly DOTFILE_BIN_DIR="${DOTFILE_DIR}/bin"
@@ -67,8 +67,8 @@ readonly DOTFILE_GIT_REPO="ddeconde/dotfiles.git"
 readonly PRIVATE_DIR="${HOME}/private"
 
 # name of the default python virtual environment
-readonly TESTING_VIRTUAL_ENV="restless"
 readonly SANDBOX_VIRTUAL_ENV="sandbox"
+readonly TESTING_VIRTUAL_ENV="restless"
 readonly PIP_CRT_PATH="s3://restless-vault/pip/local-pypi"
 
 
@@ -116,12 +116,22 @@ main () {
   do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip.conf ${VIRTUAL_ENV}/pip.conf"
 
   # Install packages via pip
-  for package in "${testing_pip_packages[@]}"; do
-    ${TESTING_VIRTUAL_ENV}/bin/pip install "${package}"
-  done
   for package in "${sandbox_pip_packages[@]}"; do
     ${SANDBOX_VIRTUAL_ENV}/bin/pip install "${package}"
   done
+  for package in "${testing_pip_packages[@]}"; do
+    ${TESTING_VIRTUAL_ENV}/bin/pip install "${package}"
+  done
+
+  # Pull restless-ephemerides from git
+  do_or_exit "git clone https://github.com/restlessbandit/restless-ephemerides.git"
+
+  # Prepare ephemerides flow configuration files
+  do_or_exit "mkdir -p /etc/restless/astrologer/models/"
+  do_or_exit "chmod -R a+x /etc/restless/"
+  do_or_exit "cp ~/restless-ephemerides/emr_manager/confs/conf-template.yml /etc/restless/astrologer/conf"
+  do_or_exit "cp ~/restless-ephemerides/emr_manager/models/models-template.yml /etc/restless/astrologer/models/default"
+  # edit these configs as appropriate?
 
   # Change login shell to Z Shell
   # if_not_success "grep -q ${ZSH_PATH} /etc/shells" "echo ${ZSH_PATH} | sudo tee -a /etc/shells"

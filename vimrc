@@ -74,6 +74,8 @@ if executable("ag")
     " Ag is fast enough that CtrlP doesn't need to cache
     let g:ctrlp_use_caching = 0
 endif
+let g:ctrlp_user_command = ['.git/',
+    \ 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
 
 " supertab
 let g:SuperTabDefaultCompletionType = "context"
@@ -243,7 +245,7 @@ set statusline+=[%{strlen(&fenc)?&fenc:&enc}]  " file encoding
 set statusline+=[%{strlen(&filetype)?&filetype:'no\ ft'}]  " file type
 set statusline+=%w  " preview window flag: [Preview]
 set statusline+=%(\ %)%#ModeMsg#%{&paste?'\ PASTE\ ':''}%*  " paste mode
-set statusline+=%#WarningMsg#%{SyntasticStatuslineFlag()}%*  " syntastic
+set statusline+=%Search%{SyntasticStatuslineFlag()}%*  " syntastic
 set statusline+=%#WildMenu#%(\ %3p%%\ \|%)  " scroll percentage
 set statusline+=%(\ %3l:%-2v\ %)%*  " line:virtualcolumn
 
