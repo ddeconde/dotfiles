@@ -238,6 +238,7 @@ set statusline+=%#WildMenu#%(\ %f\ %)  " filename
 set statusline+=%r  " read only flag: [RO]
 set statusline+=%m%*  " modified flag: [+][-]
 set statusline+=%=  " right-align the rest of the statusline
+set statusline+=%{fugitive#statusline()}  " git branch
 set statusline+=[%{&fileformat}]  " file format
 set statusline+=[%{strlen(&fenc)?&fenc:&enc}]  " file encoding
 set statusline+=[%{strlen(&filetype)?&filetype:'no\ ft'}]  " file type
