@@ -1,0 +1,234 @@
+#!/usr/bin/env bash
+#
+# private
+# Last Changed: Sun, 31 Jul 2016 20:23:29 -0700}
+#
+# Usage:
+# $ bash hosts.sh
+#
+# A simple script to update the `/etc/hosts` file from online sources of
+# community consolidated lists of adware and malware domains. Before using this
+# the original `/etc/hosts` file should be renamed to `/etc/hosts.default` to
+# allow for recovery of the system defaults.
+#
+# All portions of this script should have the following two characteristics:
+# - Idempotence: running the script multiple times should not cause problems
+# - Early Failure: if any command fails then the script exits with an error
+
+
+#
+# CONSTANTS
+#
+
+# readonly PRIVATE_DIR="${HOME}/private"
+readonly DEFAULT_URL="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+readonly HOSTS="/etc/hosts"
+
+
+#
+# SCRIPT
+#
+
+main() {
+  # Process options using getops builtin
+  parse_opts "$@"
+  # Run this script with superuser privileges - BE CAREFUL!
+  # This is necessary for some of these actions
+  sudo -v
+
+  # Execute appropriate subcommand
+  case ${COMMAND} in
+    init)
+      do_or_exit "sudo cp ${HOSTS} ${HOSTS}.default"
+      ;;
+    update)
+      update_file "${HOSTS}.block" "${HOSTS_URL}"
+      ;;
+    block)
+      require "file" "${HOSTS}.default" "no defaults found; run hosts.sh init first"
+      require "file" "${HOSTS}.block" "no block file found; run hosts.sh update first"
+      do_or_exit "sudo cp ${HOSTS}.block ${HOSTS}"
+      # flush DNS cache on OS X Yosemite or later
+      do_or_exit "sudo killall -HUP mDNSResponder"
+      ;;
+    default)
+      require "file" "${HOSTS}.default" "no defaults found; run hosts.sh init first"
+      do_or_exit "sudo cp ${HOSTS}.default ${HOSTS}"
+      # flush DNS cache on OS X Yosemite or later
+      do_or_exit "sudo killall -HUP mDNSResponder"
+      ;;
+    *)
+      usage
+      ;;
+  esac
+}
+
+
+#
+# FUNCTIONS
+#
+# Most of these functions are just wrappers for simple control flow but they
+# allow for the script itself to consist nearly entirely of readable
+# single-line statements.
+
+usage () {
+  # print usage message from here doc
+  # here doc requires no indentation
+cat <<EOF
+usage: $(basename $0) [-u url] [init | update | block | default]
+EOF
+  exit 64
+}
+
+parse_opts () {
+  # process options using getops builtin
+  local OPTIND
+  local opt
+  while getopts ":u:" opt; do
+    case ${opt} in
+      u)
+        HOSTS_URL_ARG="${OPTARG}"
+        ;;
+      \?)
+        printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
+        usage
+        ;;
+      :)
+        printf "$(basename $0): missing argument for -%s\n" ${OPTARG} >&2
+        usage
+        ;;
+    esac
+  done
+  # Shift to process positional arguments
+  shift $(( OPTIND - 1 ))
+  # An argument specifying the subcommand is required
+  if (( $# != 1 )); then
+    usage
+  fi
+  readonly COMMAND="$1"
+  readonly HOSTS_URL="${HOSTS_URL_ARG:-$DEFAULT_URL}"
+}
+
+echo_error () {
+  # conveniently print errors to stderr
+  printf "$0: $@\n" >&2
+}
+
+do_or_exit () {
+  # execute first argument command with success or exit
+  # optional second argument gives error message
+  # commands typically provide their own error messages, tests do not
+  $@
+  retval=$?
+  if (( $retval != 0 )); then
+    if (( $# > 1 )); then
+      echo_error "$2"
+    fi
+    exit $retval
+  fi
+}
+
+require () {
+  # first argument determines type of second argument
+  # exit if second argument path does not exist as correct type
+  # optional third argument gives error message
+  case $1 in
+    'file')
+      if [[ ! -f "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    'dir')
+      if [[ ! -d "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    'link')
+      if [[ ! -h "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    'exec')
+      if [[ ! -x "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    *)
+      if [[ ! -e "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+  esac
+}
+
+if_exists () {
+  # first argument determines type of second argument
+  # if second argument exists then do third
+  case $1 in
+    'file')
+      if [[ -f "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    'dir')
+      if [[ -d "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    'link')
+      if [[ -h "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    'exec')
+      if [[ -x "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    *)
+      if [[ -e "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+  esac
+}
+
+download_file () {
+  # download file from URL listed as first argument, to second argument
+  # filename; the target directory must already exist
+  local file_url=$1
+  local file_name=$2
+  local dir_name="$(dirname ${file_name})"
+  require "dir" "${dir_name}" "${dir_name} not found"
+  sudo curl -sLo ${file_name} ${app_url}
+}
+
+update_file () {
+  # update the first argument file by downloading from second argument URL;
+  # rename existing update target if it exists to preserve old version
+  if_exists "file" "${1}" "mv ${1} ${1}.old"
+  download_file "${2}" "${1}"
+}
+
+
+#
+# RUN MAIN()
+#
+
+main "$@"
+exit 0
