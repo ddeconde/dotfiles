@@ -20,9 +20,7 @@
 # CONSTANTS
 #
 
-# readonly PRIVATE_DIR="${HOME}/private"
-readonly DEFAULT_URL="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
-readonly HOSTS="/etc/hosts"
+readonly GIT_LOCAL="${HOME}/.git.local"
 
 
 #
@@ -32,30 +30,20 @@ readonly HOSTS="/etc/hosts"
 main() {
   # Process options using getops builtin
   parse_opts "$@"
-  # Run this script with superuser privileges - BE CAREFUL!
-  # This is necessary for some of these actions
-  sudo -v
 
   # Execute appropriate subcommand
-  case ${COMMAND} in
-    init)
-      do_or_exit "sudo cp ${HOSTS} ${HOSTS}.default"
-      ;;
-    update)
-      update_file "${HOSTS}.block" "${HOSTS_URL}"
-      ;;
-    block)
-      require "file" "${HOSTS}.default" "no defaults found; run hosts.sh init first"
-      require "file" "${HOSTS}.block" "no block file found; run hosts.sh update first"
-      do_or_exit "sudo cp ${HOSTS}.block ${HOSTS}"
-      # flush DNS cache on OS X Yosemite or later
-      do_or_exit "sudo killall -HUP mDNSResponder"
-      ;;
+  case ${IDENTITY} in
     default)
-      require "file" "${HOSTS}.default" "no defaults found; run hosts.sh init first"
-      do_or_exit "sudo cp ${HOSTS}.default ${HOSTS}"
-      # flush DNS cache on OS X Yosemite or later
-      do_or_exit "sudo killall -HUP mDNSResponder"
+      require "file" "${GIT_LOCAL}.default" "no default credentials found"
+      do_or_exit "cp ${GIT_LOCAL}.default ${GIT_LOCAL}"
+      ;;
+    private)
+      require "file" "${GIT_LOCAL}.private" "no private credentials found"
+      do_or_exit "cp ${GIT_LOCAL}.private ${GIT_LOCAL}"
+      ;;
+    work)
+      require "file" "${GIT_LOCAL}.work" "no work credentials found"
+      do_or_exit "cp ${GIT_LOCAL}.work ${GIT_LOCAL}"
       ;;
     *)
       usage
@@ -75,7 +63,7 @@ usage () {
   # print usage message from here doc
   # here doc requires no indentation
 cat <<EOF
-usage: $(basename $0) [-u url] init | update | block | default
+usage: $(basename $0) default | private | work
 EOF
   exit 64
 }
@@ -174,55 +162,6 @@ require () {
       fi
       ;;
   esac
-}
-
-if_exists () {
-  # first argument determines type of second argument
-  # if second argument exists then do third
-  case $1 in
-    'file')
-      if [[ -f "$2" ]]; then
-        do_or_exit "$3"
-      fi
-      ;;
-    'dir')
-      if [[ -d "$2" ]]; then
-        do_or_exit "$3"
-      fi
-      ;;
-    'link')
-      if [[ -h "$2" ]]; then
-        do_or_exit "$3"
-      fi
-      ;;
-    'exec')
-      if [[ -x "$2" ]]; then
-        do_or_exit "$3"
-      fi
-      ;;
-    *)
-      if [[ -e "$2" ]]; then
-        do_or_exit "$3"
-      fi
-      ;;
-  esac
-}
-
-download_file () {
-  # download file from URL listed as first argument, to second argument
-  # filename; the target directory must already exist
-  local file_url=$1
-  local file_name=$2
-  local dir_name="$(dirname ${file_name})"
-  require "dir" "${dir_name}" "${dir_name} not found"
-  sudo curl -sLo ${file_name} ${app_url}
-}
-
-update_file () {
-  # update the first argument file by downloading from second argument URL;
-  # rename existing update target if it exists to preserve old version
-  if_exists "file" "${1}" "mv ${1} ${1}.old"
-  download_file "${2}" "${1}"
 }
 
 
