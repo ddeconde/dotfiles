@@ -1,0 +1,239 @@
+#!/usr/bin/env bash
+#
+# private
+# Last Changed: Sun, 31 Jul 2016 20:23:29 -0700}
+#
+# Usage:
+# $ bash vm
+#
+# A simple script to update the `/etc/hosts` file from online sources of
+#
+# All portions of this script should have the following two characteristics:
+# - Idempotence: running the script multiple times should not cause problems
+# - Early Failure: if any command fails then the script exits with an error
+
+
+#
+# CONSTANTS
+#
+
+# readonly PRIVATE_DIR="${HOME}/private"
+readonly VM_DIR="${HOME}/Documents/Virtual Machines.localized"
+readonly DEFAULT_VM_FILE="${VM_DIR}/Ubuntu 64-bit Server 16.04.vmwarevm/Ubuntu 64-bit Server 16.04.vmx"
+
+
+#
+# SCRIPT
+#
+
+main() {
+  # Process options using getops builtin
+  parse_opts "$@"
+  # Run this script with superuser privileges - BE CAREFUL!
+  # This is necessary for some of these actions
+  sudo -v
+
+  # Execute appropriate subcommand
+  case ${COMMAND} in
+    start)
+      do_or_exit "sudo cp ${HOSTS} ${HOSTS}.default"
+      ${VMRUN} start "${VMFILE}" nogui
+      ;;
+    stop)
+      update_file "${HOSTS}.block" "${HOSTS_URL}"
+      ${VMRUN} stop "${VMFILE}" nogui
+      ;;
+    suspend)
+      ${VMRUN} suspend "${VMFILE}" nogui
+      ;;
+    pause)
+      ${VMRUN} pause "${VMFILE}" nogui
+      ;;
+    unpause)
+      ${VMRUN} unpause "${VMFILE}" nogui
+      ;;
+    reset)
+      ${VMRUN} reset "${VMFILE}" nogui
+      ;;
+    status)
+      ${VMRUN} list
+      ;;
+    ssh)
+      ssh ${VM_USER}@${VM_IP}
+      ;;
+    *)
+      usage
+      ;;
+  esac
+}
+
+
+#
+# FUNCTIONS
+#
+# Most of these functions are just wrappers for simple control flow but they
+# allow for the script itself to consist nearly entirely of readable
+# single-line statements.
+
+usage () {
+  # print usage message from here doc
+  # here doc requires no indentation
+cat <<EOF
+usage: $(basename $0) [-f file] start | stop | suspend | pause | unpause | reset | status
+$(basename $0) [-u user] [-a address] ssh
+EOF
+  exit 64
+}
+
+parse_opts () {
+  # process options using getops builtin
+  local OPTIND
+  local opt
+  while getopts ":u:" opt; do
+    case ${opt} in
+      f)
+        VM_FILE_ARG="${OPTARG}"
+        ;;
+      \?)
+        printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
+        usage
+        ;;
+      :)
+        printf "$(basename $0): missing argument for -%s\n" ${OPTARG} >&2
+        usage
+        ;;
+    esac
+  done
+  # Shift to process positional arguments
+  shift $(( OPTIND - 1 ))
+  # An argument specifying the subcommand is required
+  if (( $# != 1 )); then
+    usage
+  fi
+  readonly COMMAND="$1"
+  readonly VM_FILE="${VM_FILE_ARG:-$DEFAULT_VM_FILE}"
+}
+
+echo_error () {
+  # conveniently print errors to stderr
+  printf "$0: $@\n" >&2
+}
+
+do_or_exit () {
+  # execute first argument command with success or exit
+  # optional second argument gives error message
+  # commands typically provide their own error messages, tests do not
+  $@
+  retval=$?
+  if (( $retval != 0 )); then
+    if (( $# > 1 )); then
+      echo_error "$2"
+    fi
+    exit $retval
+  fi
+}
+
+require () {
+  # first argument determines type of second argument
+  # exit if second argument path does not exist as correct type
+  # optional third argument gives error message
+  case $1 in
+    'file')
+      if [[ ! -f "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    'dir')
+      if [[ ! -d "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    'link')
+      if [[ ! -h "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    'exec')
+      if [[ ! -x "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+    *)
+      if [[ ! -e "$2" ]]; then
+        if (( $# > 2 )); then
+          echo_error "$3"
+        fi
+        exit 1
+      fi
+      ;;
+  esac
+}
+
+if_exists () {
+  # first argument determines type of second argument
+  # if second argument exists then do third
+  case $1 in
+    'file')
+      if [[ -f "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    'dir')
+      if [[ -d "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    'link')
+      if [[ -h "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    'exec')
+      if [[ -x "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+    *)
+      if [[ -e "$2" ]]; then
+        do_or_exit "$3"
+      fi
+      ;;
+  esac
+}
+
+download_file () {
+  # download file from URL listed as first argument, to second argument
+  # filename; the target directory must already exist
+  local file_url=$1
+  local file_name=$2
+  local dir_name="$(dirname ${file_name})"
+  require "dir" "${dir_name}" "${dir_name} not found"
+  sudo curl -sLo ${file_name} ${app_url}
+}
+
+update_file () {
+  # update the first argument file by downloading from second argument URL;
+  # rename existing update target if it exists to preserve old version
+  if_exists "file" "${1}" "mv ${1} ${1}.old"
+  download_file "${2}" "${1}"
+}
+
+
+#
+# RUN MAIN()
+#
+
+main "$@"
+exit 0

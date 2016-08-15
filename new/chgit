@@ -4,12 +4,10 @@
 # Last Changed: Sun, 31 Jul 2016 20:23:29 -0700}
 #
 # Usage:
-# $ bash hosts.sh
+# $ bash chgit.sh
 #
-# A simple script to update the `/etc/hosts` file from online sources of
-# community consolidated lists of adware and malware domains. Before using this
-# the original `/etc/hosts` file should be renamed to `/etc/hosts.default` to
-# allow for recovery of the system defaults.
+# A simple script to switch git credentials easily by swapping
+# `.gitconfig.local` files.
 #
 # All portions of this script should have the following two characteristics:
 # - Idempotence: running the script multiple times should not cause problems
@@ -20,7 +18,8 @@
 # CONSTANTS
 #
 
-readonly GIT_LOCAL="${HOME}/.git.local"
+readonly DEFAULT_DIR=${HOME}
+readonly GIT_LOCAL="${DEFAULT_DIR}/.gitconfig.local"
 
 
 #
@@ -72,10 +71,10 @@ parse_opts () {
   # process options using getops builtin
   local OPTIND
   local opt
-  while getopts ":u:" opt; do
+  while getopts ":d:" opt; do
     case ${opt} in
-      u)
-        HOSTS_URL_ARG="${OPTARG}"
+      d)
+        DIRNAME_ARG="${OPTARG}"
         ;;
       \?)
         printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
@@ -94,7 +93,7 @@ parse_opts () {
     usage
   fi
   readonly COMMAND="$1"
-  readonly HOSTS_URL="${HOSTS_URL_ARG:-$DEFAULT_URL}"
+  readonly DIRNAME="${DIRNAME_ARG:-$DEFAULT_DIR}"
 }
 
 echo_error () {
