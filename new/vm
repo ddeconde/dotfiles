@@ -20,7 +20,26 @@
 # readonly PRIVATE_DIR="${HOME}/private"
 readonly VM_DIR="${HOME}/Documents/Virtual Machines.localized"
 readonly DEFAULT_VM_FILE="${VM_DIR}/Ubuntu 64-bit Server 16.04.vmwarevm/Ubuntu 64-bit Server 16.04.vmx"
+readonly DEFAULT_USER=""
+readonly VM_NAME="Ubuntu64-bitServer16.04"
+readonly VM_MAC_ADDRESS="00:0C:29:29:7B:DF"
+readonly VM_FIXED_ADDRESS="172.16.242.102"
+readonly VM_DHCPD_CONF_PATH="/Library/Preferences/VMware\ Fusion/vmnet8/dhcpd.conf"
 
+readonly DHCPD_CONF_ADDENDUM=$(cat <<EOF
+
+####### Start of manually added addendum for fixed address. #######
+host ${VM_NAME} {
+    hardware ethernet ${VM_MAC_ADDRESS};
+    fixed-address ${VM_FIXED_ADDRESS};
+}
+####### End of manually added addendum. #######
+EOF
+)
+
+append_fixed_address() {
+  cat ${DHCPD_CONF_ADDENDUM} >> ${VM_DHCPD_CONF_PATH}
+}
 
 #
 # SCRIPT
@@ -89,10 +108,16 @@ parse_opts () {
   # process options using getops builtin
   local OPTIND
   local opt
-  while getopts ":u:" opt; do
+  while getopts ":a:f:u:" opt; do
     case ${opt} in
+      a)
+        ADDRESS_ARG="${OPTARG}"
+        ;;
       f)
         VM_FILE_ARG="${OPTARG}"
+        ;;
+      u)
+        USER_ARG="${OPTARG}"
         ;;
       \?)
         printf "$(basename $0): illegal option -- %s\n" ${OPTARG} >&2
@@ -111,7 +136,9 @@ parse_opts () {
     usage
   fi
   readonly COMMAND="$1"
+  readonly ADDRESS="${ADDRESS_ARG:-$VM_FIXED_ADDRESS}"
   readonly VM_FILE="${VM_FILE_ARG:-$DEFAULT_VM_FILE}"
+  readonly USER="${USER_ARG:-$DEFAULT_USER}"
 }
 
 echo_error () {
