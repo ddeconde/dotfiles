@@ -215,7 +215,7 @@ download_file () {
   local file_name=$2
   local dir_name="$(dirname ${file_name})"
   require "dir" "${dir_name}" "${dir_name} not found"
-  sudo curl -sLo ${file_name} ${app_url}
+  sudo curl -sLo ${file_name} ${file_url}
 }
 
 update_file () {
