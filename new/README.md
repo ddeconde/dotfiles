@@ -335,6 +335,28 @@ Add a link to the command line utility `vmrun`:
 
 #### Virtual Machine Setup
 
+In the VMware Fusion menu under **Virtual Machine > Network Adapter > Network
+Adapter Settings... > Advanced options > MAC Address** find the MAC
+address of the virtual machine. Alternatively in the terminal execute:
+```
+cat ${HOME}/Documents/Virtual\
+Machines.localized\${VM_NAME}.vmwarevm/${VM_NAME}.vmx | \
+grep ethernet0.generatedAddress
+```
+to find the MAC address of the virtual machine.
+
+Append the following to the file `/Library/Application\ Support/VMware\
+Fusion/vmnet8/dhcpd.conf`:
+```
+####### Start of manually added addendum for fixed address. #######
+host ${VM_NAME} {
+    hardware ethernet ${VM_MAC_ADDRESS};
+    fixed-address ${VM_FIXED_ADDRESS};
+}
+####### End of manually added addendum. #######
+```
+where `${VM\_FIXED\_ADDRESS}` is something like `172.16.242.102`.
+
 Whether locally in VMWare Fusion or on [Amazon EC2](https://aws.amazon.com/ec2/)
 new virtual machines will require setup. These systems should have their
 own setup scripts to speed this process. After accessing a virtual
