@@ -112,8 +112,10 @@ main () {
   # Restless Bandit pip credentials should be installed into virtualenv
   require_success "which aws" "awscli not found"
   # Before pip can install RB packages we must install our certificate
-  do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip-ca.crt ${VIRTUAL_ENV}/pip-ca.crt"
-  do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip.conf ${VIRTUAL_ENV}/pip.conf"
+  do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip-ca.crt ${SANDBOX_VIRTUAL_ENV}/pip-ca.crt"
+  do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip.conf ${SANDBOX_VIRTUAL_ENV}/pip.conf"
+  do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip-ca.crt ${TESTING_VIRTUAL_ENV}/pip-ca.crt"
+  do_or_exit "aws s3 cp ${PIP_CRT_PATH}/pip.conf ${TESTING_VIRTUAL_ENV}/pip.conf"
 
   # Install packages via pip
   for package in "${sandbox_pip_packages[@]}"; do
