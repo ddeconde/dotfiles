@@ -313,8 +313,8 @@ link_files () {
   fi
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
-    if_exists "file" "${2}/${pre}${base_name}" "mv ${2}/${pre}${base_name} ${2}/${pre}${base_name}.old"
     if_exists "link" "${2}/${pre}${base_name}" "rm ${2}/${pre}${base_name}"
+    if_exists "file" "${2}/${pre}${base_name}" "mv ${2}/${pre}${base_name} ${2}/${pre}${base_name}.old"
     if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${pre}${base_name}"
   done
 }
