@@ -160,8 +160,8 @@ link_dir_files () {
   # also link files in subdirectories of first argument to
   # created (if necessary) subdirectories in the second argument
   # optional third argument is used to prefix created subdirectories
-  link_files "${1}" "${2}" "."
-  link_subdir_files "${1}" "${2}" "."
+  link_files "${1}" "${2}" "${3}"
+  link_subdir_files "${1}" "${2}" "${3}"
 }
 
 

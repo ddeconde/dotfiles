@@ -270,7 +270,8 @@ else
   alias lla='ls -aFhl --color'
 fi
 
-alias mvim='mvim -v'
+# alias mvim='mvim -v'
+alias vim='mvim -v'
 
 # Use Homebrewed versions of some programs
 # alias git='/usr/local/bin/git'

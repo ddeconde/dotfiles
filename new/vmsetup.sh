@@ -136,11 +136,6 @@ install_apps () {
   # clean_up_apps
 }
 
-get_homebrew () {
-  # a wrapper for the homebrew installation line from `http://brew.sh`
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-}
-
 
 #
 # SCRIPT
@@ -154,30 +149,23 @@ main () {
   # This is necessary for some of these actions
   sudo -v
 
-  # Require that an administrative user account has already been created
-  require_success "id -Gn ${ADMIN} | grep -q -w admin" "administrative user account: ${ADMIN} not found"
-
   # Require network connectivity
   require_success "check_ip_and_dns"
 
-  # Set the system name
-  set_system_name "${SYSTEM_NAME}"
+  # Install Git and Curl via apt-get
+  do_or_exit "sudo apt-get update"
+  do_or_exit "sudo apt-get -y upgrade"
+  do_or_exit "sudo apt-get -y install curl"
+  require_success "which curl" "curl not found"
+  do_or_exit "sudo apt-get -y install git"
+  require_success "which git" "git not found"
 
-  # Install Xcode Command Line Tools
-  install_xcode_clt
-
-  # Install Homebrew
-  install_homebrew
-
-  # Install command line packages via Homebrew
+  # Install packages via apt-get
   for package in "${packages[@]}"; do
-    echo_if_verbose "installing ${package} via homebrew"
-    sudo -u ${ADMIN} brew install ${package}
+    sudo apt-get install -y "${package}"
+    echo "$package"
   done
-  do_or_exit "sudo -u ${ADMIN} brew cleanup"
-
-  # Install GUI applications
-  install_apps
+  # do_or_exit "sudo apt-get clean"
 
   # Copy backup data into place if available
   for dir in "${backup_dirs[@]}"; do
@@ -187,9 +175,6 @@ main () {
   # Clone dotfiles repository if necessary
   require_success "which git" "git not found"
   if_not_exists "dir" "${DOTFILES}" "git clone git://github.com/${GIT_REPO} ${DOTFILES}"
-
-  # Download Solarized colorscheme if necessary
-  if_not_exists "dir" "${COLORS_PATH}" "git clone https://github.com/altercation/solarized.git ${COLORS_PATH}"
 
   # Link dotfiles to home directory
   require "dir" "${DOTFILES}" "${DOTFILES} not found"
@@ -209,11 +194,6 @@ main () {
     if_exists "any" "/usr/local/bin/${bin}" "ln -s /usr/local/bin ${HOME}/bin/${bin}"
   done
 
-  # Reminder of where the iTerm2 preferences file is
-  echo_if_verbose "iTerm2 preferences are at: ${DOTFILE}/etc\n"
-
-  # Direct user to README
-  echo_if_verbose "see ${DOTFILES}/etc/README.md for more installation information\n"
 }
 
 
@@ -453,16 +433,11 @@ if_not_exists () {
 link_files () {
   # symbolically link all files in first argument to second argument
   # optional third argument can be used to prefix links, e.g. with '.'
-  if (( $# > 2 )); then
-    pre="$3"
-  else
-    pre=""
-  fi
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
-    if_exists "file" "${2}/${pre}${base_name}" "mv ${2}/${pre}${base_name} ${2}/${pre}${base_name}.old"
-    if_exists "link" "${2}/${pre}${base_name}" "rm ${2}/${pre}${base_name}"
-    if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${pre}${base_name}"
+    if_exists "link" "${2}/${3}${base_name}" "rm ${2}/${3}${base_name}"
+    if_exists "file" "${2}/${3}${base_name}" "mv ${2}/${3}${base_name} ${2}/${3}${base_name}.old"
+    if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${3}${base_name}"
   done
 }
 
@@ -472,16 +447,15 @@ link_subdir_files () {
   # in those subdirectories of the first argument to the corresponding
   # subdirectories of the second argument
   # optional third argument can be used to prefix directories, e.g. with '.'
-  if (( $# > 2 )); then
-    local pre="$3"
-  else
-    local pre=""
-  fi
   for subdir in ${1}/*; do
     base_name="$(basename ${subdir})"
+    # ignore the directory containing this script
+    if [[ "${subdir}" == "${PRIVATE_BIN_DIR}" ]]; then
+      continue
+    fi
     if [[ -d "${subdir}" ]]; then
-      mkdir -p ${2}/${pre}${base_name}
-      link_files "${subdir}" "${2}/${pre}${base_name}"
+      mkdir -p ${2}/${3}${base_name}
+      link_files "${subdir}" "${2}/${3}${base_name}"
     fi
   done
 }
@@ -492,141 +466,8 @@ link_dir_files () {
   # also link files in subdirectories of first argument to
   # created (if necessary) subdirectories in the second argument
   # optional third argument is used to prefix created subdirectories
-  link_files "${1}" "${2}" "."
-  link_subdir_files "${1}" "${2}" "."
-}
-
-is_installed () {
-  # return success if first argument is the name of an application already
-  # installed in the "/Applications" directory
-  if [[ -d "${APP_DIR}/${1}.app" ]]; then
-    return 0
-  fi
-  return 1
-}
-
-is_not_installed () {
-  # return success if first argument is not the name of an application already
-  # installed in the "/Applications" directory
-  if [[ ! -d "${APP_DIR}/${1}" ]]; then
-    return 0
-  fi
-  return 1
-}
-
-download_app () {
-  # download application from URL listed as first argument, with download
-  # filetype of third argument (i.e. "dmg", "zip", "pkg", "tar") and filename
-  # according to the second argument--this name must be the correct name of the
-  # ".app" file contained within the download
-  local app_url=$1
-  local app_name=$2
-  local file_type=$3
-  local app_path="${TMP_DIR}/${app_name}.${file_type}"
-  if_not_exists "dir" "${TMP_DIR}" "sudo -u ${ADMIN} mkdir -p ${TMP_DIR}"
-  sudo -u ${ADMIN} curl -sLo ${app_path} ${app_url}
-}
-
-install_app () {
-  # install application with name according to the first argument and
-  # downloaded install filetype of the second argument (i.e. "dmg", "zip",
-  # "pkg", "tar")--if this application is already installed to the
-  # "/Applications" directory then this function does nothing
-  local app_name=$1
-  local file_type=$2
-  local app_path="${TMP_DIR}/${app_name}.${file_type}"
-  local mount_point="/Volumes/${app_name}"
-
-  # Skip over already installed applications; no updating
-  if is_installed ${app_name}; then
-    return 0
-  fi
-
-  # Install according to type
-  case ${file_type} in
-    'dmg')
-      # yes handles required interactive agreements
-      sudo -u ${ADMIN} yes | hdiutil attach ${app_path} -nobrowse -mountpoint ${mount_point} > /dev/null 2>&1
-      sudo -u ${ADMIN} cp -R "${mount_point}/${app_name}.app" "${APP_DIR}"
-      sudo -u ${ADMIN} hdiutil detach ${mount_point} > /dev/null 2>&1
-      ;;
-    'zip')
-      sudo -u ${ADMIN} unzip -qq ${app_path}
-      mv "${app_name}.app" "${APP_DIR}"
-      ;;
-    'pkg')
-      sudo -u ${ADMIN} installer -pkg ${app_path} -target /
-      ;;
-    'tar')
-      sudo -u ${ADMIN} tar -zxf ${app_path} > /dev/null 2>&1
-      mv "${app_name}.app" "${APP_DIR}"
-      ;;
-  esac
-}
-
-get_app () {
-  # download and install application with name according to the second
-  # argument, download URL according to the first argument, and download
-  # filetype according to the third argument
-  local app_url=$3
-  local app_name=$1
-  local file_type=$2
-  local app_path="${tmp_dir}/${app_name}.${file_type}"
-
-  # Skip over already installed applications; no updating
-  if is_installed ${app_name}; then
-    return 0
-  fi
-
-  echo_if_verbose "downloading and installing ${app_name}.\n"
-  download_app ${app_url} ${app_name} ${file_type}
-  install_app ${app_name} ${file_type}
-}
-
-clean_up_apps () {
-  # delete downloaded application files and remove temporary directory
-  sudo -u ${ADMIN} rm -rf ${TMP_DIR}
-  sudo -u ${ADMIN} rmdir ${TMP_DIR}
-}
-
-set_system_name () {
-  # set the system name
-  echo_if_verbose "setting hostname to ${1}"
-  do_or_exit "sudo scutil --set ComputerName ${1}"
-  do_or_exit "sudo scutil --set LocalHostName ${1}"
-  do_or_exit "sudo scutil --set HostName ${1}"
-}
-
-install_xcode_clt () {
-  # install Xcode Command Line Tools
-  require_success "id -Gn ${ADMIN} | grep -q -w admin" "administrative user account: ${ADMIN} not found"
-  echo_if_verbose "installing Xcode Command Line Tools"
-  if_not_success "sudo -u ${ADMIN} xcode-select --print-path" "xcode-select --install"
-}
-
-install_homebrew () {
-  # install Homebrew as administrative user
-  require_success "id -Gn ${ADMIN} | grep -q -w admin" "administrative user account: ${ADMIN} not found"
-  require_success "xcode-select --print-path" "Xcode Command Line Tools not found"
-  echo_if_verbose "installing homebrew"
-  # if ! which brew > /dev/null 2>&1; then
-  #   # the following line is from `http://brew.sh` but with sudo -u prepended
-  #   sudo -u ${ADMIN} get_homebrew
-  #   retval=$?
-  #   if (( retval != 0 )); then
-  #     exit $retval
-  #   fi
-  # fi
-  if_not_exists "exec" "brew" "sudo -u ${ADMIN} get_homebrew"
-  # make certain Homebrew is ready to brew
-  # do_or_exit "sudo -u ${ADMIN} brew update"
-  do_or_exit "sudo -u ${ADMIN} brew doctor"
-}
-
-add_login_shell () {
-  # add login shell to /etc/shells if it isn't already there
-  require "exec" "${1}" "shell ${1} not found"
-  if_not_success "grep -q ${1} /etc/shells" "echo ${1} | sudo tee -a /etc/shells"
+  link_files "${1}" "${2}" "${3}"
+  link_subdir_files "${1}" "${2}" "${3}"
 }
 
 check_ip_and_dns () {
