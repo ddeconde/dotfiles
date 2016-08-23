@@ -127,16 +127,11 @@ if_exists () {
 link_files () {
   # symbolically link all files in first argument to second argument
   # optional third argument can be used to prefix links, e.g. with '.'
-  if (( $# > 2 )); then
-    pre="$3"
-  else
-    pre=""
-  fi
   for src_file in ${1}/*; do
     base_name="$(basename ${src_file})"
-    if_exists "link" "${2}/${pre}${base_name}" "rm ${2}/${pre}${base_name}"
-    if_exists "file" "${2}/${pre}${base_name}" "mv ${2}/${pre}${base_name} ${2}/${pre}${base_name}.old"
-    if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${pre}${base_name}"
+    if_exists "link" "${2}/${3}${base_name}" "rm ${2}/${3}${base_name}"
+    if_exists "file" "${2}/${3}${base_name}" "mv ${2}/${3}${base_name} ${2}/${3}${base_name}.old"
+    if_exists "file" "${src_file}" "ln -s ${src_file} ${2}/${3}${base_name}"
   done
 }
 
@@ -146,11 +141,6 @@ link_subdir_files () {
   # in those subdirectories of the first argument to the corresponding
   # subdirectories of the second argument
   # optional third argument can be used to prefix directories, e.g. with '.'
-  if (( $# > 2 )); then
-    local pre="$3"
-  else
-    local pre=""
-  fi
   for subdir in ${1}/*; do
     base_name="$(basename ${subdir})"
     # ignore the directory containing this script
@@ -158,8 +148,8 @@ link_subdir_files () {
       continue
     fi
     if [[ -d "${subdir}" ]]; then
-      mkdir -p ${2}/${pre}${base_name}
-      link_files "${subdir}" "${2}/${pre}${base_name}"
+      mkdir -p ${2}/${3}${base_name}
+      link_files "${subdir}" "${2}/${3}${base_name}"
     fi
   done
 }

@@ -36,6 +36,7 @@ packages=(
   awscli
   python-pip
   virtualenv
+  python-dev
   # RESTLESS-EPHEMERIDES MODULE SUPPORT
   llvm-dev
   libedit-dev
@@ -46,14 +47,15 @@ packages=(
 
 sandbox_pip_packages=(
   # BASE
-  numpy
-  ipython
+  'numpy'
+  'ipython'
 )
 
 # Python packages to be installed by pip
 testing_pip_packages=(
   # BASE
   # RESTLESS-EPHEMERIDES MODULE SUPPORT
+  'numpy'
   'enum34'
   'llvmlite==0.5.0'
   'numba==0.19.2'
@@ -77,8 +79,9 @@ readonly PIP_CRT_PATH="s3://restless-vault/pip/local-pypi"
 #
 
 main () {
+  # `sudo -v` is unnecessary for sudo use on EC2 instances
   # Superuser privileges are needed for some of these actions
-  sudo -v
+  # sudo -v
 
   # Install Git and Curl via apt-get
   do_or_exit "sudo apt-get update"
