@@ -355,7 +355,7 @@ host ${VM_NAME} {
 }
 ####### End of manually added addendum. #######
 ```
-where `${VM\_FIXED\_ADDRESS}` is something like `172.16.242.102`.
+where `${VM\_FIXED\_ADDRESS}` is (something like) `172.16.242.102`.
 
 Whether locally in VMWare Fusion or on [Amazon EC2](https://aws.amazon.com/ec2/)
 new virtual machines will require setup. These systems should have their

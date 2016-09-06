@@ -23,34 +23,26 @@
 
 # Packages to be installed by apt-get
 packages=(
+  # basics
   openssh-server
   curl
   git
   vim
   zsh
   bash
-  # tmux
-  screen
   build-essential
+  screen
+  # tmux
+  # aws
   awscli
+  # python
   python-pip
   virtualenv
-  # for restless-ephemerides module support
-  llvm-dev
-  libedit-dev
-  zlib1g-dev
-  libxml2-dev
-  libxslt1-dev
 )
 
 # Python packages to be installed by pip
 pip_packages=(
-  # virtualenv
-  # for restless-ephemerides module support
-  'enum34'
-  'llvmlite==0.5.0'
-  'numba==0.19.2'
-  'restless-ephemerides'
+  numpy
 )
 
 
@@ -100,41 +92,6 @@ readonly HOME_BIN_LINKS=(
   bash
   curl
 )
-
-# Wrapper functions for URL constants
-
-install_apps () {
-  # This function is a wrapper for multiple calls to the 'get_app' function,
-  # one for each GUI application to be installed. Each call to 'get_app'
-  # requires the following arguments:
-  # 1) download URL
-  # 2) application name (the filename of the .app directory, excluding ".app")
-  # 3) filetype of the downloaded application (i.e. "zip", "dmg", "pkg", "tar")
-
-  # Arguments to "get_app", particuarly URLs, must be kept up-to-date
-  get_app "iTerm" "zip" "https://iterm2.com/downloads/stable/iTerm2-2_1_4.zip"
-  get_app "Spectacle" "zip" "https://s3.amazonaws.com/spectacle/downloads/Spectacle+1.0.1.zip"
-  get_app "MacVim" "dmg" "https://github.com/macvim-dev/macvim/releases/download/snapshot-94/MacVim.dmg"
-  get_app "The Unarchiver" "dmg" "http://unarchiver.c3.cx/downloads/TheUnarchiver3.10.1.dmg"
-  get_app "1Password 6" "zip" "https://d13itkw33a7sus.cloudfront.net/dist/1P/mac4/1Password-6.0.1.zip"
-  get_app "Little Snitch Installer" "dmg" "https://www.obdev.at/downloads/littlesnitch/LittleSnitch-3.6.1.dmg"
-  get_app "Micro Snitch" "zip" "https://www.obdev.at/downloads/MicroSnitch/MicroSnitch-1.2.zip"
-  get_app "LaunchBar" "dmg" "https://www.obdev.at/downloads/launchbar/LaunchBar-6.5.dmg"
-  # get_app "Adium" "dmg" "http://downloads.sourceforge.net/project/adium/Adium_1.5.10.dmg"
-  get_app "TorBrowser" "dmg" "https://www.torproject.org/dist/torbrowser/5.0.7/TorBrowser-5.0.7-osx64_en-US.dmg"
-  get_app "VLC" "dmg" "http://get.videolan.org/vlc/2.2.1/macosx/vlc-2.2.1.dmg"
-  get_app "Dash" "zip" "http://london.kapeli.com/Dash.zip"
-  get_app "VMware Fusion" "dmg" "https://www.vmware.com/go/try-fusion-en"
-  get_app "MacTeX" "pkg" "http://tug.org/cgi-bin/mactex-download/MacTeX.pkg"
-  get_app "Carbon Copy Cloner" "zip" "http://bombich.com/software/download_ccc.php?v=latest"
-  get_app "Viscosity" "dmg" "http://www.sparklabs.com/downloads/Viscosity.dmg"
-  get_app "Firefox" "dmg" "http://download.mozilla.org/?product=firefox-latest&os=osx&lang=en-US"
-  # get_app "Chromium" "dmg" "https://sourceforge.net/projects/osxportableapps/files/latest/download?source=files"
-
-  # Uncomment the line below to automatically remove the downloaded
-  # applications after installation.
-  # clean_up_apps
-}
 
 
 #

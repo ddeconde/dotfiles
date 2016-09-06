@@ -24,11 +24,13 @@ readonly DEFAULT_USER=""
 readonly VM_NAME="Ubuntu64-bitServer16.04"
 readonly VM_MAC_ADDRESS="00:0C:29:29:7B:DF"
 readonly VM_FIXED_ADDRESS="172.16.242.102"
-readonly VM_DHCPD_CONF_PATH="/Library/Preferences/VMware\ Fusion/vmnet8/dhcpd.conf"
+readonly VM_DHCPD_CONF="/Library/Preferences/VMware\ Fusion/vmnet8/dhcpd.conf"
 
-readonly DHCPD_CONF_ADDENDUM=$(cat <<EOF
+readonly DHCPD_CONF_ADD=$(cat <<EOF
 
 ####### Start of manually added addendum for fixed address. #######
+# DHCPD_CONF_FIXED_ADDRESS_ADDENDUM #
+
 host ${VM_NAME} {
     hardware ethernet ${VM_MAC_ADDRESS};
     fixed-address ${VM_FIXED_ADDRESS};
@@ -37,9 +39,6 @@ host ${VM_NAME} {
 EOF
 )
 
-append_fixed_address() {
-  cat ${DHCPD_CONF_ADDENDUM} >> ${VM_DHCPD_CONF_PATH}
-}
 
 #
 # SCRIPT
@@ -55,11 +54,9 @@ main() {
   # Execute appropriate subcommand
   case ${COMMAND} in
     start)
-      do_or_exit "sudo cp ${HOSTS} ${HOSTS}.default"
       ${VMRUN} start "${VMFILE}" nogui
       ;;
     stop)
-      update_file "${HOSTS}.block" "${HOSTS_URL}"
       ${VMRUN} stop "${VMFILE}" nogui
       ;;
     suspend)
@@ -78,7 +75,11 @@ main() {
       ${VMRUN} list
       ;;
     ssh)
-      ssh ${VM_USER}@${VM_IP}
+      ssh ${VM_USER}@${ADDRESS}
+      ;;
+    address)
+      append_fixed_address
+      printf "$(basename $0): vm ip address fixed at ${VM_FIXED_ADDRESS}."
       ;;
     *)
       usage
@@ -157,6 +158,13 @@ do_or_exit () {
       echo_error "$2"
     fi
     exit $retval
+  fi
+}
+
+if_not_success () {
+  # if first argument command has successful exit then do second
+  if ! $1 > /dev/null 2>&1; then
+    do_or_exit "$2"
   fi
 }
 
@@ -255,6 +263,11 @@ update_file () {
   # rename existing update target if it exists to preserve old version
   if_exists "file" "${1}" "mv ${1} ${1}.old"
   download_file "${2}" "${1}"
+}
+
+append_fixed_address() {
+  dhcpd_conf_addendum="DHCPD_CONF_FIXED_ADDRESS_ADDENDUM"
+  if_not_success "grep -q ${dhcpd_conf_addendum} ${VM_DHCPD_CONF}" "cat ${DHCPD_CONF_ADD} >> ${VM_DHCPD_CONF}"
 }
 
 
