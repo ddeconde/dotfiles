@@ -1,0 +1,135 @@
+!
+! Xft settings for fonts
+!
+
+! autohinting is usually disabled by default as it is not useful on many fonts
+Xft.autohint: false
+! hinting lines up fonts with the pixel grid of the display to sharpen them
+Xft.hinting: true
+! hintstyle controls amount of reshaping to grid, options are:
+! hintnone, hintslight, hintmedium, hintfull
+! hintslight is usually the default
+Xft.hintstyle: hintslight
+Xft.antialias: true
+! standard dpi counts are 96, 120 (125%), 144 (150%), 168 (175%) 192 (200%), etc.
+! dpi is machine dependent: Thinkpad X1 Carbon 5th Gen. with FHD screen is 157.35
+!Xft.dpi: 157
+! subpixel rendering is usually unused, but if it is enabled then use the following
+! Xft.lcdfilter: lcddefault
+! Xft.rgba: rgb
+
+!
+! URxvt config
+!
+! see all urxvt xresource options:
+! urxvt --help 2>&1 | sed -n '/:  /s/^ */! URxvt*/gp'
+
+! Fonts
+URxvt.font: xft:xos4 Terminus:style=Regular:pixelsize=12
+URxvt.boldFont: xft:xos4 Terminus:style=Bold:pixelsize=12
+URxvt.italicFont: xft:DejaVu Sans Mono:style=Oblique:pixelsize=12
+URxvt.boldItalicFont: xft:DejaVu Sans Mono:style=Bold Oblique:pixelsize=12
+!URxvt.italicFont: xft:DejaVu Sans Mono:style=Oblique:pixelsize=12:autohint=True
+!URxvt.boldItalicFont: xft:DejaVu Sans Mono:style=Bold Oblique:pixelsize=12:autohint=True
+! buffering for xft usually improves performance
+URxvt.buffered: true
+! create keybindings for changing font size
+URxvt.keysym.C-M-1: command:\033]710;xft:xos4 Terminus:style=Regular:pixelsize=12\007\033]711;xft:xos4 Terminus:stye=Bold:pixelsize=12\007\033]712;xft:DejaVu Sans Mono:style=Oblique:pixelsize=12\007\033]713;xft:DejaVu Sans Mono:style=Bold Oblique:pixelsize=12\007
+URxvt.keysym.C-M-2: command:\033]710;xft:xos4 Terminus:style=Regular:pixelsize=14\007\033]711;xft:xos4 Terminus:stye=Bold:pixelsize=14\007\033]712;xft:DejaVu Sans Mono:style=Oblique:pixelsize=14\007\033]713;xft:DejaVu Sans Mono:style=Bold Oblique:pixelsize=14\007
+URxvt.keysym.C-M-3: command:\033]710;xft:xos4 Terminus:style=Regular:pixelsize=16\007\033]711;xft:xos4 Terminus:stye=Bold:pixelsize=16\007\033]712;xft:DejaVu Sans Mono:style=Oblique:pixelsize=16\007\033]713;xft:DejaVu Sans Mono:style=Bold Oblique:pixelsize=16\007
+URxvt.keysym.C-M-4: command:\033]710;xft:xos4 Terminus:style=Regular:pixelsize=18\007\033]711;xft:xos4 Terminus:stye=Bold:pixelsize=18\007\033]712;xft:DejaVu Sans Mono:style=Oblique:pixelsize=18\007\033]713;xft:DejaVu Sans Mono:style=Bold Oblique:pixelsize=18\007
+
+! Terminal Characteristics
+! tmux expects TERM to be "screen" or "screen-256color" and shells to be login
+URxvt.termName: screen-256color
+URxvt.loginShell: true
+URxvt.imLocale: en_US.UTF-8
+! make screen-print dump to a time-stamped file
+URxvt.print-pipe: cat > $HOME/$(echo urxvt.print.$(date +'%Y%m%d%H%M%S'))
+!URxvt.geometry: 80x24
+URxvt.visualBell: true
+! disable ISO 14755 unicode input mode so Ctrl-Shift is free
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+
+! Scrollback
+! use tmux for scrollback--this means most scrollback options are irrelevant
+URxvt.saveLines: 0
+! do not display scrollbar--even when scrollback is not 0, save the space
+URxvt.scrollBar: false
+
+! Perl Extensions
+! leave these blank to disable Perl extensions for speed and security
+URxvt.perl-ext:
+URxvt.perl-ext-common:
+
+! 
+! Colorscheme: Solarized Dark
+!
+
+#define S_base03        #002b36
+#define S_base02        #073642
+#define S_base01        #586e75
+#define S_base00        #657b83
+#define S_base0         #839496
+#define S_base1         #93a1a1
+#define S_base2         #eee8d5
+#define S_base3         #fdf6e3
+
+*background:            S_base03
+*foreground:            S_base0
+*fadeColor:             S_base03
+*cursorColor:           S_base1
+*pointerColorBackground:S_base01
+*pointerColorForeground:S_base1
+
+#define S_yellow        #b58900
+#define S_orange        #cb4b16
+#define S_red           #dc322f
+#define S_magenta       #d33682
+#define S_violet        #6c71c4
+#define S_blue          #268bd2
+#define S_cyan          #2aa198
+#define S_green         #859900
+
+!! black dark/light
+*color0:                S_base02
+*color8:                S_base03
+
+!! red dark/light
+*color1:                S_red
+*color9:                S_orange
+
+!! green dark/light
+*color2:                S_green
+*color10:               S_base01
+
+!! yellow dark/light
+*color3:                S_yellow
+*color11:               S_base00
+
+!! blue dark/light
+*color4:                S_blue
+*color12:               S_base0
+
+!! magenta dark/light
+*color5:                S_magenta
+*color13:               S_violet
+
+!! cyan dark/light
+*color6:                S_cyan
+*color14:               S_base1
+
+!! white dark/light
+*color7:                S_base2
+*color15:               S_base3
+
+!
+! Color Specifications
+!
+
+! highlight underlined text and the underlines themselves
+URxvt.colorUL: S_yellow
+URxvt.underlineColor: S_yellow
+! make the cursor stand out more in the terminal (override the default)
+URxvt.cursorColor: S_base3
