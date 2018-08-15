@@ -7,10 +7,7 @@
 # If the above line is not correctly displayed, fix your editor first!
 
 general {
-        colors = true
-        color_good = "#2aa198"
-        color_bad = "#d33682"
-        color_degraded = "#b58900"
+        colors = false
 	separator = ""
         interval = 5
 }
@@ -29,18 +26,27 @@ wireless _first_ {
 
 ethernet _first_ {
         # if you use %speed, i3status requires root privileges
-        format_up = " ethernet: %ip (%speed) "
+        format_up = " ethernet: %ip "
         format_down = " ethernet: down "
 }
 
 battery all {
-        format = " %status %percentage %remaining "
+        format = " %status: %percentage | %remaining "
+	format_down = ""
+	status_chr = "battery charging"
+	status_bat = "battery"
+	status_unk = "battery unkown"
+	status_full = "battery full"
+	integer_battery_capacity = true
+	last_full_capacity = true
 }
 
 tztime local {
-        format = " %Y-%m-%d | %H:%M "
+        format = " %Y-%m-%d  %H:%M "
 }
 
 run_watch VPN {
+        format = " vpn: on "
+	format_down = " VPN: OFF "
         pidfile = "/var/run/openvpn.pid"
 }
