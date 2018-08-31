@@ -1,16 +1,16 @@
 
 ! 
-! Colorscheme: Solarized Light
+! Colorscheme: 
 !
 
-#define S_base03         #fdf6e3
-#define S_base02         #eee8d5
-#define S_base01         #93a1a1
-#define S_base00         #839496
-#define S_base0        #657b83
-#define S_base1        #586e75
-#define S_base2        #073642
-#define S_base3        #002b36
+#define S_base03         #f7f7f7
+#define S_base02         #eeeeee
+#define S_base01         #b2b2b2
+#define S_base00         #bcbcbc
+#define S_base0        #444444
+#define S_base1        #4e4e4e
+#define S_base2        #121212
+#define S_base3        #080808
 
 *background:            S_base03
 *foreground:            S_base0
@@ -19,14 +19,14 @@
 *pointerColorBackground:S_base01
 *pointerColorForeground:S_base1
 
-#define S_yellow        #b58900
-#define S_orange        #cb4b16
-#define S_red           #dc322f
-#define S_magenta       #d33682
-#define S_violet        #6c71c4
-#define S_blue          #268bd2
-#define S_cyan          #2aa198
-#define S_green         #859900
+#define S_yellow        #8a8a8a
+#define S_orange        #8b99a7
+#define S_red           #586674
+#define S_magenta       #3c6891
+#define S_violet        #6f9ac3
+#define S_blue          #808080
+#define S_cyan          #6e8091
+#define S_green         #767676
 
 !! black dark/light
 *color0:                S_base02
