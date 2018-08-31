@@ -56,3 +56,20 @@ bindsym $mod+d exec "dmenu_run -nb '#002b36' -nf '#839496' -sb '#268bd2' -sf '#f
 
 # xsetroot sets desktop background color
 exec_always --no-startup-id "xsetroot -solid '#073642'"
+
+# i3lock requires color to be given as an option so include System Mode here
+set $locker i3lock --color 073642 && sleep 1
+
+set $mode_system System (l) lock, (e) exit, (r) reboot, (s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id $locker, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym r exec --no-startup-id reboot, mode "default"
+    bindsym s exec --no-startup-id poweroff, mode "default"  
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+Pause mode "$mode_system"
