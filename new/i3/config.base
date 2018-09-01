@@ -31,7 +31,7 @@ font pango:DejaVu Sans Mono 8
 default_border pixel 3
 #default_border normal
 
-# don't show burders with only one window
+# don't show borders with only one window
 hide_edge_borders smart
 
 # Use Mouse+$mod to drag floating windows to their wanted position
@@ -45,9 +45,6 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 # bindsym $mod+d exec "dmenu_run -p 'dmenu >'"
-# bindsym $mod+d exec "dmenu_run -nb '#586e75' -nf '#002b36' -sb '#fdf6e3' -sf '#002b36' -fn 'terminus-14' -p 'dmenu >'"
-# bindsym $mod+d exec "dmenu_run -nb '#002b36' -nf '#839496' -sb '#268bd2' -sf '#fdf6e3' -fn 'terminus-12' -p 'dmenu >'"
-#bindsym $mod+d exec "dmenu_run -nb '#002b36' -nf '#fdf6e3' -sb '#d33682' -sf '#002b36' -fn 'terminus-12' -p 'dmenu >'"
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
@@ -160,11 +157,40 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# exit or logout via hotkey
+set $mode_system Select: (e) exit, (l) logout, (r) reboot, (s) shutdown, (p) poweroff
+mode "$mode_system" {
+        # N.B. unpriviledged users likely can't run power management commands
+        bindsym e exec --no-startup-id i3-msg exit, mode "default"
+        bindsym l exec --no-startup-id i3-msg exit && exit, mode "default"
+        bindsym r exec --no-startup-id reboot, mode "default"
+        bindsym s exec --no-startup-id halt, mode "default"
+        bindsym p exec --no-startup-id poweroff, mode "default"
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+p mode "$mode_system"
+
+# change colorscheme via hotkey
+set $mode_colors Select: (d) solarized dark, (l) solarized light, (b) black, (w) white
+mode "$mode_colors" {
+        # These bindings trigger as soon as you enter the colors mode
+
+        bindsym d exec "cat ~/.Xresources.base ~/.Xresources.dark > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.dark > ~/.config/i3/config && i3-msg restart", mode "default"
+        bindsym l exec "cat ~/.Xresources.base ~/.Xresources.light > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.light > ~/.config/i3/config && i3-msg restart", mode "default"
+        bindsym b exec "cat ~/.Xresources.base ~/.Xresources.black > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.black > ~/.config/i3/config && i3-msg restart", mode "default"
+        bindsym w exec "cat ~/.Xresources.base ~/.Xresources.white > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.white > ~/.config/i3/config && i3-msg restart", mode "default"
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+c mode "$mode_colors"
+
 # exec on start-up
 #exec_always --no-startup-id "xsetroot -solid '#001e26'"
 exec --no-startup-id redshift -l 34.05:-118.24 -t 6500:3600
-
-# change colorscheme via hotkey
-bindsym $mod+Shift+d exec "cat ~/.Xresources.base ~/.Xresources.dark > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.dark > ~/.config/i3/config && i3-msg restart"
-bindsym $mod+Shift+b exec "cat ~/.Xresources.base ~/.Xresources.light > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.light > ~/.config/i3/config && i3-msg restart"
-# bindsym $mod+Shift+d exec "cat && i3-msg restart && xrdb -merge"
