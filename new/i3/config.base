@@ -175,14 +175,16 @@ mode "$mode_system" {
 bindsym $mod+p mode "$mode_system"
 
 # change colorscheme via hotkey
-set $mode_colors Select: (d) solarized dark, (l) solarized light, (b) black, (w) white
+set $mode_colors Select: (d) dark, (l) light, (k) black, (w) white, (b) brown, (t) tan
 mode "$mode_colors" {
         # These bindings trigger as soon as you enter the colors mode
 
         bindsym d exec "cat ~/.Xresources.base ~/.Xresources.dark > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.dark > ~/.config/i3/config && i3-msg restart", mode "default"
         bindsym l exec "cat ~/.Xresources.base ~/.Xresources.light > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.light > ~/.config/i3/config && i3-msg restart", mode "default"
-        bindsym b exec "cat ~/.Xresources.base ~/.Xresources.black > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.black > ~/.config/i3/config && i3-msg restart", mode "default"
+        bindsym k exec "cat ~/.Xresources.base ~/.Xresources.black > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.black > ~/.config/i3/config && i3-msg restart", mode "default"
         bindsym w exec "cat ~/.Xresources.base ~/.Xresources.white > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.white > ~/.config/i3/config && i3-msg restart", mode "default"
+        bindsym b exec "cat ~/.Xresources.base ~/.Xresources.brown > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.brown > ~/.config/i3/config && i3-msg restart", mode "default"
+        bindsym t exec "cat ~/.Xresources.base ~/.Xresources.tan > ~/.Xresources && xrdb -merge ~/.Xresources && cat ~/.config/i3/config.base ~/.config/i3/config.tan > ~/.config/i3/config && i3-msg restart", mode "default"
 
         # back to normal: Enter or Escape
         bindsym Return mode "default"

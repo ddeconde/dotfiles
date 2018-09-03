@@ -1,0 +1,59 @@
+
+#
+# Colorscheme: Gruvbox Dark
+#
+
+# Colors variables from Xresources
+# set_from_resource variable_name xresource_variable fallback_color
+set_from_resource $black color0 #282828
+set_from_resource $brblack color8 #1d2021
+set_from_resource $red color1 #cc241d
+set_from_resource $brred color9 #d65d0e
+set_from_resource $green color2 #98971a
+set_from_resource $brgreen color10 #504945
+set_from_resource $yellow color3 #d79921
+set_from_resource $bryellow color11 #665c54
+set_from_resource $blue color4 #458588
+set_from_resource $brblue color12 #7c6f64
+set_from_resource $magenta color5 #b16286
+set_from_resource $brmagenta color13 #d3869b
+set_from_resource $cyan color6 #689d6a
+set_from_resource $brcyan color14 #928374
+set_from_resource $white color7 #ebdbb2
+set_from_resource $brwhite color15 #f9f5d7
+
+# class border background text indicator child_border
+client.focused $brgreen $brgreen $brwhite $brcyan $brgreen
+client.focused_inactive $black $black $brblue $black $black
+client.unfocused $black $black $brblue $black $black
+client.urgent $yellow $yellow $brwhite $yellow $yellow
+client.placeholder $black $black $brwhite $black $black
+
+client.background $brblack
+
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+bar {
+        status_command i3status -c ~/.config/i3status/config
+	colors {
+	        background $black
+		statusline $brblue
+		separator $brblue
+	        # colorclass border background text
+		focused_workspace $black $black $brwhite
+		active_workspace $black $black $brblue
+		inactive_workspace $black $black $brblue
+		urgent_workspace $yellow $yellow $brwhite
+		binding_mode $magenta $magenta $brwhite
+	}
+        position top
+	font pango: DejaVu Sans Mono 8  # xos4 Terminus 8 # 
+	# font pango:FontAwesome 10, Terminus 10  # DejaVu Sans Mono 10
+}
+
+# dmenu requires colors to be given as options
+bindsym $mod+d exec "dmenu_run -nb '#282828' -nf '#7c6f64' -sb '#458588' -sf '#f9f5d7' -fn 'terminus-13' -p 'dmenu >'"
+# bindsym $mod+d exec "dmenu_run -nb '#002b36' -nf '#839496' -sb '#268bd2' -sf '#fdf6e3' -fn 'terminus-13' -p 'dmenu >'"
+
+# xsetroot sets desktop background color
+exec_always --no-startup-id "xsetroot -solid '#282828'"

@@ -1,26 +1,26 @@
 
 #
-# Colorscheme: Solarized Light
+# Colorscheme: Gruvbox Light
 #
 
 # Colors variables from Xresources
 # set_from_resource variable_name xresource_variable fallback_color
-set_from_resource $black color0 #eee8d5
-set_from_resource $brblack color8 #fdf6e3
-set_from_resource $red color1 #dc322f
-set_from_resource $brred color9 #cb4b16
-set_from_resource $green color2 #859900
-set_from_resource $brgreen color10 #93a1a1
-set_from_resource $yellow color3 #b58900
-set_from_resource $bryellow color11 #839496
-set_from_resource $blue color4 #268bd2
-set_from_resource $brblue color12 #657b83
-set_from_resource $magenta color5 #d33682
-set_from_resource $brmagenta color13 #6c71c4
-set_from_resource $cyan color6 #586e75
-set_from_resource $brcyan color14 #93a1a1
-set_from_resource $white color7 #073642
-set_from_resource $brwhite color15 #002b36
+set_from_resource $black color0 #f9f5d7
+set_from_resource $brblack color8 #1d2021
+set_from_resource $red color1 #cc241d
+set_from_resource $brred color9 #d65d0e
+set_from_resource $green color2 #98971a
+set_from_resource $brgreen color10 #928374
+set_from_resource $yellow color3 #d79921
+set_from_resource $bryellow color11 #7c6f64
+set_from_resource $blue color4 #458588
+set_from_resource $brblue color12 #665c54
+set_from_resource $magenta color5 #b16286
+set_from_resource $brmagenta color13 #d3869b
+set_from_resource $cyan color6 #689d6a
+set_from_resource $brcyan color14 #504945
+set_from_resource $white color7 #282828
+set_from_resource $brwhite color15 #ebdbb2
 
 # # class border background text indicator child_border
 # client.focused $brcyan $brcyan $brwhite $brgreen $brcyan
@@ -81,7 +81,7 @@ bar {
 }
 
 # dmenu requires colors to be given as options
-bindsym $mod+d exec "dmenu_run -nb '#eee8d5' -nf '#657b83' -sb '#d33682' -sf '#002b36' -fn 'terminus-13' -p 'dmenu >'"
+bindsym $mod+d exec "dmenu_run -nb '#ebdbb2' -nf '#665c54' -sb '#b16286' -sf '#f9f5d7' -fn 'terminus-13' -p 'dmenu >'"
 
 # xsetroot sets desktop background color
-exec_always --no-startup-id "xsetroot -solid '#eee8d5'"
+exec_always --no-startup-id "xsetroot -solid '#ebdbb2'"

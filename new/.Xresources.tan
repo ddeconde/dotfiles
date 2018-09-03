@@ -1,0 +1,55 @@
+! -----------------------------------------------------------------------------
+! File: gruvbox-light.xresources
+! Description: Retro groove colorscheme generalized
+! Author: morhetz <morhetz@gmail.com>
+! Source: https://github.com/morhetz/gruvbox-generalized
+! Last Modified: 6 Sep 2014
+! -----------------------------------------------------------------------------
+
+! hard contrast: *background: #f9f5d7
+!*background: #fbf1c7
+*background: #f9f5d7
+! soft contrast: *background: #f2e5bc
+!*foreground: #3c3836
+*foreground: #665c54
+! Black + DarkGrey
+!*color0:  #fdf4c1
+!*color8:  #928374
+*color0:  #ebdbb2
+*color8:  #f9f5d7
+! DarkRed + Red
+*color1:  #cc241d
+*color9:  #9d0006
+! DarkGreen + Green
+*color2:  #98971a
+*color10: #928374
+! DarkYellow + Yellow
+*color3:  #d79921
+*color11: #7c6f64
+! DarkBlue + Blue
+*color4:  #458588
+*color12: #665c54
+! DarkMagenta + Magenta
+*color5:  #b16286
+*color13: #8f3f71
+! DarkCyan + Cyan
+*color6:  #689d6a
+*color14: #504945
+! LightGrey + White
+!*color7:  #7c6f64
+!*color15: #3c3836
+*color7:  #282828
+*color15: #1d2021
+
+!
+! Color Specifications
+!
+
+! highlight underlined text and the underlines themselves
+!URxvt.colorUL: S_orange
+!URxvt.underlineColor: S_orange
+URxvt.colorUL: #9d0006
+URxvt.underlineColor: #9d0006
+! make the cursor stand out more in the terminal (override the default)
+!URxvt.cursorColor: S_base3
+URxvt.cursorColor: #1d2021
