@@ -47,6 +47,8 @@ URxvt.imLocale: en_US.UTF-8
 ! make screen-print dump to a time-stamped file
 URxvt.print-pipe: cat > $HOME/$(echo urxvt.print.$(date +'%Y%m%d%H%M%S'))
 !URxvt.geometry: 80x24
+URxvt.internalBorder: 16
+URxvt.externalBorder: 0
 URxvt.visualBell: true
 ! disable ISO 14755 unicode input mode so Ctrl-Shift is free
 URxvt.iso14755: false
@@ -54,9 +56,20 @@ URxvt.iso14755_52: false
 
 ! Scrollback
 ! use tmux for scrollback--this means most scrollback options are irrelevant
-URxvt.saveLines: 0
+!URxvt.saveLines: 0
+URxvt.saveLines: 8192
 ! do not display scrollbar--even when scrollback is not 0, save the space
 URxvt.scrollBar: false
+! shift-pgup and shift-pgdn scroll a page up or down by default,
+! make it so that shift-up and shift-down scroll up or down a by a line
+URxvt.keysym.Shift-Up: command:\033]720;1\007
+URxvt.keysym.Shift-Down: command:\033]721;1\007
+
+! use control-arrow keys to jump between words
+URxvt.keysym.Control-Up: \033[1;5A
+URxvt.keysym.Control-Down: \033[1;5B
+URxvt.keysym.Control-Right: \033[1;5C
+URxvt.keysym.Control-Left: \033[1;5D
 
 ! Perl Extensions
 ! leave these blank to disable Perl extensions for speed and security

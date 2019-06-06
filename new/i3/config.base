@@ -158,14 +158,16 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # exit or logout via hotkey
-set $mode_system Select: (e) exit, (l) logout, (r) reboot, (s) shutdown, (p) poweroff
+set $locker i3lock --dpms && sleep 1
+set $mode_system Select: (l)ock, (e)xit, (s)uspend, (h)ibernate, (r)eboot, (p)oweroff
 mode "$mode_system" {
         # N.B. unpriviledged users likely can't run power management commands
+        bindsym l exec --no-startup-id $locker, mode "default"
         bindsym e exec --no-startup-id i3-msg exit, mode "default"
-        bindsym l exec --no-startup-id i3-msg exit && exit, mode "default"
-        bindsym r exec --no-startup-id reboot, mode "default"
-        bindsym s exec --no-startup-id halt, mode "default"
-        bindsym p exec --no-startup-id poweroff, mode "default"
+        bindsym s exec --no-startup-id $locker && systemctl suspend, mode "default"
+        bindsym h exec --no-startup-id $locker systemctl hibernate, mode "default"
+        bindsym r exec --no-startup-id systemctl reboot, mode "default"
+        bindsym p exec --no-startup-id systemctl poweroff, mode "default"
 
         # back to normal: Enter or Escape
         bindsym Return mode "default"
@@ -173,6 +175,46 @@ mode "$mode_system" {
 }
 
 bindsym $mod+p mode "$mode_system"
+
+# change display settings
+set $mode_display Select: (f)ull HD, HD (p)lus, (h)D, (e)xternalHDMI, HDMI on (l)eft, HDMI on (r)ight, (i)nternal only, (o)ff
+mode "$mode_display" {
+        # change main display resolution
+        bindsym f exec --no-startup-id xrandr --output eDP-1 --mode 1920x1080, mode "default"
+        bindsym p exec --no-startup-id xrandr --output eDP-1 --mode 1600x900, mode "default"
+        bindsym h exec --no-startup-id xrandr --output eDP-1 --mode 1280x720, mode "default"
+        bindsym o exec --no-startup-id xrandr --output eDP-1 --off, mode "default"
+        # external displays
+        bindsym e exec --no-startup-id xrandr --output HDMI-1 --auto --same-as eDP-1, mode "default"
+        bindsym l exec --no-startup-id xrandr --output HDMI-1 --auto --left-of eDP-1, mode "default"
+        bindsym r exec --no-startup-id xrandr --output HDMI-1 --auto --right-of eDP-1, mode "default"
+        bindsym i exec --no-startup-id xrandr --output HDMI-1 --auto --off, mode "default"
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+m mode "$mode_display"
+
+# change screen brightness and color warmth
+set $mode_brightness Select: (d)ay mode, (n)ight mode, (m)aximum brightness, brightness (o)ff, (+) brightness up, (-) brightness down
+mode "$mode_brightness" {
+        # toggle night/day screen warmth (default day is 6500)
+        bindsym n exec --no-startup-id "sct 3500"; "notify-send 'Screen Color Temperature' 'NIGHT MODE'", mode "default"
+        bindsym d exec --no-startup-id "sct"; "notify-send 'Screen Color Temperature' 'DEFAULT'", mode "default"
+        # change screen brightness
+        bindsym m exec --no-startup-id "brightnessctl --device intel_backlight set 100%"; "notify-send 'Screen Brightness' 'MAXIMUM'", mode "default"
+        bindsym o exec --no-startup-id "brightnessctl --device intel_backlight set 0%"; "notify-send 'Screen Brightness' 'MINIMUM'", mode "default"
+        bindsym plus exec --no-startup-id "brightnessctl --device intel_backlight set +5%"; "notify-send 'Screen Brightness' 'UP'", mode "default"
+        bindsym minus exec --no-startup-id "brightnessctl --device intel_backlight set -5%"; "notify-send 'Screen Brightness' 'DOWN'", mode "default"
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+b mode "$mode_brightness"
 
 # change colorscheme via hotkey
 set $mode_colors Select: (d) dark, (l) light, (k) black, (w) white, (b) brown, (t) tan
@@ -193,6 +235,54 @@ mode "$mode_colors" {
 
 bindsym $mod+c mode "$mode_colors"
 
+# "system" control applications
+# sound
+for_window [title="^alsamixer$"] floating enable sticky enable border pixel 1
+bindsym $mod+Ctrl+m exec --no-startup-id "urxvt -e alsamixer"
+#for_window [title="^pactl$"] floating enable
+#bindsym $mod+Ctrl+m exec --no-startup-id urxvt -e 'pactrl'
+# network
+for_window [title="^nmtui$"] floating enable sticky border pixel 1
+bindsym $mod+Ctrl+n exec --no-startup-id "urxvt -e nmtui"
+
+# scratchpad
+for_window [title="^scratchpad$"] floating enable sticky enable border pixel 1 move scratchpad
+bindsym $mod+x [title="^scratchpad$"] scratchpad show
+exec --no-startup-id "urxvt -title scratchpad -e vim"
+
+# help
+for_window [title="^help"] floating enable sticky enable border pixel 1
+bindsym $mod+y exec --no-startup-id "urxvt -title help -e man i3"
+
+
+# hardware keys
+# double check how the hardware behaves just based on the kernel alone before enabling these bindings
+# for audio, change below to handle changing output devices (dynamic sink)
+#bindsym XF86AudioMute exec --no-startup-id "amixer -q set Master toggle; notify-send 'Audio Volume' 'MUTE'"
+#bindsym XF86AudioLowerVolume exec --no-startup-id "amixer -q set Master 5%- unmute; notify-send 'Audio Volume' 'DOWN'"
+#bindsym XF86AudioRaiseVolume exec --no-startup-id "amixer -q set Master 5%+ unmute; notify-send 'Audio Volume' 'UP'"
+#bindsym XF86AudioMute exec --no-startup-id "pactl set-sync-mute @DEFAULT_SINK@ toggle; notify-send 'Audio Volume' 'MUTE'"
+#bindsym XF86AudioLowerVolume exec --no-startup-id "pactl set-sync-mute @DEFAULT_SINK@ false; pactl set-sync-volume @DEFAULT_SINK@ -5%; notify-send 'Audio Volume' 'DOWN'"
+#bindsym XF86AudioRaiseVolume exec --no-startup-id "pactl set-sync-mute @DEFAULT_SINK@ false; pactl set-sync-volume @DEFAULT_SINK@ +5%; notify-send 'Audio Volume' 'UP'"
+#bindsym XF86MonBrightnessDown exec --no-startup-id "brightnessctl --device intel_backlight set -5%; notify-send 'Screen Brightness' 'UP'"
+#bindsym XF86ModBrightnessUp exec --no-startup-id "brightnessctl --device intel_backlight set +5%; notify-send 'Screen Brightness' 'DOWN'"
+#bindsym XF86Display
+#bindsym XF86WLAN
+#bindsym XF86Tools
+#bindsym XF86Bluetooth
+
+#bindsym --release Print exec "scrot "
+#bindsym --release Shift+Print exec "scrot "
+#bindsym --release Print exec "scrot "
+
+# KEYBOARD
+# turn keyboard lcd on/off?
+
+# perhaps put the next line in profile?
+# exec_always --no-startup-id setxkbmap -layout us -option ctrl:nocaps,shift:both_capslock
+
+
 # exec on start-up
 #exec_always --no-startup-id "xsetroot -solid '#001e26'"
-exec --no-startup-id redshift -l 34.05:-118.24 -t 6500:3600
+#exec --no-startup-id redshift -l 34.05:-118.24 -t 6500:3600
+#exec --no-startup-id compton -CGb
