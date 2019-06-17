@@ -60,7 +60,7 @@
   * No DM needed:
   Add the following to the end of `~/.bash_profile` or `~/.zprofile`:
 ```
-if [[ ! $DISPLAY && $XDG_VTNR -le 3 ]]; then
+if [[ ! $DISPLAY && $XDG_VTNR -le 2 ]]; then
   exec startx
 fi
 ```
@@ -94,12 +94,17 @@ with the test condition being something like `-eq 1` for only starting X on the 
 - Backup: rsnapshot/borgbackup, restic
 - Passwords: pass, passmenu
 - Web: Firefox, Luakit, Lynx,
-- Core Utilities:
+- Editors: vim
+- Core Utilities: tree,
 
+- Programming:
+   * git
+   * pgcli
+   * mycli
 - Misc:
-  * Dictionary
-  * Thesaurus
-  *
+   * Dictionary
+   * Thesaurus
+   *
 - Audio Player: cmus
 - Video Player: mpv
 - Image Viewer: feh
@@ -129,13 +134,23 @@ with the test condition being something like `-eq 1` for only starting X on the 
 
 
 ## packages
+### desktop
 - i3
-- j4-dmenu-desktop
-- brightnessctl
-- tlp, tlp-rdw
-- alsa-utils
+- unclutter-xfixes
 - xrandr
+- j4-dmenu-desktop
+- solarc-theme
+- arc-theme
+### system
+- brightnessctl
 - sct
+- tlp, tlp-rdw, acpi
+- alsa-utils
 - network-manager, network-manager-openvpn
+### applications
 - dictd, dict-gcide, dict-moby-thesaurus
+### utilities
 - silversearcher-ag
+- sysstat
+- command-not-found
+- command-not-found-data
