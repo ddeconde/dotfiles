@@ -1,0 +1,181 @@
+.\" Process this file with
+.\" groff -man -Tascii <filename>
+.\"
+.TH I3-KEYBINDINGS 7 "2019-07-19" "i3 Window Manager" "i3 Keybindings"
+.SH NAME
+i3-keybindings \- keybindings for controlling the i3 window manager
+.SH DESCRIPTION
+According to default configuration, in
+.B i3
+focus follows the mouse and the mouse can be used to resize windows by dragging
+on the borders.
+The mouse is also useful for interacting with GUI applications running within
+windows.
+However most interaction with the window manager itself is through the
+keyboard with windows being opened, moved, selected, resized, and closed via
+keybindings listed below.
+See
+.BR i3 (1)
+for information about default keybindings and how to configure custom ones.
+.SH KEYBINDINGS
+The keyword
+.B Mod
+refers to the
+.I Windows
+(Mod4) key, a convenient alternative to the default modifier key
+.I Alt
+(Mod1) which might conflict with some application-defined shortcuts.
+Bindings marked with '*' are custom, the rest are i3 defaults.
+.SS BASICS
+.IP Mod+Enter
+.RS
+Open a new terminal emulator window.
+.RE
+.IP Mod+d
+.RS
+Open dmenu for starting any application by typing (part of) its name.
+.RE
+.IP Mod+Shift+q
+.RS
+Kills the current window.
+This is equivalent to "clicking on the close button", meaning a polite request to the application to close this window.
+For example, Firefox will save its session upon such a request.
+If the application does not support that, the window will be killed and it depends on the application what happens.
+.RE
+.IP Mod+Shfit+e
+.RS
+Exits i3.
+.RE
+.IP Mod+Shift+r
+.RS
+Restarts i3 in place. Your layout will be preserved.
+.RE
+.IP Mod+Shift+c
+.RS
+Reloads i3 configuration file.
+.RE
+.IP Mod+/
+.RS
+Show i3 keybindings.*
+.RE
+.IP Mod+Shift+/
+.RS
+Show the i3 manual.*
+.RE
+.SS MOVEMENT
+.IP Mod+<direction>
+.RS
+Focus window in <direction>.
+Direction keys are j/k/l/; (left, down, up, right) or the arrow keys.
+.RE
+.IP Mod+Shift+<direction>
+.RS
+Move window to <direction>.
+Direction keys are j/k/l/; (left, down, up, right) or the arrow keys.
+.RE
+.IP Mod+<number>
+.RS
+Switch to workspace <number>.
+.RE
+.IP Mod+Shift+<number>
+.RS
+Move window to workspace <number>.
+.RE
+.IP Mod+a
+.RS
+Focus parent container.
+.RE
+.IP Mod+z
+.RS
+Focus child container.*
+.RE
+.SS LAYOUT
+.IP Mod+f
+.RS
+Toggle fullscreen mode.
+.RE
+.IP Mod+s
+.RS
+Enable stacking layout for the current container.
+.RE
+.IP Mod+e
+.RS
+Enable default layout for the current container.
+.RE
+.IP Mod+w
+.RS
+Enable tabbed layout for the current container.
+.RE
+.IP Mod+Shift+Space
+.RS
+Toggle tiling/floating for the current container.
+.RE
+.IP Mod+Space
+.RS
+Select the first tiling container if the current container is floating and vice-versa.
+.RE
+.IP Mod+h
+.RS
+Toggle splitting to horizontal orientation.
+.RE
+.IP Mod+v
+.RS
+Toggle splitting to vertical orientation.
+.RE
+.IP Mod+r
+.RS
+Enter Resize binding mode.
+.RE
+.SS SETTINGS
+.IP Mod+y
+.RS
+Enter Power binding mode.*
+.RE
+.IP Mod+x
+.RS
+Enter X display settings binding mode.*
+.RE
+.IP Mod+b
+.RS
+Enter Brighness and color temperature binding mode.*
+.RE
+.IP Mod+c
+.RS
+Enter Colorscheme binding mode.*
+.RE
+.IP Mod+n
+.RS
+Enter Network settings binding mode.*
+.RE
+.IP Mod+m
+.RS
+Open audio mixer.*
+.RE
+.SS UTILITY
+.IP Mod+t
+.RS
+Show scratchpad window.*
+.RE
+.IP Mod+Shift+t
+.RS
+Create new scratchpad window.*
+.RE
+.SH FILES
+.B ~/.i3/config (or ~/.config/i3/config)
+.RS
+When starting, i3 loads keybindings (among other things) from its configuration
+file. See
+.BR i3 (1)
+for further details of this file's location and how keybindings are specified
+within it.
+.SH NOTES
+As a window manager, i3 is not designed to control more than the placement and
+appearance of windows.
+Though there are keybindings listed above that pertain to other functions,
+these are just triggers to launch suitable applications.
+The primary way to run software in i3 is not via keybindings, but
+opening a terminal and entering commands.
+For launching GUI applications using the rofi or dmenu keybinding listed above
+and typing (part of) the program name may be most convenient.
+.SH "SEE ALSO"
+.BR i3 (1)

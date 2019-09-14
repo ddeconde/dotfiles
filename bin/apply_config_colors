@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Use sed to apply color lists to config file templates.
+
+# exit on error even within piped command chains
+set -eo pipefail
+# enable recursive globbing but don't pass the pattern for no matches
+shopt -s nullglob globstar
+
+
+readonly CONFIG_HOME="${HOME}/.config"
+#readonly CONFIG_HOME="${HOME}/config"
+
+readonly ext=".template"
+readonly config_files=(
+  ${CONFIG_HOME}/Xresources.template
+  ${CONFIG_HOME}/i3/config.template
+  ${CONFIG_HOME}/i3status/config.template
+  ${CONFIG_HOME}/dunst/dunstrc.template
+  ${CONFIG_HOME}/rofi/config.template
+  # gtk theme colors too?
+)
+
+for f in "${config_files[@]}"; do
+    sed -f "$1" <"${f}" >$(dirname ${f})/$(basename -s ${ext} ${f})
+done
+
+exit 0

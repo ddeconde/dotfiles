@@ -252,7 +252,7 @@ exec --no-startup-id "urxvt -title scratchpad -e vim"
 
 # help
 for_window [title="^help"] floating enable sticky enable border pixel 1
-bindsym $mod+Slash exec --no-startup-id "urxvt -title help -e man i3"
+bindsym $mod+slash exec --no-startup-id "urxvt -title help -e man i3"
 
 
 # hardware keys

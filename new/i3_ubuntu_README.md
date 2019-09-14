@@ -10,13 +10,13 @@
 - polkit??
 
 - Help
-  * List keybindings etc
-  * man pages
+  * List keybindings etc !
+  * man pages !
 - Accessibility
-  * Font Size
-  * Colors
+  * Font Size !
+  * Colors !
 - System Misc
-  * Airplane Mode
+  * Airplane Mode !
 - Power Management
   * TLP
 - Audio Volume !
@@ -37,10 +37,13 @@
   * nmcli
 - Notifications !
   * dunst
+- Launcher !
+  * rofi (dmenu)
 - External Storage Mounting
-  * udevil/udiskie
+  * udevil/udiskie/udisks2
 - Keyboard Settings !
-- copy/paste ?
+- Copy/Paste !
+  * xclip
 - Hardware Control Keys
   Use `xev` to find out which physical hardware function key is mapped to which XF86 command by running `xev -event keyboard` in the terminal and pressing the keys in question.
 
@@ -68,8 +71,10 @@ with the test condition being something like `-eq 1` for only starting X on the 
 - Plymouth splash (and theme)
 
 ### Backups
+- rsync/restic/duplicity/syncthing?
 
 ### Passwords
+pass (w/ passmenu)
 
 ### Encryption
 
@@ -80,13 +85,31 @@ with the test condition being something like `-eq 1` for only starting X on the 
 ### Chat
 
 ### Containers
+lxd (lxc)/docker
 
 ### Shell / Multiplexer
+bash
+zsh
+tmux
 
 ### Editor
 
 ## Configuration
+- vimrc !
+- tmux.conf
 
+- Xresources (colors) !
+- i3/config (colors) !
+- i3status/config (colors) !
+- dunstrc (colors) !
+- rofi (colors) !
+- gtk.css (colors) !
+- add all defaults color scheme
+
+- mutt
+- 
+
+### copy/paste
 
 ## Applications
 - File Manager: vifm, mc, ranger
@@ -95,31 +118,35 @@ with the test condition being something like `-eq 1` for only starting X on the 
 - Passwords: pass, passmenu
 - Web: Firefox, Luakit, Lynx,
 - Editors: vim
-- Core Utilities: tree,
+- Core Utilities: tree, tmux
 
 - Programming:
-   * git
-   * pgcli
-   * mycli
+  * git, tig
+  * pgcli
+  * mycli
+  * asciinema
 - Misc:
-   * Dictionary
-   * Thesaurus
-   *
+  * Dictionary
+  * Thesaurus
+  * Calculator
+  * visidata
+  * pandoc
 - Audio Player: cmus
 - Video Player: mpv
 - Image Viewer: feh
 - Organization: taskwarrior, calcurse
 - Chat: weechat, finch?,
 - Mail: mutt, 
-- System: htop, ncdu,
+- System: htop, ncdu, sysstat, tree
+- Containers:
 
 
 - System Prefs:
   * Accessibility
-  * Airplane Mode
+  * Airplane Mode !
   * Network !
   * Bluetooth
-  * Notifications
+  * Notifications !
   * Audio/Sound !
   * Display & Brightness !
   * Wallpaper
@@ -139,18 +166,25 @@ with the test condition being something like `-eq 1` for only starting X on the 
 - unclutter-xfixes
 - xrandr
 - j4-dmenu-desktop
-- solarc-theme
-- arc-theme
+- dunst
+- rofi
+### security
+- pass
+
 ### system
 - brightnessctl
 - sct
 - tlp, tlp-rdw, acpi
 - alsa-utils
 - network-manager, network-manager-openvpn
+- bluez
+- bluez-tools
 ### applications
 - dictd, dict-gcide, dict-moby-thesaurus
+- bc, dc (GNU calculators)
 ### utilities
 - silversearcher-ag
 - sysstat
 - command-not-found
 - command-not-found-data
+- rtorrent
