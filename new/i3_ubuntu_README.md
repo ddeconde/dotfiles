@@ -70,8 +70,9 @@ fi
 with the test condition being something like `-eq 1` for only starting X on the first virtual terminal.
 - Plymouth splash (and theme)
 
-### Backups
-- rsync/restic/duplicity/syncthing?
+### Backups & file syncronization
+- rsync, restic
+- syncthing
 
 ### Passwords
 pass (w/ passmenu)
@@ -96,17 +97,29 @@ tmux
 
 ## Configuration
 - vimrc !
+
 - tmux.conf
+- zshrc
+- bashrc
+
+- password-store
+
+- 
+
+- muttrc
+- 
 
 - Xresources (colors) !
 - i3/config (colors) !
 - i3status/config (colors) !
 - dunstrc (colors) !
 - rofi (colors) !
+
 - gtk.css (colors) !
 - add all defaults color scheme
 
 - mutt
+- notmuchmail
 - 
 
 ### copy/paste
@@ -114,14 +127,14 @@ tmux
 ## Applications
 - File Manager: vifm, mc, ranger
 - PDF Reader: zathura,
-- Backup: rsnapshot/borgbackup, restic
+- Backup: restic, rclone, rsync/rsnapshot
 - Passwords: pass, passmenu
 - Web: Firefox, Luakit, Lynx,
 - Editors: vim
-- Core Utilities: tree, tmux
+- Core Utilities: zsh, tmux
 
 - Programming:
-  * git, tig
+  * git, tig, git-crypt
   * pgcli
   * mycli
   * asciinema
@@ -135,7 +148,7 @@ tmux
 - Video Player: mpv
 - Image Viewer: feh
 - Organization: taskwarrior, calcurse
-- Chat: weechat, finch?,
+- Chat: weechat, signal
 - Mail: mutt, 
 - System: htop, ncdu, sysstat, tree
 - Containers:
@@ -181,7 +194,7 @@ tmux
 - bluez-tools
 ### applications
 - dictd, dict-gcide, dict-moby-thesaurus
-- bc, dc (GNU calculators)
+- bc, dc (GNU calculators), apcalc
 ### utilities
 - silversearcher-ag
 - sysstat

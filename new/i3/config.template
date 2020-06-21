@@ -185,7 +185,7 @@ mode "$mode_system" {
 bindsym $mod+y mode "$mode_system"
 
 # change X display settings
-set $mode_display Select: [f]ull HD, HD [p]lus, [h]D, [e]xternalHDMI, HDMI on [l]eft, HDMI on [r]ight, [i]nternal only, [o]ff
+set $mode_display Select: [f]ull HD, HD [p]lus, [h]D, [e]xternal HDMI, HDMI on [l]eft, HDMI on [r]ight, [i]nternal only, [o]ff
 mode "$mode_display" {
         # change main display resolution
         bindsym f exec --no-startup-id "xrandr --output eDP-1 --mode 1920x1080", mode "default"
@@ -257,12 +257,12 @@ mode "$mode_network" {
         bindsym Escape mode "default"
 }
 
-for_window [title="^nmtui$"] floating enable sticky border pixel 1
+for_window [title="^nmtui$"] floating enable sticky
 bindsym $mod+n mode "$mode_network"
 
 # "system" control applications
 # sound
-for_window [title="^alsamixer$"] floating enable sticky enable border pixel 1
+for_window [title="^alsamixer$"] floating enable sticky enable
 bindsym $mod+m exec --no-startup-id "urxvt -e alsamixer"
 #for_window [title="^pactl$"] floating enable
 #bindsym $mod+Ctrl+m exec --no-startup-id urxvt -e 'pactrl'
@@ -276,21 +276,24 @@ bindsym $mod+comma exec --no-startup-id "urxvt -e vim ~/.config/i3/config"
 bindsym $mod+Shift+comma exec --no-startup-id "urxvt -e vim ~/.config/i3status/config"
 
 # scratchpad
-for_window [title="^scratchpad$"] floating enable sticky enable border pixel 1 move scratchpad
+for_window [title="^scratchpad$"] floating enable sticky enable move scratchpad
 bindsym $mod+grave [title="^scratchpad$"] scratchpad show
 bindsym $mod+Shift+grave exec --no-startup-id "urxvt -title scratchpad"
 exec --no-startup-id "urxvt -title scratchpad"
 
 # help
-for_window [title="^help"] floating enable sticky enable border pixel 1
-for_window [title="^keys"] floating enable sticky enable border pixel 1
+for_window [title="^help"] floating enable sticky enable
+for_window [title="^keys"] floating enable sticky enable
+for_window [title="^commands"] floating enable sticky enable
 bindsym $mod+Shift+slash exec --no-startup-id "urxvt -title help -e man i3"
 bindsym $mod+slash exec --no-startup-id "urxvt -title keys -e less ~/.config/i3-keybindings.man"
+bindsym $mod+period exec --no-startup-id "urxvt -title commands -e 'whatis -s 1,8 $(compgen -c) | grep -Fve \(1p | sort -k2d,2 -k1,1 | less"
 
 # fix border universally
 for_window [class=".*"] border pixel 2
 
 # prevent single-pixel or larger than screen-size floating windows
+# this is quite important for handling dialog boxes of GUI applications
 floating_minimum_size 320 x 180
 floating_maximum_size 1024 x 768
 
@@ -379,7 +382,7 @@ bar {
 	}
         position top
         separator_symbol " "
-	font pango: DejaVu Sans Mono 8
+	font pango: DejaVu Sans Mono 10
 	# font pango:FontAwesome 10, Terminus 10  # DejaVu Sans Mono 10
 }
 

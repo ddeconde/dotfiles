@@ -9,9 +9,9 @@
 general {
         # colors = true
         colors = false
-        color_good = "#2aa198"
-        color_bad = "#d33682"
-        color_degraded = "#b58900"
+        color_good = "{{color12}}"
+        color_bad = "{{color3}}"
+        color_degraded = "{{color12}}"
 	separator = ""
         interval = 5
 }
