@@ -1,0 +1,151 @@
+I3-KEYBINDINGS(7)               i3 Keybindings               I3-KEYBINDINGS(7)
+
+
+
+NNAAMMEE
+       i3-keybindings - keybindings for controlling the i3 window manager
+
+DDEESSCCRRIIPPTTIIOONN
+       According  to  default configuration, in ii33 focus follows the mouse and
+       the mouse can be used to resize windows by  dragging  on  the  borders.
+       The  mouse is also useful for interacting with GUI applications running
+       within windows.  However  most  interaction  with  the  window  manager
+       itself  is  through  the  keyboard  with  windows  being opened, moved,
+       selected, resized, and closed via keybindings listed below.  See  ii33(1)
+       for  information  about default keybindings and how to configure custom
+       ones.
+
+KKEEYYBBIINNDDIINNGGSS
+       The keyword MMoodd refers to the _W_i_n_d_o_w_s (Mod4) key, a convenient alterna-
+       tive  to  the default modifier key _A_l_t (Mod1) which might conflict with
+       some application-defined shortcuts.  Bindings marked with '*' are  cus-
+       tom, the rest are i3 defaults.
+
+   BBAASSIICCSS
+       Mod+Enter
+              Open a new terminal emulator window.
+
+       Mod+d
+              Open  dmenu for starting any application by typing (part of) its
+              name.
+
+       Mod+Shift+q
+              Kills the current window.  This is equivalent  to  "clicking  on
+              the  close  button", meaning a polite request to the application
+              to close this window.  For example, Firefox will save  its  ses-
+              sion  upon  such a request.  If the application does not support
+              that, the window will be killed and it depends on  the  applica-
+              tion what happens.
+
+       Mod+Shfit+e
+              Exits i3.
+
+       Mod+Shift+r
+              Restarts i3 in place. Your layout will be preserved.
+
+       Mod+Shift+c
+              Reloads i3 configuration file.
+
+       Mod+/
+              Show i3 keybindings.*
+
+       Mod+Shift+/
+              Show i3 man page.*
+
+   MMOOVVEEMMEENNTT
+       Mod+<direction>
+              Focus  window in <direction>.  Direction keys are j/k/l/; (left,
+              down, up, right) or the arrow keys.
+
+       Mod+Shift+<direction>
+              Move window to <direction>.  Direction keys are  j/k/l/;  (left,
+              down, up, right) or the arrow keys.
+
+       Mod+<number>
+              Switch to workspace <number>.
+
+       Mod+Shift+<number>
+              Move window to workspace <number>.
+
+       Mod+a
+              Focus parent container.
+
+       Mod+z
+              Focus child container.*
+
+   LLAAYYOOUUTT
+       Mod+f
+              Toggle fullscreen mode.
+
+       Mod+s
+              Enable stacking layout for the current container.
+
+       Mod+e
+              Enable default layout for the current container.
+
+       Mod+w
+              Enable tabbed layout for the current container.
+
+       Mod+Shift+Space
+              Toggle tiling/floating for the current container.
+
+       Mod+Space
+              Select  the  first  tiling container if the current container is
+              floating and vice-versa.
+
+       Mod+h
+              Toggle splitting to horizontal orientation.
+
+       Mod+v
+              Toggle splitting to vertical orientation.
+
+       Mod+r
+              Enter Resize binding mode.
+
+   SSEETTTTIINNGGSS
+       Mod+y
+              Enter Power binding mode.*
+
+       Mod+x
+              Enter X display settings binding mode.*
+
+       Mod+b
+              Enter Brighness and color temperature binding mode.*
+
+       Mod+c
+              Enter Colorscheme binding mode.*
+
+       Mod+n
+              Enter Network settings binding mode.*
+
+       Mod+m
+              Open audio mixer.*
+
+   UUTTIILLIITTYY
+       Mod+t
+              Show scratchpad window.*
+
+       Mod+Shift+t
+              Create new scratchpad window.*
+
+FFIILLEESS
+       ~~//..ii33//ccoonnffiigg ((oorr ~~//..ccoonnffiigg//ii33//ccoonnffiigg))
+              When starting, i3 loads keybindings (among  other  things)  from
+              its  configuration  file.  See ii33(1) for further details of this
+              file's location and how keybindings are specified within it.
+
+NNOOTTEESS
+       As a window manager, i3 is not designed to control more than the place-
+       ment  and  appearance  of windows.  Though there are keybindings listed
+       above that pertain to other  functions,  these  are  just  triggers  to
+       launch suitable applications.  The primary way to run software in i3 is
+       not via keybindings, but opening a terminal and entering commands.  For
+       launching  GUI  applications  using the rofi or dmenu keybinding listed
+       above and typing (part of) the program name may be most convenient.
+
+SSEEEE AALLSSOO
+       ii33(1)
+
+
+
+i3 Window Manager                 2019-07-19                 I3-KEYBINDINGS(7)

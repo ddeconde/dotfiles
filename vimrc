@@ -3,8 +3,9 @@
 " Last changed: Wed, 14 Oct 2015 11:02:53 -0700
 "
 
-set nocompatible " this is actually assumed when this .vimrc file exists
-
+if &compatible
+    set nocompatible  " this is actually assumed when this .vimrc file exists
+endif
 
 "
 " PLUGINS
@@ -19,7 +20,7 @@ set nocompatible " this is actually assumed when this .vimrc file exists
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall | source $MYVIMRC
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Use vim-plug to install and manage all other plugins
@@ -48,7 +49,21 @@ Plug 'scrooloose/syntastic'  " syntax checking for many languages
 " Appearance Plugins
 Plug 'altercation/vim-colors-solarized'  " selective-contrast colorscheme
 Plug 'Yggdroot/indentLine'  " display indentation guides
-" Plug 'chriskempson/base16-vim'
+Plug 'chriskempson/base16-vim'
+" Plug 'matthiaskern/vim-monochrome'
+Plug 'kcsongor/vim-monochrome'
+" Plug 'fxn/vim-monochrome'
+Plug 'bvf/preto'
+Plug 'andreypopp/vim-colors-plain'
+Plug 'treycucco/vim-monotonic'
+Plug 'owickstrom/vim-colors-paramount'
+Plug 'cloud-oak/vim-colors-alchemy'
+Plug 'xdefrag/vim-beelzebub'
+Plug 'logico-dev/typewriter'
+Plug 'clinstid/eink.vim'
+Plug 'noahfrederick/vim-noctu'
+Plug 'romainl/flattened'
+" Plug 'flazz/vim-colorschemes'
 
 " Filetype Specific Plugins
 Plug 'LaTeX-Box-Team/LaTeX-Box'  " LaTeX support
@@ -149,12 +164,12 @@ set visualbell  " flash screen instead of audio bell for alert
 " set title  " update terminal window title
 set shortmess+=A  " don't show 'ATTENTION' warning for existing swapfiles
 set background=dark
-try
-    colorscheme solarized
-catch
-    colorscheme pablo
-endtry
-" silent! colorscheme solarized
+" try
+"     colorscheme solarized
+" catch
+"     colorscheme pablo
+" endtry
+silent! colorscheme flattened
 " When using solarized without custom terminal colors use the following
 " let g:solarized_termcolors=256
 
@@ -230,22 +245,96 @@ set foldlevelstart=99  " open files completely unfolded
 set foldnestmax=8  " no more than 8 levels of folds
 set foldmethod=indent  "default to indentation-based folding
 
+" Add highlight groups for statusline
+function! UserHighlights() abort
+    highlight User1 term=reverse cterm=reverse ctermfg=4
+    highlight User2 term=reverse cterm=reverse ctermfg=2
+    highlight User3 term=reverse cterm=reverse ctermfg=5
+    highlight User4 term=reverse cterm=reverse ctermfg=1
+    highlight User5 term=reverse cterm=reverse ctermfg=13
+    highlight User6 term=reverse cterm=reverse ctermfg=3
+    highlight User7 term=reverse cterm=reverse ctermfg=0 ctermbg=14 gui=bold,reverse
+    highlight User8 ctermfg=9 ctermbg=0
+endfunction
+
+augroup UserColors
+    autocmd!
+    autocmd Colorscheme * call UserHighlights()
+augroup END
+
+try
+    colorscheme solarized
+catch
+    colorscheme pablo
+endtry
+
+" Map mode() outputs to mode types and labels for statusline
+let g:modetype={
+      \ 'n'      : ['N', '  NORMAL '],
+      \ 'no'     : ['N', '  N·OPERATOR PENDING '],
+      \ 'v'      : ['V', '  VISUAL '],
+      \ 'V'      : ['V', '  V·LINE '],
+      \ "\<C-v>" : ['V', '  V·BLOCK '],
+      \ 's'      : ['I', '  SELECT '],
+      \ 'S'      : ['I', '  S·LINE '],
+      \ "\<C-s>" : ['I', '  S·BLOCK '],
+      \ 'i'      : ['I', '  INSERT '],
+      \ 'R'      : ['R', '  REPLACE '],
+      \ 'Rv'     : ['R', '  V·REPLACE '],
+      \ 'c'      : ['E', '  COMMAND '],
+      \ 'cv'     : ['E', '  VIM EX '],
+      \ 'ce'     : ['E', '  EX '],
+      \ 'r'      : ['S', '  PROMPT '],
+      \ 'rm'     : ['S', '  MORE '],
+      \ 'r?'     : ['S', '  CONFIRM '],
+      \ '!'      : ['S', '  SHELL '],
+      \ 't'      : ['S', '  TERMINAL ']
+      \}
+
 " Statusline
 set laststatus=2  " always display statusline
 set ruler  " display cursor position even with empty statusline
-set statusline=%#WildMenu#%(\ %n\ \|%)%<  " buffer number and truncation
-set statusline+=%#WildMenu#%(\ %f\ %)  " filename
+set statusline=
+" modes are mutually exclusive so only one of the following applies
+set statusline+=%1*%{(modetype[mode()][0]==#'N')?modetype[mode()][1]:''}
+set statusline+=%2*%{(modetype[mode()][0]==#'I')?modetype[mode()][1]:''}
+set statusline+=%3*%{(modetype[mode()][0]==#'V')?modetype[mode()][1]:''}
+set statusline+=%4*%{(modetype[mode()][0]==#'R')?modetype[mode()][1]:''}
+set statusline+=%5*%{(modetype[mode()][0]==#'E')?modetype[mode()][1]:''}
+set statusline+=%6*%{(modetype[mode()][0]==#'S')?modetype[mode()][1]:''}
+" set statusline+=%*
+" set statusline+=%9*%{&paste?'\ \ PASTE\ ':''}%*  " paste mode
+" set statusline+=%8*%{&spell?'\ \ SPELL\ ':''}%*  " paste mode
+" set statusline+=%8*%{&list?'\ \ LIST\ ':''}%*  " paste mode
+" set statusline+=%#WildMenu#%(\ %n\ \|%)%<  " buffer number and truncation
+" set statusline+=%#WildMenu#%(\ %n\ %)  " buffer number and truncation
+" set statusline+=%#WildMenu#%(\ %f\ %)  " filename
+set statusline+=%*%(\ %n\ \|%)%<  " buffer number and truncation
+" set statusline+=%(\ %f\ %)  " filename
+set statusline+=%*%(\ %t\ %)%<  " filename
+" set statusline+=%(\ %t\ %)  " filename
 set statusline+=%r  " read only flag: [RO]
-set statusline+=%m%*  " modified flag: [+][-]
+" set statusline+=%m%*  " modified flag: [+][-]
+set statusline+=%m  " modified flag: [+][-]
+" set statusline+=%7*%(\ %)
+set statusline+=%#FoldColumn#%(\ %)
+set statusline+=%{&paste?'\[paste\]':''}  " paste mode
+set statusline+=%{&list?'\[list\]':''}  " listed characters displayed
 set statusline+=%=  " right-align the rest of the statusline
-set statusline+=%{fugitive#statusline()}  " git branch
+" set statusline+=%8*%{SyntasticStatuslineFlag()}%7*  " syntastic
+set statusline+=%#DiffDelete#%{SyntasticStatuslineFlag()}%#FoldColumn#  " syntastic
 set statusline+=[%{&fileformat}]  " file format
 set statusline+=[%{strlen(&fenc)?&fenc:&enc}]  " file encoding
-set statusline+=[%{strlen(&filetype)?&filetype:'no\ ft'}]  " file type
+" set statusline+=[%{strlen(&filetype)?&filetype:'no\ ft'}]  " file type
+set statusline+=%y  " file type
 set statusline+=%w  " preview window flag: [Preview]
-set statusline+=%(\ %)%#ModeMsg#%{&paste?'\ PASTE\ ':''}%*  " paste mode
-set statusline+=%#Search#%{SyntasticStatuslineFlag()}%*  " syntastic
-set statusline+=%#WildMenu#%(\ %3p%%\ \|%)  " scroll percentage
+" set statusline+=%(\ %)%#ModeMsg#%{&paste?'\ PASTE\ ':''}%*  " paste mode
+" set statusline+=%#Search#%{SyntasticStatuslineFlag()}%*  " syntastic
+set statusline+=%(\ %)
+set statusline+=%*%(\ %3p%%\ \|%)  " scroll percentage
+" set statusline+=%*%(\ %3p%%\ %)  " scroll percentage
+" set statusline+=%#WildMenu#%(\ %3p%%\ \|%)  " scroll percentage
+" set statusline+=%#WildMenu#%(\ %3l:%-2v\ %)%*  " line:virtualcolumn
 set statusline+=%(\ %3l:%-2v\ %)%*  " line:virtualcolumn
 
 
@@ -279,7 +368,7 @@ cmap w!! w !sudo tee % >/dev/null
 " Protect against accidentally winding up in Ex mode
 nnoremap Q <Nop>
 
-" Toggles 
+" Toggles
 " Toggle and echo paste mode easily (even while in insert mode)
 set pastetoggle=<F2>
 nnoremap <Leader>p :set paste!<CR>:set paste?<CR>
@@ -308,7 +397,7 @@ nnoremap <C-H> :silent! grep! "\b<C-r><C-w>\b"<CR>:cw<CR>:redr!<CR>
 " Formatting
 " Strip all trailing whitespace without losing search history
 nnoremap <Silent> <Leader>$ :let _s=@/<Bar>:%s/\s\+$//e<Bar>
-    \ :let @/=_s<Bar>:nohl<CR> 
+    \ :let @/=_s<Bar>:nohl<CR>
 " Reindent the entire file while fixing cursor (indentation only)
 nnoremap <Silent> <Leader>= :let l=line(".")<Bar>:let c=virtcol(".")<Bar>
     \ :normal gg=G<Bar>:call cursor(l, c)<Bar>:unlet l<Bar>:unlet c<CR> 
@@ -331,9 +420,13 @@ noremap <C-P> :bp
 noremap <C-J> <C-W>w
 noremap <C-K> <C-W>W
 " Split current window and move to new split (w: vertical, W: horizontal)
-nnoremap <leader>w <C-w>v<C-w>l
-nnoremap <leader>W <C-w>s<C-w>j
+nnoremap <Leader>w <C-w>v<C-w>l
+nnoremap <Leader>W <C-w>s<C-w>j
 
+
+" Make alterations to this file more easily
+nnoremap <Leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <Leader>sv :source $MYVIMRC<CR>
 
 "
 " CURSOR SHAPE
@@ -387,7 +480,7 @@ autocmd FileType text setlocal textwidth=72
 " autocmd Filetype text setlocal formatoptions=
 
 " Idomatic seletion of default auto-command group
-augroup END 
+augroup END
 
 
 "
