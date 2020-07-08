@@ -127,7 +127,7 @@ tmux
 ## Applications
 - File Manager: vifm, mc, ranger
 - PDF Reader: zathura,
-- Backup: restic, rclone, rsync/rsnapshot
+- Backup: restic, rclone, rsync/rsnapshot, syncthing
 - Passwords: pass, passmenu
 - Web: Firefox, Luakit, Lynx,
 - Editors: vim
